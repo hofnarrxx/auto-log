@@ -1,0 +1,27 @@
+<h2>Add Vehicle</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+
+  <input placeholder="Brand" formControlName="brand">
+  @if (form.controls.brand.invalid && form.controls.brand.touched) {
+  <div>
+    Brand is required
+  </div>
+  }
+
+  <input placeholder="Model" formControlName="model">
+
+  <input type="number" placeholder="Year" formControlName="year">
+  <input type="number" placeholder="Mileage" formControlName="mileage">
+  <input type="file" accept="image/*" (change)="onFileSelected($event)">
+  @if (selectedImageBase64) {
+  <div>
+    <img [src]="selectedImageBase64" width="200">
+  </div>
+  }
+
+  <div class="buttons">
+    <button type="button" class="cancel" (click)="cancel()">Cancel</button>
+    <button type="submit" class="save">Save</button>
+  </div>
+</form>
