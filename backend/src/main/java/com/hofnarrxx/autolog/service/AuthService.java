@@ -1,7 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.dto.AuthRequest;
-import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +24,7 @@ public class AuthService {
         this.authManager = authManager;
     }
 
-    public AuthResponse register(AuthRequest request) {
+    public String register(AuthRequest request) {
 
         if (userRepository.findByEmail(request.email()).isPresent())
             throw new RuntimeException("Email already exists");
@@ -36,12 +35,10 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user.getEmail());
-
-        return new AuthResponse(token);
+        return jwtService.generateToken(user.getEmail());
     }
 
-    public AuthResponse login(AuthRequest request) {
+    public String login(AuthRequest request) {
 
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -50,8 +47,7 @@ public class AuthService {
                 )
         );
 
-        String token = jwtService.generateToken(request.email());
-        return new AuthResponse(token);
+        return jwtService.generateToken(request.email());
     }
 
     public User getCurrentUser() {
