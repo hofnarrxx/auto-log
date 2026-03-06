@@ -1,0 +1,105 @@
+<div class="auth-page">
+
+  <div class="auth-card">
+
+    <h1 class="logo">AutoLog</h1>
+
+    <form [formGroup]="form" (ngSubmit)="register()" class="auth-form">
+
+      <div class="form-field">
+        <label>Email</label>
+
+        <input
+          type="email"
+          placeholder="Enter your email"
+          formControlName="email"
+        >
+
+        @if(form.controls.email.touched && form.controls.email.invalid) {
+
+          <div class="error">
+
+            @if(form.controls.email.errors?.['required']) {
+              <span>Email is required</span>
+            }
+
+            @if(form.controls.email.errors?.['email']) {
+              <span>Enter a valid email</span>
+            }
+
+          </div>
+
+        }
+      </div>
+
+      <div class="form-field">
+        <label>Password</label>
+
+        <input
+          type="password"
+          placeholder="Create password"
+          formControlName="password"
+        >
+
+        @if(form.controls.password.touched && form.controls.password.invalid) {
+
+          <div class="error">
+
+            @if(form.controls.password.errors?.['required']) {
+              <span>Password is required</span>
+            }
+
+            @if(form.controls.password.errors?.['minlength']) {
+              <span>Password must be at least 6 characters</span>
+            }
+
+          </div>
+
+        }
+      </div>
+
+      <div class="form-field">
+        <label>Confirm Password</label>
+
+        <input
+          type="password"
+          placeholder="Repeat password"
+          formControlName="confirmPassword"
+        >
+
+        @if(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
+
+          <div class="error">
+            <span>Password confirmation is required</span>
+          </div>
+
+        }
+
+        @if(form.value.password !== form.value.confirmPassword && form.controls.confirmPassword.touched) {
+
+          <div class="error">
+            <span>Passwords do not match</span>
+          </div>
+
+        }
+
+      </div>
+
+      <button
+        class="auth-button"
+        type="submit"
+        [disabled]="form.invalid"
+      >
+        Create account
+      </button>
+
+    </form>
+
+    <p class="auth-switch">
+      Already have an account?
+      <a routerLink="/login">Login</a>
+    </p>
+
+  </div>
+
+</div>
