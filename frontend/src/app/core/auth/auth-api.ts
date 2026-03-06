@@ -8,13 +8,17 @@ import { tap } from 'rxjs';
 export class AuthApi {
   isAuthenticated = signal<boolean>(false);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.checkAuth().subscribe({
+      next: () => this.isAuthenticated.set(true),
+      error: () => this.isAuthenticated.set(false)
+    });
+  }
 
-   login(email: string, password: string) {
+  login(email: string, password: string) {
     return this.http.post(
       'http://localhost:8080/api/auth/login',
-      { email, password },
-      { withCredentials: true }
+      { email, password }
     ).pipe(
       tap(() => this.isAuthenticated.set(true))
     );
@@ -23,8 +27,7 @@ export class AuthApi {
   register(email: string, password: string) {
     return this.http.post(
       'http://localhost:8080/api/auth/register',
-      { email, password },
-      { withCredentials: true }
+      { email, password }
     ).pipe(
       tap(() => this.isAuthenticated.set(true))
     );
@@ -33,8 +36,7 @@ export class AuthApi {
   logout() {
     return this.http.post(
       'http://localhost:8080/api/auth/logout',
-      {},
-      { withCredentials: true }
+      {}
     ).pipe(
       tap(() => this.isAuthenticated.set(false))
     );
@@ -42,8 +44,7 @@ export class AuthApi {
 
   checkAuth() {
     return this.http.get(
-      'http://localhost:8080/api/auth/me',
-      { withCredentials: true }
+      'http://localhost:8080/api/auth/me'
     );
   }
 }
