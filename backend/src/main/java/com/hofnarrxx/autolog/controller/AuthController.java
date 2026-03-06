@@ -1,16 +1,18 @@
 package com.hofnarrxx.autolog.controller;
 
 import com.hofnarrxx.autolog.dto.AuthRequest;
+import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
 
@@ -35,8 +37,11 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<String> me(Authentication authentication) {
-        return ResponseEntity.ok(authentication.getName());
+    public ResponseEntity<AuthResponse> me(@AuthenticationPrincipal UserDetails user) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(new AuthResponse(user.getUsername()));
     }
 
     @PostMapping("/logout")

@@ -31,7 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        //final String header = request.getHeader("Authorization");
         String token = extractTokenFromCookie(request);
 
         if (token == null || !jwtService.isValid(token)) {
@@ -39,7 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        //String token = header.substring(7);
         String email = jwtService.extractEmail(token);
 
         if (email != null &&

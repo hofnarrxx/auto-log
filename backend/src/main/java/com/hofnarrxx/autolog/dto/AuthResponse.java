@@ -1,4 +1,4 @@
 package com.hofnarrxx.autolog.dto;
 
-public record AuthResponse(String token) {
+public record AuthResponse(String auth) {
 }
