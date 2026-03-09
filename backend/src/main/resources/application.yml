@@ -1,6 +1,16 @@
 spring:
   config:
     import: optional:file:.env[.properties]
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            scope:
+              - email
+              - profile
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}

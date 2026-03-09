@@ -1,5 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
+import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +24,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = repository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found"));
+
+        if (user.getProvider() == AuthProvider.GOOGLE) {
+            throw new RuntimeException("Use Google login for this account");
+        }
 
         return org.springframework.security.core.userdetails.User
                 .builder()

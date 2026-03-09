@@ -30,4 +30,9 @@ export class Login {
       error: () => alert('Invalid credentials')
     });
   }
+
+  googleLogin() {
+    window.location.href =
+      'http://localhost:8080/oauth2/authorization/google';
+  }
 }

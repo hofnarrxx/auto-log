@@ -1,5 +1,6 @@
 package com.hofnarrxx.autolog.config;
 
+import com.hofnarrxx.autolog.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,9 +20,12 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
+    private final CustomOAuth2UserService oauth2UserService;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter){
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter,
+                          CustomOAuth2UserService oauth2UserService){
         this.jwtFilter = jwtFilter;
+        this.oauth2UserService = oauth2UserService;
     }
 
     @Bean
@@ -36,7 +40,17 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(user ->
+                                user.userService(oauth2UserService)
+                        )
+                        .defaultSuccessUrl("http://localhost:4200/dashboard",
+                                true)
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessUrl("http://localhost:4200/login"));
 
         return http.build();
     }

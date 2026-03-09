@@ -8,62 +8,54 @@
 
       <div class="form-field">
         <label>Email</label>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          formControlName="email"
-        >
+        <input type="email" placeholder="Enter your email" formControlName="email">
         @if(form.controls.email.touched && form.controls.email.invalid) {
 
-          <div class="error">
+        <div class="error">
 
-            @if(form.controls.email.errors?.['required']) {
-              <span>Email is required</span>
-            }
+          @if(form.controls.email.errors?.['required']) {
+          <span>Email is required</span>
+          }
 
-            @if(form.controls.email.errors?.['email']) {
-              <span>Enter a valid email address</span>
-            }
+          @if(form.controls.email.errors?.['email']) {
+          <span>Enter a valid email address</span>
+          }
 
-          </div>
+        </div>
 
         }
       </div>
 
       <div class="form-field">
         <label>Password</label>
-        <input
-          type="password"
-          placeholder="Enter your password"
-          formControlName="password"
-        >
+        <input type="password" placeholder="Enter your password" formControlName="password">
 
         @if(form.controls.password.touched && form.controls.password.invalid) {
 
-          <div class="error">
+        <div class="error">
 
-            @if(form.controls.password.errors?.['required']) {
-              <span>Password is required</span>
-            }
+          @if(form.controls.password.errors?.['required']) {
+          <span>Password is required</span>
+          }
 
-            @if(form.controls.password.errors?.['minlength']) {
-              <span>Password must be at least 6 characters</span>
-            }
+          @if(form.controls.password.errors?.['minlength']) {
+          <span>Password must be at least 6 characters</span>
+          }
 
-          </div>
+        </div>
 
         }
       </div>
 
-      <button
-        class="auth-button"
-        type="submit"
-        [disabled]="form.invalid"
-      >
+      <button class="auth-button" type="submit" [disabled]="form.invalid">
         Log In
       </button>
 
     </form>
+
+    <button class="google-btn" (click)="googleLogin()">
+      Continue with Google
+    </button>
 
     <p class="auth-switch">
       Don't have an account?

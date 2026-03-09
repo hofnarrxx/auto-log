@@ -1,6 +1,7 @@
 package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.dto.AuthRequest;
+import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +33,7 @@ public class AuthService {
         User user = new User();
         user.setEmail(request.email());
         user.setPassword(encoder.encode(request.password()));
-
+        user.setProvider(AuthProvider.LOCAL);
         userRepository.save(user);
 
         return jwtService.generateToken(user.getEmail());
