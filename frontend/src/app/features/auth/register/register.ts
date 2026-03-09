@@ -24,11 +24,17 @@ export class Register {
     if (this.form.invalid) return;
 
     const { email, password, confirmPassword } = this.form.value;
-    if (password !== confirmPassword) return; 
+    if (password !== confirmPassword) return;
 
     this.authApi.register(email!, password!).subscribe({
-      next: () => this.router.navigate(['/']),
-      error: () => alert('Registration failed')
+      next: () => this.router.navigate(['/dashboard']),
+      error: err => {
+        if (err.status === 409) {
+          alert('Email already registered');
+        } else {
+          alert('Registration failed');
+        }
+      }
     });
   }
 }
