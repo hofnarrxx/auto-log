@@ -1,15 +1,15 @@
-@if (vehicle) {
+@if (vehicle()) {
 
   <div class="details-container">
 
-    @if (vehicle.image) {
-      <img [src]="vehicle.image" class="details-image">
+    @if (vehicle()!.image) {
+      <img [src]="vehicle()!.image" class="details-image">
     }
+    
+    <h2>{{ vehicle()!.brand }} {{ vehicle()!.model }}</h2>
 
-    <h2>{{ vehicle.brand }} {{ vehicle.model }}</h2>
-
-    <p><strong>Year:</strong> {{ vehicle.year }}</p>
-    <p><strong>Mileage:</strong> {{ vehicle.mileage }} km</p>
+    <p><strong>Year:</strong> {{ vehicle()!.year }}</p>
+    <p><strong>Mileage:</strong> {{ vehicle()!.mileage }} km</p>
 
     <div class="details-actions">
       <button class="edit-btn" (click)="openEdit()">Edit</button>
@@ -20,7 +20,7 @@
   @if (showModal()) {
     <app-modal (closed)="closeModal()">
       <app-vehicle-form
-        [vehicle]="vehicle"
+        [vehicle]="vehicle()"
         (closed)="closeModal()">
       </app-vehicle-form>
     </app-modal>

@@ -24,4 +24,14 @@ public class VehicleController {
     public Vehicle create(@RequestBody Vehicle vehicle) {
         return vehicleService.create(vehicle);
     }
+
+    @DeleteMapping
+    public void delete(@PathVariable Long id){
+         vehicleService.delete(id);
+    }
+
+    @PutMapping("/{id}")
+    public Vehicle update(@PathVariable Long id, @RequestBody Vehicle vehicle) {
+        return vehicleService.update(id, vehicle);
+    }
 }

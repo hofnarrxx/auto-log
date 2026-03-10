@@ -9,6 +9,10 @@ public class Vehicle {
     private Long id;
     private String brand;
     private String model;
+    private Integer mileage;
+    private Integer year;
+    @Column(columnDefinition = "TEXT")
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -39,5 +43,29 @@ public class Vehicle {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public int getMileage() {
+        return mileage;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setMileage(Integer mileage) {
+        this.mileage = mileage;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
     }
 }

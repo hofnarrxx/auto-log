@@ -12,9 +12,14 @@ import { Modal } from '../../shared/ui/modal/modal';
 })
 export class Dashboard {
   private vehicleStore = inject(VehicleStore);
-  vehicles = this.vehicleStore.vehicles;
 
   showModal = signal(false);
+
+  vehicles = this.vehicleStore.vehicles;
+
+  ngOnInit() {
+    this.vehicleStore.load();
+  }
 
   openModal() {
     this.showModal.set(true);

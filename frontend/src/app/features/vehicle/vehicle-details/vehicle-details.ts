@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VehicleStore } from '../vehicle-store';
 import { VehicleForm } from '../vehicle-form/vehicle-form';
@@ -16,12 +16,10 @@ export class VehicleDetails {
   private vehicleStore = inject(VehicleStore);
   showModal = signal(false);
 
-  vehicle = this.getVehicle();
-
-  private getVehicle() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    return this.vehicleStore.vehicles().find(v => v.id === id);
-  }
+  vehicle = computed(() => {
+  const id = Number(this.route.snapshot.paramMap.get('id'));
+  return this.vehicleStore.vehicles().find(v => v.id === id);
+});
 
   openEdit() {
     this.showModal.set(true);
@@ -29,13 +27,13 @@ export class VehicleDetails {
 
   closeModal() {
     this.showModal.set(false);
-    this.vehicle = this.getVehicle();
   }
 
   deleteVehicle() {
-    if (!this.vehicle) return;
+    const vehicle = this.vehicle();
+    if (!vehicle) return;
 
-    this.vehicleStore.remove(this.vehicle.id);
+    this.vehicleStore.remove(vehicle.id);
     this.router.navigate(['/']);
   }
 }
