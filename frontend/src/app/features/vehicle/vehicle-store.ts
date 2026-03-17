@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Vehicle } from './vehicle-model';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -27,9 +27,11 @@ export class VehicleStore {
   }
 
   remove(id: number) {
-    this.http.delete(`${this.api}/${id}`).subscribe(() => {
-      this.vehicles.update(v => v.filter(vehicle => vehicle.id !== id));
-    });
+    return this.http.delete<void>(`${this.api}/${id}`).pipe(
+      tap(() => {
+        this.vehicles.update(v => v.filter(vehicle => vehicle.id !== id));
+      })
+    );
   }
 
   load() {

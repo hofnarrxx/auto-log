@@ -9,7 +9,8 @@ public class Vehicle {
     private Long id;
     private String brand;
     private String model;
-    private Integer mileage;
+    private String fuelType;
+    private Double mileage;
     private Integer year;
     @Column(columnDefinition = "TEXT")
     private String image;
@@ -45,7 +46,7 @@ public class Vehicle {
         this.user = user;
     }
 
-    public int getMileage() {
+    public double getMileage() {
         return mileage;
     }
 
@@ -57,7 +58,7 @@ public class Vehicle {
         this.image = image;
     }
 
-    public void setMileage(Integer mileage) {
+    public void setMileage(double mileage) {
         this.mileage = mileage;
     }
 
@@ -67,5 +68,13 @@ public class Vehicle {
 
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public String getFuelType() {
+        return fuelType;
+    }
+
+    public void setFuelType(String fuelType) {
+        this.fuelType = fuelType;
     }
 }

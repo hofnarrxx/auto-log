@@ -25,7 +25,7 @@ public class VehicleController {
         return vehicleService.create(vehicle);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
          vehicleService.delete(id);
     }

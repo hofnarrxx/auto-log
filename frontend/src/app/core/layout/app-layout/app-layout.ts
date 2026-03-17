@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthApi } from '../../auth/auth-api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-app-layout',
@@ -8,5 +10,17 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './app-layout.css',
 })
 export class AppLayout {
+  private authApi = inject(AuthApi);
+  private router = inject(Router);
 
+  logout() {
+    this.authApi.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login'], { replaceUrl: true });
+      },
+      error: () => {
+        this.router.navigate(['/login'], { replaceUrl: true });
+      }
+    });
+  }
 }

@@ -40,7 +40,7 @@ export const routes: Routes = [
             },
 
             {
-                path: 'vehicle',
+                path: 'vehicles',
                 canActivate: [authGuard],
                 loadChildren: () =>
                     import('./features/vehicle/vehicle.routes')

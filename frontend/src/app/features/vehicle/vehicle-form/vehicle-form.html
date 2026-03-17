@@ -4,16 +4,41 @@
 
   <input placeholder="Brand" formControlName="brand">
   @if (form.controls.brand.invalid && form.controls.brand.touched) {
-  <div>
-    Brand is required
-  </div>
+  <div class="error">Brand is required</div>
   }
 
   <input placeholder="Model" formControlName="model">
+  @if (form.controls.model.invalid && form.controls.model.touched) {
+  <div class="error">Model is required</div>
+  }
 
-  <input type="number" placeholder="Year" formControlName="year">
-  <input type="number" placeholder="Mileage" formControlName="mileage">
+  <select formControlName="fuelType">
+    <option [ngValue]="null" disabled>Select fuel type</option>
+    @for (fuel of fuelTypes; track fuel) {
+    <option [value]="fuel">{{ fuel }}</option>
+    }
+  </select>
+  @if (form.controls.fuelType.invalid && form.controls.fuelType.touched) {
+  <div class="error">Fuel type is required</div>
+  }
+
+  <input type="number" placeholder="Year" formControlName="year" min="1886" [max]="currentYear" step="1">
+
+  @if (form.controls.year.hasError('integer') && form.controls.year.touched) {
+
+  <div class="error">Year must be a whole number</div> }
+  @else if (form.controls.year.invalid && form.controls.year.touched) {
+  <div class="error">Year must be between 1886 and {{ currentYear }}</div>
+  }
+
+  <input type="number" placeholder="Mileage (km)" formControlName="mileage" min="0" step="0.1">
+  
+  @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+  <div class="error">Mileage must be a non-negative number</div>
+  }
+
   <input type="file" accept="image/*" (change)="onFileSelected($event)">
+
   @if (selectedImageBase64) {
   <div>
     <img [src]="selectedImageBase64" width="200">

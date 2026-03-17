@@ -8,13 +8,7 @@ export const authGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   return authApi.checkAuth().pipe(
-    map(res => {
-      console.log('auth success', res);
-      return true;
-    }),
-    catchError(err => {
-      console.log('auth failed', err);
-      return of(router.createUrlTree(['/login']));
-    })
+    map(() => true),
+    catchError(() => of(router.createUrlTree(['/login'])))
   );
 };

@@ -31,6 +31,7 @@ public class VehicleService {
         Vehicle existing = repository.findById(id).orElseThrow(() -> new VehicleNotFoundException());
         existing.setBrand(vehicle.getBrand());
         existing.setModel(vehicle.getModel());
+        existing.setFuelType(vehicle.getFuelType());
         existing.setMileage(vehicle.getMileage());
         existing.setImage(vehicle.getImage());
         existing.setYear(vehicle.getYear());

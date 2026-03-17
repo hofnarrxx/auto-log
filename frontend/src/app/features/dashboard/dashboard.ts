@@ -30,6 +30,6 @@ export class Dashboard {
   }
 
   deleteVehicle(id: number) {
-    this.vehicleStore.remove(id);
+    this.vehicleStore.remove(id).subscribe();
   }
 }

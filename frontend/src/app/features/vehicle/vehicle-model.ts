@@ -3,6 +3,7 @@ export interface Vehicle {
   brand: string;
   model: string;
   year: number | null;
+  fuelType: string | null;
   mileage: number | null;
   image?: string;
 }

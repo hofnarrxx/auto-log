@@ -1,7 +1,7 @@
 <div class="vehicle-grid">
 
   @for (v of vehicles(); track v.id) {
-  <div class="vehicle-card clickable" [routerLink]="['/vehicle', v.id]">
+  <div class="vehicle-card clickable" [routerLink]="['/vehicles', v.id]">
 
     <div class="image-wrapper">
       @if (v.image) {

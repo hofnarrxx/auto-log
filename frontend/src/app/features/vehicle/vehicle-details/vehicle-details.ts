@@ -33,7 +33,8 @@ export class VehicleDetails {
     const vehicle = this.vehicle();
     if (!vehicle) return;
 
-    this.vehicleStore.remove(vehicle.id);
-    this.router.navigate(['/']);
+    this.vehicleStore.remove(vehicle.id).subscribe({
+      next: () => this.router.navigate(['/dashboard'], { replaceUrl: true })
+    });
   }
 }
