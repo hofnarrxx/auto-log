@@ -1,10 +1,19 @@
 <nav class="navbar">
   <div class="logo">AutoLog</div>
 
-  <div class="links">
+  <!-- <div class="links">
     <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
     <button type="button" class="logout-link" (click)="logout()">Log Out</button>
+  </div> -->
+  <div class="profile" (click)="toggleMenu($event)">
+    <button type="button" class="profile-btn" [attr.aria-expanded]="menuOpen()"> Profile </button>
+    @if (menuOpen()) {
+    <div class="dropdown">
+      <a routerLink="/dashboard" (click)="closeMenu()">My Cars</a>
+      <button type="button" class="dropdown-logout" (click)="logout()">Log Out</button>
     </div>
+    }
+  </div>
 </nav>
 
 <div class="content">

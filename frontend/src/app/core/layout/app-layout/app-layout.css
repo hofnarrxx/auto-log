@@ -5,6 +5,7 @@
   background-color: #1f2937;
   padding: 15px 25px;
   color: white;
+  position: relative;
 }
 
 .logo {
@@ -22,14 +23,64 @@
   border-bottom: 2px solid #38bdf8;
 }
 
+.profile {
+position: relative;
+}
+
+.profile-btn {
+background: transparent;
+color: white;
+border: 1px solid rgba(255, 255, 255, 0.35);
+border-radius: 8px;
+padding: 8px 12px;
+cursor: pointer;
+font: inherit;
+}
+
+.dropdown {
+position: absolute;
+right: 0;
+top: calc(100% + 8px);
+min-width: 160px;
+background: #111827;
+border: 1px solid rgba(255, 255, 255, 0.14);
+border-radius: 10px;
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+padding: 6px;
+display: flex;
+flex-direction: column;
+gap: 4px;
+z-index: 50;
+}
+
+.dropdown a,
+.dropdown-logout {
+display: block;
+width: 100%;
+text-align: left;
+color: white;
+text-decoration: none;
+background: transparent;
+border: 0;
+border-radius: 8px;
+padding: 8px 10px;
+font: inherit;
+cursor: pointer;
+}
+
+.dropdown a:hover,
+.dropdown-logout:hover {
+background: rgba(56, 189, 248, 0.18);
+}
+
 .content {
-  padding: 20px;
+padding: 20px;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
+margin: 0;
+font-family: Arial, sans-serif;
+background: #f5f6fa;
 }
 
 h2 {
