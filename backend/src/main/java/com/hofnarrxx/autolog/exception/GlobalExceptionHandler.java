@@ -19,4 +19,34 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(VehicleNotFoundException.class)
+    public ResponseEntity<?> handleVehicleNotFound(VehicleNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "VEHICLE_NOT_FOUND",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(MaintenanceNotFoundException.class)
+    public ResponseEntity<?> handleMaintenanceNotFound(MaintenanceNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "MAINTENANCE_NOT_FOUND",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InvalidMaintenanceCategoryException.class)
+    public ResponseEntity<?> handleInvalidMaintenanceCategory(InvalidMaintenanceCategoryException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "error", "INVALID_MAINTENANCE_CATEGORY",
+                        "message", ex.getMessage()
+                ));
+    }
 }
