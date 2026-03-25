@@ -1,0 +1,30 @@
+<div class="details-tab">
+  <div class="info-group">
+    <h3>Vehicle Information</h3>
+    <div class="info-item">
+      <label>Brand:</label>
+      <span>{{ vehicle.brand }}</span>
+    </div>
+    <div class="info-item">
+      <label>Model:</label>
+      <span>{{ vehicle.model }}</span>
+    </div>
+    <div class="info-item">
+      <label>Year:</label>
+      <span>{{ vehicle.year }}</span>
+    </div>
+    <div class="info-item">
+      <label>Mileage:</label>
+      <span>{{ vehicle.mileage }} km</span>
+    </div>
+    <div class="info-item">
+      <label>Fuel Type:</label>
+      <span>{{ vehicle.fuelType }}</span>
+    </div>
+  </div>
+
+  <div class="details-actions">
+    <button class="edit-btn" (click)="editRequested.emit()">Edit</button>
+    <button class="delete-btn" (click)="deleteRequested.emit()">Delete</button>
+  </div>
+</div>

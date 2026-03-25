@@ -1,0 +1,13 @@
+.maintenance-tab {
+  animation: fadeIn 0.3s ease;
+  color: #4b5563;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

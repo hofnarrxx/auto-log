@@ -1,0 +1,81 @@
+.details-tab {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.info-group {
+  margin-bottom: 24px;
+}
+
+.info-group h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item label {
+  font-weight: 500;
+  color: #666;
+}
+
+.info-item span {
+  color: #333;
+}
+
+.details-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  border-top: 2px solid #f0f0f0;
+  padding-top: 24px;
+}
+
+.edit-btn {
+  flex: 1;
+  background: #1890ff;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #0050b3;
+}
+
+.delete-btn {
+  flex: 1;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #d9363e;
+}

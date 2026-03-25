@@ -1,0 +1,31 @@
+@if (vehicle()) {
+
+  <div class="dashboard-container">
+
+    <div class="tab-content">
+      @if (activeTab() === 'details') {
+        <app-vehicle-details-tab
+          [vehicle]="vehicle()!"
+          (editRequested)="openEdit()"
+          (deleteRequested)="deleteVehicle()">
+        </app-vehicle-details-tab>
+      }
+
+      @if (activeTab() === 'maintenance') {
+        <app-vehicle-maintenance-tab></app-vehicle-maintenance-tab>
+      }
+    </div>
+  </div>
+
+  @if (showModal()) {
+    <app-modal (closed)="closeModal()">
+      <app-vehicle-form
+        [vehicle]="vehicle()"
+        (closed)="closeModal()">
+      </app-vehicle-form>
+    </app-modal>
+  }
+
+} @else {
+  <p>Vehicle not found.</p>
+}

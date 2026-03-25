@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { VehicleDetails } from './vehicle-details/vehicle-details';
+import { VehicleDashboard } from './vehicle-dashboard/vehicle-dashboard';
 
 export const vehicleRoutes: Routes = [
-  { path: ':id', component: VehicleDetails }
+  { path: ':id', component: VehicleDashboard }
 ];

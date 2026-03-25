@@ -13,6 +13,31 @@
   font-weight: bold;
 }
 
+.vehicle-navbar-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.vehicle-navbar-tabs a {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+}
+
+.vehicle-navbar-tabs a:hover {
+  color: white;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.vehicle-navbar-tabs a.active {
+  color: #111827;
+  background: #93c5fd;
+  border-color: #93c5fd;
+}
+
 .links a {
   color: white;
   text-decoration: none;
