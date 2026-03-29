@@ -14,6 +14,10 @@ public class Maintenance {
     private Long id;
 
     private LocalDate serviceDate;
+
+    @Column(length = 50)
+    private String title;
+
     private Integer mileage;
     private String category;
 
@@ -59,6 +63,14 @@ public class Maintenance {
 
     public Integer getMileage() {
         return mileage;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setMileage(Integer mileage) {

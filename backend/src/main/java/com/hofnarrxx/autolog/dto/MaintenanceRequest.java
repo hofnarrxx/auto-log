@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public record MaintenanceRequest(
         LocalDate serviceDate,
+        String title,
         Integer mileage,
         String category,
         String description,

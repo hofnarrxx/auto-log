@@ -12,7 +12,7 @@
       }
 
       @if (activeTab() === 'maintenance') {
-        <app-vehicle-maintenance-tab></app-vehicle-maintenance-tab>
+        <app-vehicle-maintenance-tab [vehicleId]="vehicle()!.id"></app-vehicle-maintenance-tab>
       }
     </div>
   </div>

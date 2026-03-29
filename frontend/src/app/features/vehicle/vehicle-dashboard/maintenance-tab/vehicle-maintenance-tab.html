@@ -1,3 +1,248 @@
 <div class="maintenance-tab">
-  <p>Maintenance information coming soon...</p>
+  <div class="tab-header">
+    <h3>Service Records</h3>
+    <div class="header-actions">
+      <button type="button" class="filter-btn" (click)="openFilterModal()">
+        Filter
+      </button>
+      <button type="button" class="add-record-btn" (click)="openCreateModal()">
+        Add Service Record
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <p class="status-message">Loading service records...</p>
+  } @else if (error()) {
+    <p class="status-message error">{{ error() }}</p>
+  } @else if (!timelineEntries().length) {
+    <p class="status-message">
+      {{ hasAnyRecords() ? 'No service records match current filters.' : 'No service records yet.' }}
+    </p>
+  } @else {
+    <div class="timeline">
+      @for (entry of timelineEntries(); track entry.id) {
+        <button
+          type="button"
+          class="timeline-item"
+          (click)="openRecordDetails(entry)">
+          <div class="entry-date">{{ formatDate(entry.serviceDate) }}</div>
+
+          <div class="entry-point" [attr.aria-label]="entry.category">
+            <span aria-hidden="true">{{ iconForCategory(entry.category) }}</span>
+          </div>
+
+          <div class="entry-content">
+            <p class="entry-title">{{ entry.title || 'Untitled Service' }}</p>
+          </div>
+        </button>
+      }
+    </div>
+  }
+
+  @if (isFilterModalOpen()) {
+    <div class="service-modal-backdrop" (click)="closeFilterModal()"></div>
+
+    <div class="service-modal filter-modal" (click)="$event.stopPropagation()">
+      <h2>Filter Service Records</h2>
+
+      <section class="filter-section">
+        <h4>Categories</h4>
+
+        <label class="filter-option all-option">
+          <input
+            type="checkbox"
+            [checked]="allCategoriesChecked()"
+            (change)="toggleAllCategories($any($event.target).checked)">
+          <span>All categories</span>
+        </label>
+
+        <div class="category-options">
+          @for (category of availableFilterCategories(); track category) {
+            <label class="filter-option">
+              <input
+                type="checkbox"
+                [checked]="isCategorySelected(category)"
+                (change)="toggleCategory(category, $any($event.target).checked)">
+              <span>{{ category }}</span>
+            </label>
+          }
+        </div>
+      </section>
+
+      <section class="filter-section">
+        <h4>Price Range</h4>
+
+        <div class="price-readout">
+          {{ minPriceLimit().toFixed(0) }} EUR - {{ maxPriceLimit().toFixed(0) }} EUR
+        </div>
+
+        <div class="dual-range-slider-container">
+          <div class="dual-range-slider">
+            <input
+              type="range"
+              class="slider-min"
+              [min]="0"
+              [max]="maxAvailablePrice()"
+              [value]="minPriceLimit()"
+              [step]="1"
+              [disabled]="maxAvailablePrice() === 0"
+              (input)="onMinPriceLimitChange($any($event.target).value)">
+            <input
+              type="range"
+              class="slider-max"
+              [min]="0"
+              [max]="maxAvailablePrice()"
+              [value]="maxPriceLimit()"
+              [step]="1"
+              [disabled]="maxAvailablePrice() === 0"
+              (input)="onMaxPriceLimitChange($any($event.target).value)">
+            <div class="slider-track" [ngStyle]="sliderTrackStyle()"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" (click)="resetFilters()">Reset</button>
+        <button type="button" class="primary-btn" (click)="closeFilterModal()">Done</button>
+      </div>
+    </div>
+  }
+
+  @if (isModalOpen()) {
+    <div class="service-modal-backdrop" (click)="closeModal()"></div>
+
+    <div class="service-modal" (click)="$event.stopPropagation()">
+      <div class="record-modal-content">
+      @if (isFormMode()) {
+        <h2>{{ modalTitle() }}</h2>
+
+        <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
+          <label>
+            Title
+            <input type="text" formControlName="title" maxlength="50" placeholder="e.g. Annual inspection">
+          </label>
+
+          @if (form.controls.title.invalid && form.controls.title.touched) {
+            <p class="error-text">Title is required and can be up to 50 characters.</p>
+          }
+
+          <label>
+            Service Date
+            <input type="date" formControlName="serviceDate">
+          </label>
+
+          @if (form.controls.serviceDate.invalid && form.controls.serviceDate.touched) {
+            <p class="error-text">Service date is required.</p>
+          }
+
+          <label>
+            Category
+            <select formControlName="category">
+              <option value="" disabled>Select category</option>
+              @for (category of categories(); track category) {
+                <option [value]="category">{{ category }}</option>
+              }
+            </select>
+          </label>
+
+          @if (form.controls.category.invalid && form.controls.category.touched) {
+            <p class="error-text">Category is required.</p>
+          }
+
+          <label>
+            Mileage (km)
+            <input type="number" formControlName="mileage" min="0" step="1">
+          </label>
+
+          @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+            <p class="error-text">Mileage is required.</p>
+          }
+
+          <label>
+            Cost (EUR)
+            <input type="number" formControlName="cost" min="0" step="0.01">
+          </label>
+
+          @if (form.controls.cost.invalid && form.controls.cost.touched) {
+            <p class="error-text">Cost is required.</p>
+          }
+
+          <label>
+            Description
+            <textarea formControlName="description" rows="4"></textarea>
+          </label>
+
+          @if (form.controls.description.invalid && form.controls.description.touched) {
+            <p class="error-text">Description is required.</p>
+          }
+
+          @if (actionError()) {
+            <p class="error-text">{{ actionError() }}</p>
+          }
+
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn" (click)="closeModal()">Cancel</button>
+            <button type="submit" class="primary-btn" [disabled]="isSaving()">
+              {{ isSaving() ? 'Saving...' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      } @else if (selectedRecord(); as record) {
+        <h2>Service Record</h2>
+
+        <div class="record-details">
+          <div class="detail-row">
+            <span class="label">Title</span>
+            <span>{{ record.title || '-' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Service Date</span>
+            <span>{{ formatDate(record.serviceDate) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Category</span>
+            <span>{{ record.category }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Mileage</span>
+            <span>{{ record.mileage ?? '-' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Cost</span>
+            <span>{{ formatMoney(record.cost) }}</span>
+          </div>
+          <div class="detail-row description">
+            <span class="label">Description</span>
+            <p>{{ record.description }}</p>
+          </div>
+          <div class="detail-row">
+            <span class="label">Created</span>
+            <span>{{ formatDateTime(record.createdAt) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Updated</span>
+            <span>{{ formatDateTime(record.updatedAt) }}</span>
+          </div>
+        </div>
+
+        @if (actionError()) {
+          <p class="error-text">{{ actionError() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" (click)="closeModal()">Close</button>
+          <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">Edit</button>
+          <button
+            type="button"
+            class="danger-btn"
+            (click)="deleteSelectedRecord()"
+            [disabled]="isDeleting()">
+            {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      }
+      </div>
+    </div>
+  }
 </div>

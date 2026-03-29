@@ -8,6 +8,7 @@ public record MaintenanceResponse(
         Long id,
         Long vehicleId,
         LocalDate serviceDate,
+        String title,
         Integer mileage,
         String category,
         String description,

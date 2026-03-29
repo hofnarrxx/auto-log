@@ -88,7 +88,13 @@ public class MaintenanceService {
                         MaintenanceCategory.allowedValues()
                 ));
 
+        String title = request.title() == null ? null : request.title().trim();
+        if (title != null && title.length() > 50) {
+            title = title.substring(0, 50);
+        }
+
         maintenance.setServiceDate(request.serviceDate());
+        maintenance.setTitle(title);
         maintenance.setMileage(request.mileage());
         maintenance.setCategory(category.getDisplayName());
         maintenance.setDescription(request.description());
@@ -100,6 +106,7 @@ public class MaintenanceService {
                 maintenance.getId(),
                 maintenance.getVehicle().getId(),
                 maintenance.getServiceDate(),
+            maintenance.getTitle(),
                 maintenance.getMileage(),
                 maintenance.getCategory(),
                 maintenance.getDescription(),
