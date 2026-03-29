@@ -1,7 +1,31 @@
 <div class="maintenance-tab">
   <div class="tab-header">
-    <h3>Service Records</h3>
+    <div class="header-main">
+      <h3>Service Records</h3>
+      <p class="header-summary">
+        {{ totalRecords() }} records | Total cost: {{ formatMoney(totalServiceCost()) }}
+      </p>
+    </div>
     <div class="header-actions">
+      <label class="search-control">
+        <span>Search</span>
+        <input
+          type="text"
+          placeholder="Search by title"
+          [value]="titleSearch()"
+          (input)="onTitleSearchChange($any($event.target).value)">
+      </label>
+
+      <label class="sort-control">
+        <span>Sort by</span>
+        <select [value]="selectedSort()" (change)="onSortChange($any($event.target).value)">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="price-low-high">Price: Low to High</option>
+          <option value="price-high-low">Price: High to Low</option>
+        </select>
+      </label>
+
       <button type="button" class="filter-btn" (click)="openFilterModal()">
         Filter
       </button>
@@ -33,7 +57,10 @@
           </div>
 
           <div class="entry-content">
-            <p class="entry-title">{{ entry.title || 'Untitled Service' }}</p>
+            <p class="entry-title">
+              {{ entry.title || 'Untitled Service' }}
+            </p>
+            <span class="entry-cost">{{ formatMoney(entry.cost) }}</span>
           </div>
         </button>
       }
@@ -71,7 +98,7 @@
       </section>
 
       <section class="filter-section">
-        <h4>Price Range</h4>
+        <h4>Cost Range</h4>
 
         <div class="price-readout">
           {{ minPriceLimit().toFixed(0) }} EUR - {{ maxPriceLimit().toFixed(0) }} EUR
@@ -174,7 +201,7 @@
           </label>
 
           @if (form.controls.description.invalid && form.controls.description.touched) {
-            <p class="error-text">Description is required.</p>
+            <p class="error-text">Description can be up to 200 characters.</p>
           }
 
           @if (actionError()) {

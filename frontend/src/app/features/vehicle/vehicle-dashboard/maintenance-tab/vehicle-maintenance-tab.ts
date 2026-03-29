@@ -18,6 +18,7 @@ interface ServiceRecord {
 }
 
 type ModalMode = 'closed' | 'create' | 'view' | 'edit';
+type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 
 @Component({
   selector: 'app-vehicle-maintenance-tab',
@@ -35,7 +36,7 @@ export class VehicleMaintenanceTab {
     title: new FormControl('', [Validators.required, Validators.maxLength(50)]),
     mileage: new FormControl<number | null>(null, [Validators.min(0), Validators.required]),
     category: new FormControl('', Validators.required),
-    description: new FormControl('', [Validators.required, Validators.maxLength(200)]),
+    description: new FormControl('', [Validators.maxLength(200)]),
     cost: new FormControl<number | null>(null, [Validators.min(0), Validators.required]),
   });
 
@@ -59,6 +60,8 @@ export class VehicleMaintenanceTab {
   protected readonly selectedCategories = signal<string[]>([]);
   protected readonly minPriceLimit = signal(0);
   protected readonly maxPriceLimit = signal(0);
+  protected readonly selectedSort = signal<SortOption>('newest');
+  protected readonly titleSearch = signal('');
 
   private readonly serviceRecords = signal<ServiceRecord[]>([]);
   private filtersInitialized = false;
@@ -113,11 +116,20 @@ export class VehicleMaintenanceTab {
   });
 
   protected readonly hasAnyRecords = computed(() => this.serviceRecords().length > 0);
+  protected readonly totalRecords = computed(() => this.serviceRecords().length);
+  protected readonly totalServiceCost = computed(() =>
+    this.serviceRecords().reduce((total, record) => total + (record.cost ?? 0), 0)
+  );
 
   protected readonly timelineEntries = computed(() =>
     [...this.serviceRecords()]
-      .sort((a, b) => this.toTimestamp(b.serviceDate) - this.toTimestamp(a.serviceDate))
-      .filter(record => this.matchesCategoryFilter(record) && this.matchesPriceFilter(record))
+      .filter(
+        record =>
+          this.matchesCategoryFilter(record) &&
+          this.matchesPriceFilter(record) &&
+          this.matchesTitleFilter(record)
+      )
+      .sort((a, b) => this.compareRecords(a, b))
   );
 
   protected readonly sliderTrackStyle = computed(() => {
@@ -216,6 +228,23 @@ export class VehicleMaintenanceTab {
     this.selectedCategories.set([...this.availableFilterCategories()]);
     this.minPriceLimit.set(0);
     this.maxPriceLimit.set(this.maxAvailablePrice());
+  }
+
+  protected onSortChange(rawValue: string) {
+    if (
+      rawValue !== 'newest' &&
+      rawValue !== 'oldest' &&
+      rawValue !== 'price-low-high' &&
+      rawValue !== 'price-high-low'
+    ) {
+      return;
+    }
+
+    this.selectedSort.set(rawValue);
+  }
+
+  protected onTitleSearchChange(rawValue: string) {
+    this.titleSearch.set(rawValue.trimStart());
   }
 
   protected startEditSelectedRecord() {
@@ -383,7 +412,7 @@ export class VehicleMaintenanceTab {
     const mileageValue = this.form.controls.mileage.value;
     const costValue = this.form.controls.cost.value;
 
-    if (!serviceDate || !title || !category || !description || title.length > 50) {
+    if (!serviceDate || !title || !category || title.length > 50) {
       return null;
     }
 
@@ -457,7 +486,7 @@ export class VehicleMaintenanceTab {
 
     this.selectedCategories.set(selected);
 
-    // If categories initialized filters before records arrived, recover default max when data appears.
+    
     if (this.minPriceLimit() === 0 && this.maxPriceLimit() === 0 && maxPrice > 0) {
       this.maxPriceLimit.set(maxPrice);
     }
@@ -491,5 +520,44 @@ export class VehicleMaintenanceTab {
     }
 
     return record.cost >= this.minPriceLimit() && record.cost <= this.maxPriceLimit();
+  }
+
+  private matchesTitleFilter(record: ServiceRecord): boolean {
+    const query = this.titleSearch().trim().toLowerCase();
+    if (!query) {
+      return true;
+    }
+
+    const title = (record.title ?? '').toLowerCase();
+    return title.includes(query);
+  }
+
+  private compareRecords(a: ServiceRecord, b: ServiceRecord): number {
+    const sort = this.selectedSort();
+
+    if (sort === 'oldest') {
+      return this.toTimestamp(a.serviceDate) - this.toTimestamp(b.serviceDate);
+    }
+
+    if (sort === 'price-low-high') {
+      return this.compareByPrice(a, b, 'asc');
+    }
+
+    if (sort === 'price-high-low') {
+      return this.compareByPrice(a, b, 'desc');
+    }
+
+    return this.toTimestamp(b.serviceDate) - this.toTimestamp(a.serviceDate);
+  }
+
+  private compareByPrice(a: ServiceRecord, b: ServiceRecord, direction: 'asc' | 'desc'): number {
+    const left = a.cost ?? Number.POSITIVE_INFINITY;
+    const right = b.cost ?? Number.POSITIVE_INFINITY;
+
+    if (left !== right) {
+      return direction === 'asc' ? left - right : right - left;
+    }
+
+    return this.toTimestamp(b.serviceDate) - this.toTimestamp(a.serviceDate);
   }
 }

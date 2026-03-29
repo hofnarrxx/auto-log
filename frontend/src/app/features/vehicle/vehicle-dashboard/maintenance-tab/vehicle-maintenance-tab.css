@@ -11,10 +11,65 @@
   margin-bottom: 18px;
 }
 
+.header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header-summary {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.search-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.search-control input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  font: inherit;
+  padding: 9px 12px;
+  width: 180px;
+}
+
+.search-control input::placeholder {
+  color: #94a3b8;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.sort-control select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  font: inherit;
+  font-weight: 600;
+  padding: 9px 12px;
 }
 
 .tab-header h3 {
@@ -134,11 +189,21 @@
 }
 
 .entry-title {
-  margin: 0 0 4px;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
   color: #0f172a;
   font-weight: 700;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.entry-cost {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 13px;
 }
 
 .entry-category {
