@@ -49,4 +49,14 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(FuelNotFoundException.class)
+    public ResponseEntity<?> handleFuelNotFound(FuelNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "FUEL_NOT_FOUND",
+                        "message", ex.getMessage()
+                ));
+    }
 }

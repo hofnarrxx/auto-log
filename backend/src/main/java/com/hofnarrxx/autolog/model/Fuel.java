@@ -30,8 +30,11 @@ public class Fuel {
     @Column(precision = 12, scale = 2)
     private BigDecimal cost;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(precision = 12, scale = 3)
+    private BigDecimal amount;
+
+    @Column(length = 50)
+    private String gasStation;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -83,12 +86,20 @@ public class Fuel {
         this.cost = cost;
     }
 
-    public String getDescription() {
-        return description;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getGasStation() {
+        return gasStation;
+    }
+
+    public void setGasStation(String gasStation) {
+        this.gasStation = gasStation;
     }
 
     public Instant getCreatedAt() {
