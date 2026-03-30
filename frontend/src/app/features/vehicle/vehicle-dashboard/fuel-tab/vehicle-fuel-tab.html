@@ -1,0 +1,150 @@
+<div class="fuel-tab">
+  <div class="tab-header">
+    <div class="header-main">
+      <h3>Fuel Records</h3>
+      <p class="header-summary">{{ fuelRecords().length }} entries</p>
+    </div>
+
+    <button type="button" class="add-record-btn" (click)="openCreateModal()">
+      Add Fuel Record
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <p class="status-message">Loading fuel records...</p>
+  } @else if (error()) {
+    <p class="status-message error">{{ error() }}</p>
+  } @else if (!fuelRecords().length) {
+    <p class="status-message">No fuel records yet.</p>
+  } @else {
+    <div class="timeline">
+      @for (entry of fuelRecords(); track entry.id) {
+        <button type="button" class="timeline-item" (click)="openRecordDetails(entry)">
+          <div class="entry-date">{{ formatDate(entry.date) }}</div>
+
+          <div class="entry-point" aria-hidden="true">
+            <span>⛽</span>
+          </div>
+
+          <div class="entry-content">
+            <p class="entry-amount">Fuel: {{ formatFuelAmount(entry.amount) }}</p>
+            <p class="entry-price">Price: {{ formatMoney(entry.cost) }}</p>
+            @if (entry.gasStation) {
+              <p class="entry-station">Station: {{ entry.gasStation }}</p>
+            }
+          </div>
+        </button>
+      }
+    </div>
+  }
+
+  @if (isModalOpen()) {
+    <div class="fuel-modal-backdrop" (click)="closeModal()"></div>
+
+    <div class="fuel-modal" (click)="$event.stopPropagation()">
+      <h2>{{ modalTitle() }}</h2>
+
+      @if (isCreateMode()) {
+      <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
+        <label>
+          Date
+          <input type="date" formControlName="date">
+        </label>
+        @if (form.controls.date.invalid && form.controls.date.touched) {
+          <p class="error-text">Date is required.</p>
+        }
+
+        <label>
+          Amount (L)
+          <input type="number" formControlName="amount" min="0" step="0.01">
+        </label>
+        @if (form.controls.amount.invalid && form.controls.amount.touched) {
+          <p class="error-text">Amount is required.</p>
+        }
+
+        <label>
+          Cost (EUR)
+          <input type="number" formControlName="cost" min="0" step="0.01">
+        </label>
+        @if (form.controls.cost.invalid && form.controls.cost.touched) {
+          <p class="error-text">Cost is required.</p>
+        }
+
+        <label>
+          Mileage (km)
+          <input type="number" formControlName="mileage" min="0" step="1">
+        </label>
+        @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+          <p class="error-text">Mileage is required.</p>
+        }
+
+        <label>
+          Gas Station (optional)
+          <input type="text" formControlName="gasStation" maxlength="50" placeholder="e.g. Shell Main Street">
+        </label>
+        @if (form.controls.gasStation.invalid && form.controls.gasStation.touched) {
+          <p class="error-text">Gas station can be up to 50 characters.</p>
+        }
+
+        @if (actionError()) {
+          <p class="error-text">{{ actionError() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="primary-btn" [disabled]="isSaving()">
+            {{ saveButtonLabel() }}
+          </button>
+        </div>
+      </form>
+      } @else if (selectedRecord(); as record) {
+      <div class="record-details">
+        <div class="detail-row">
+          <span class="label">Date</span>
+          <span>{{ formatDate(record.date) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Amount</span>
+          <span>{{ formatFuelAmount(record.amount) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Cost</span>
+          <span>{{ formatMoney(record.cost) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Mileage</span>
+          <span>{{ record.mileage ?? '-' }} km</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Gas Station</span>
+          <span>{{ record.gasStation || '-' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Created</span>
+          <span>{{ formatDateTime(record.createdAt) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Updated</span>
+          <span>{{ formatDateTime(record.updatedAt) }}</span>
+        </div>
+      </div>
+
+      @if (actionError()) {
+        <p class="error-text">{{ actionError() }}</p>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" (click)="closeModal()">Close</button>
+        <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">Edit</button>
+        <button
+          type="button"
+          class="danger-btn"
+          [disabled]="isDeleting()"
+          (click)="deleteSelectedRecord()">
+          {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+        </button>
+      </div>
+      }
+    </div>
+  }
+</div>

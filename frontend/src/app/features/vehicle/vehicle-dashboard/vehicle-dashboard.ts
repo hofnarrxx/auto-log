@@ -6,10 +6,11 @@ import { VehicleForm } from '../vehicle-form/vehicle-form';
 import { Modal } from '../../../shared/ui/modal/modal';
 import { VehicleDetailsTab } from './details-tab/vehicle-details-tab';
 import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab';
+import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
 
 @Component({
   selector: 'app-vehicle-dashboard',
-  imports: [VehicleForm, Modal, VehicleDetailsTab, VehicleMaintenanceTab],
+  imports: [VehicleForm, Modal, VehicleDetailsTab, VehicleMaintenanceTab, VehicleFuelTab],
   templateUrl: './vehicle-dashboard.html',
   styleUrl: './vehicle-dashboard.css',
 })
@@ -22,9 +23,17 @@ export class VehicleDashboard {
     initialValue: this.route.snapshot.queryParamMap,
   });
 
-  activeTab = computed<'details' | 'maintenance'>(() => {
+  activeTab = computed<'details' | 'maintenance' | 'fuel'>(() => {
     const tab = this.queryParamMap().get('tab');
-    return tab === 'maintenance' ? 'maintenance' : 'details';
+    if (tab === 'maintenance') {
+      return 'maintenance';
+    }
+
+    if (tab === 'fuel') {
+      return 'fuel';
+    }
+
+    return 'details';
   });
 
   ngOnInit() {

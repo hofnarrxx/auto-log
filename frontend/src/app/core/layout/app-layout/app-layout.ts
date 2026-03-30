@@ -23,7 +23,7 @@ export class AppLayout {
     return match?.[1] ?? null;
   }
 
-  isVehicleTabActive(tab: 'details' | 'maintenance') {
+  isVehicleTabActive(tab: 'details' | 'maintenance' | 'fuel') {
     if (!this.isVehicleDashboardPage()) {
       return false;
     }

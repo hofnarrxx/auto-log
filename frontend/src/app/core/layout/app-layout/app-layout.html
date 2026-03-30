@@ -15,6 +15,12 @@
       [class.active]="isVehicleTabActive('maintenance')">
       Maintenance
     </a>
+    <a
+      [routerLink]="['/vehicles', currentVehicleId()]"
+      [queryParams]="{ tab: 'fuel' }"
+      [class.active]="isVehicleTabActive('fuel')">
+      Fuel
+    </a>
   </div>
   }
 
