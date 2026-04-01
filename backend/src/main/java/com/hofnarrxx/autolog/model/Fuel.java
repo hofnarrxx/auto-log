@@ -2,6 +2,8 @@ package com.hofnarrxx.autolog.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,6 +37,10 @@ public class Fuel {
 
     @Column(length = 50)
     private String gasStation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Currency currency;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -102,6 +108,14 @@ public class Fuel {
         this.gasStation = gasStation;
     }
 
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -118,4 +132,3 @@ public class Fuel {
         this.vehicle = vehicle;
     }
 }
-

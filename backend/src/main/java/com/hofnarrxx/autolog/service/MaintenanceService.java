@@ -2,9 +2,11 @@ package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.dto.MaintenanceRequest;
 import com.hofnarrxx.autolog.dto.MaintenanceResponse;
+import com.hofnarrxx.autolog.exception.InvalidCurrencyException;
 import com.hofnarrxx.autolog.exception.InvalidMaintenanceCategoryException;
 import com.hofnarrxx.autolog.exception.MaintenanceNotFoundException;
 import com.hofnarrxx.autolog.exception.VehicleNotFoundException;
+import com.hofnarrxx.autolog.model.Currency;
 import com.hofnarrxx.autolog.model.Maintenance;
 import com.hofnarrxx.autolog.model.MaintenanceCategory;
 import com.hofnarrxx.autolog.model.Vehicle;
@@ -88,6 +90,12 @@ public class MaintenanceService {
                         MaintenanceCategory.allowedValues()
                 ));
 
+        Currency currency = Currency.fromDisplayName(request.currency())
+                .orElseThrow(() -> new InvalidCurrencyException(
+                        request.currency(),
+                        Currency.allowedValues()
+                ));
+
         String title = request.title() == null ? null : request.title().trim();
         if (title != null && title.length() > 50) {
             title = title.substring(0, 50);
@@ -99,6 +107,7 @@ public class MaintenanceService {
         maintenance.setCategory(category.getDisplayName());
         maintenance.setDescription(request.description());
         maintenance.setCost(request.cost());
+        maintenance.setCurrency(currency);
     }
 
     private MaintenanceResponse toResponse(Maintenance maintenance) {
@@ -106,11 +115,12 @@ public class MaintenanceService {
                 maintenance.getId(),
                 maintenance.getVehicle().getId(),
                 maintenance.getServiceDate(),
-            maintenance.getTitle(),
+                maintenance.getTitle(),
                 maintenance.getMileage(),
                 maintenance.getCategory(),
                 maintenance.getDescription(),
                 maintenance.getCost(),
+                maintenance.getCurrency() == null ? null : maintenance.getCurrency().getDisplayName(),
                 maintenance.getCreatedAt(),
                 maintenance.getUpdatedAt()
         );

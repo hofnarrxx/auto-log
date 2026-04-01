@@ -50,6 +50,16 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(InvalidCurrencyException.class)
+    public ResponseEntity<?> handleInvalidCurrency(InvalidCurrencyException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "error", "INVALID_CURRENCY",
+                        "message", ex.getMessage()
+                ));
+    }
+
     @ExceptionHandler(FuelNotFoundException.class)
     public ResponseEntity<?> handleFuelNotFound(FuelNotFoundException ex) {
         return ResponseEntity

@@ -8,7 +8,7 @@ public record FuelRequest(
         Integer mileage,
         BigDecimal cost,
         BigDecimal amount,
-        String gasStation
+        String gasStation,
+        String currency
 ) {
 }
-

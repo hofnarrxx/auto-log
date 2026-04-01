@@ -12,6 +12,7 @@ public record FuelResponse(
         BigDecimal cost,
         BigDecimal amount,
         String gasStation,
+        String currency,
         Instant createdAt,
         Instant updatedAt
 ) {

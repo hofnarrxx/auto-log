@@ -27,6 +27,10 @@ public class Maintenance {
     @Column(precision = 12, scale = 2)
     private BigDecimal cost;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Currency currency;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -99,6 +103,14 @@ public class Maintenance {
 
     public void setCost(BigDecimal cost) {
         this.cost = cost;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public Instant getCreatedAt() {

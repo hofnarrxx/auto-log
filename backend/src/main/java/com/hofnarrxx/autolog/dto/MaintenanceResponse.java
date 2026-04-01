@@ -13,8 +13,8 @@ public record MaintenanceResponse(
         String category,
         String description,
         BigDecimal cost,
+        String currency,
         Instant createdAt,
         Instant updatedAt
 ) {
 }
-

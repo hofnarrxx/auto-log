@@ -9,7 +9,7 @@ public record MaintenanceRequest(
         Integer mileage,
         String category,
         String description,
-        BigDecimal cost
+        BigDecimal cost,
+        String currency
 ) {
 }
-

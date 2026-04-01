@@ -3,7 +3,9 @@ package com.hofnarrxx.autolog.service;
 import com.hofnarrxx.autolog.dto.FuelRequest;
 import com.hofnarrxx.autolog.dto.FuelResponse;
 import com.hofnarrxx.autolog.exception.FuelNotFoundException;
+import com.hofnarrxx.autolog.exception.InvalidCurrencyException;
 import com.hofnarrxx.autolog.exception.VehicleNotFoundException;
+import com.hofnarrxx.autolog.model.Currency;
 import com.hofnarrxx.autolog.model.Fuel;
 import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.FuelRepository;
@@ -80,11 +82,18 @@ public class FuelService {
     }
 
     private void applyRequest(Fuel fuel, FuelRequest request) {
+        Currency currency = Currency.fromDisplayName(request.currency())
+                .orElseThrow(() -> new InvalidCurrencyException(
+                        request.currency(),
+                        Currency.allowedValues()
+                ));
+
         fuel.setDate(request.date());
         fuel.setMileage(request.mileage());
         fuel.setCost(request.cost());
         fuel.setAmount(request.amount());
         fuel.setGasStation(request.gasStation());
+        fuel.setCurrency(currency);
     }
 
     private FuelResponse toResponse(Fuel fuel) {
@@ -96,9 +105,9 @@ public class FuelService {
                 fuel.getCost(),
                 fuel.getAmount(),
                 fuel.getGasStation(),
+                fuel.getCurrency() == null ? null : fuel.getCurrency().getDisplayName(),
                 fuel.getCreatedAt(),
                 fuel.getUpdatedAt()
         );
     }
 }
-
