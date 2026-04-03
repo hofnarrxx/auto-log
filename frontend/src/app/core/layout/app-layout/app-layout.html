@@ -29,6 +29,7 @@
     @if (menuOpen()) {
     <div class="dropdown">
       <a routerLink="/dashboard" (click)="closeMenu()">My Cars</a>
+      <a routerLink="/settings" (click)="closeMenu()">Settings</a>
       <button type="button" class="dropdown-logout" (click)="logout()">Log Out</button>
     </div>
     }

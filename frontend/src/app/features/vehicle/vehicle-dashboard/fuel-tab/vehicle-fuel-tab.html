@@ -28,7 +28,7 @@
 
           <div class="entry-content">
             <p class="entry-amount">Fuel: {{ formatFuelAmount(entry.amount) }}</p>
-            <p class="entry-price">Price: {{ formatMoney(entry.cost) }}</p>
+            <p class="entry-price">Price: {{ formatMoney(entry.cost, entry.currency) }}</p>
             @if (entry.gasStation) {
               <p class="entry-station">Station: {{ entry.gasStation }}</p>
             }
@@ -62,13 +62,31 @@
           <p class="error-text">Amount is required.</p>
         }
 
-        <label>
-          Cost (EUR)
-          <input type="number" formControlName="cost" min="0" step="0.01">
-        </label>
-        @if (form.controls.cost.invalid && form.controls.cost.touched) {
-          <p class="error-text">Cost is required.</p>
-        }
+        <div class="cost-currency-row">
+          <div class="field-group">
+            <label>
+              Cost
+              <input type="number" formControlName="cost" min="0" step="0.01">
+            </label>
+            @if (form.controls.cost.invalid && form.controls.cost.touched) {
+              <p class="error-text">Cost is required.</p>
+            }
+          </div>
+
+          <div class="field-group">
+            <label>
+              Currency
+              <select formControlName="currency">
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+                <option value="PLN">PLN</option>
+              </select>
+            </label>
+            @if (form.controls.currency.invalid && form.controls.currency.touched) {
+              <p class="error-text">Currency is required.</p>
+            }
+          </div>
+        </div>
 
         <label>
           Mileage (km)
@@ -109,7 +127,7 @@
         </div>
         <div class="detail-row">
           <span class="label">Cost</span>
-          <span>{{ formatMoney(record.cost) }}</span>
+          <span>{{ formatMoney(record.cost, record.currency) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Mileage</span>

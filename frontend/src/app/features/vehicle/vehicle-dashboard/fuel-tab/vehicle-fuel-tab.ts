@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { CurrencyService } from '../../../../shared/services/currency.service';
 
 interface FuelRecord {
   id: number;
@@ -12,6 +13,7 @@ interface FuelRecord {
   cost: number | null;
   amount: number | null;
   gasStation: string | null;
+  currency?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,6 +26,7 @@ interface FuelRecord {
 })
 export class VehicleFuelTab {
   private readonly http = inject(HttpClient);
+  private readonly currencyService = inject(CurrencyService);
   private readonly vehicleApi = 'http://localhost:8080/vehicles';
 
   readonly form = new FormGroup({
@@ -32,6 +35,7 @@ export class VehicleFuelTab {
     cost: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
     mileage: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
     gasStation: new FormControl('', [Validators.maxLength(50)]),
+    currency: new FormControl<string>('', Validators.required),
   });
 
   @Input({ required: true })
@@ -70,17 +74,13 @@ export class VehicleFuelTab {
     });
   }
 
-  protected formatMoney(value: number | null | undefined): string {
+  protected formatMoney(value: number | null | undefined, currency?: string): string {
     if (value === null || value === undefined) {
       return '-';
     }
 
-    return new Intl.NumberFormat('en-GB', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
+    const currencyCode = currency || this.currencyService.selectedCurrency();
+    return this.currencyService.formatCurrency(value, currencyCode);
   }
 
   protected formatFuelAmount(amount: number | null | undefined): string {
@@ -102,6 +102,7 @@ export class VehicleFuelTab {
       cost: null,
       mileage: null,
       gasStation: '',
+      currency: this.currencyService.selectedCurrency(),
     });
     this.isModalOpen.set(true);
   }
@@ -129,6 +130,7 @@ export class VehicleFuelTab {
       cost: record.cost,
       mileage: record.mileage,
       gasStation: record.gasStation ?? '',
+      currency: record.currency || this.currencyService.selectedCurrency(),
     });
   }
 
@@ -269,8 +271,9 @@ export class VehicleFuelTab {
     const amountValue = this.form.controls.amount.value;
     const costValue = this.form.controls.cost.value;
     const mileageValue = this.form.controls.mileage.value;
+    const currencyValue = (this.form.controls.currency.value ?? '').trim();
 
-    if (!date || gasStationValue.length > 50) {
+    if (!date || gasStationValue.length > 50 || !currencyValue) {
       return null;
     }
 
@@ -306,6 +309,7 @@ export class VehicleFuelTab {
       cost,
       mileage,
       gasStation: gasStationValue || null,
+      currency: currencyValue,
     };
   }
 }

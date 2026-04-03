@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './features/dashboard/dashboard';
 import { VehicleForm } from './features/vehicle/vehicle-form/vehicle-form';
+import { Settings } from './features/settings/settings';
 import { authGuard } from './core/auth/auth-guard';
 import { AppLayout } from './core/layout/app-layout/app-layout';
 
@@ -32,6 +33,11 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 component: Dashboard
+            },
+
+            {
+                path: 'settings',
+                component: Settings
             },
 
             {

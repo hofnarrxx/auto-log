@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 public enum Currency {
-    EURO("Euro"),
-    US_DOLLAR("US Dollar"),
-    ZLOTY("Złoty");
+    EURO("EUR"),
+    US_DOLLAR("USD"),
+    ZLOTY("PLN");
 
     private final String displayName;
 

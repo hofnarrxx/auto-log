@@ -1,0 +1,15 @@
+<div class="settings-container">
+  <h1>Settings</h1>
+  
+  <div class="settings-section">
+    <label for="currency-select">Select currency:</label>
+    <select 
+      id="currency-select" 
+      [(ngModel)]="selectedCurrency" 
+      (change)="onCurrencyChange(selectedCurrency())">
+      @for (currency of currencies; track currency) {
+        <option [value]="currency">{{ currency }}</option>
+      }
+    </select>
+  </div>
+</div>

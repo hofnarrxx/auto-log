@@ -168,6 +168,27 @@
   gap: 10px;
 }
 
+.record-form select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+
+
+.cost-currency-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: 10px;
+  align-items: start;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .record-form label {
   display: flex;
   flex-direction: column;
@@ -257,6 +278,12 @@
 
 .fuel-modal h2 {
   margin: 0 0 14px;
+}
+
+@media (max-width: 520px) {
+  .cost-currency-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @keyframes fadeIn {

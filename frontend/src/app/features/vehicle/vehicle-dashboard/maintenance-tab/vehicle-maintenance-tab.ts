@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { CurrencyService } from '../../../../shared/services/currency.service';
 
 interface ServiceRecord {
   id: number;
@@ -13,6 +14,7 @@ interface ServiceRecord {
   category: string;
   description: string;
   cost: number | null;
+  currency?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,8 +30,9 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 })
 export class VehicleMaintenanceTab {
   private readonly http = inject(HttpClient);
+  private readonly currencyService = inject(CurrencyService);
   private readonly vehicleApi = 'http://localhost:8080/vehicles';
-  private readonly metadataApi = 'http://localhost:8080/maintenance/categories';
+  private readonly metadataApi = 'http://localhost:8080/metadata/maintenance/categories';
 
   readonly form = new FormGroup({
     serviceDate: new FormControl('', Validators.required),
@@ -38,6 +41,7 @@ export class VehicleMaintenanceTab {
     category: new FormControl('', Validators.required),
     description: new FormControl('', [Validators.maxLength(200)]),
     cost: new FormControl<number | null>(null, [Validators.min(0), Validators.required]),
+    currency: new FormControl<string>('', Validators.required),
   });
 
   @Input({ required: true })
@@ -160,6 +164,7 @@ export class VehicleMaintenanceTab {
       category: '',
       description: '',
       cost: null,
+      currency: this.currencyService.selectedCurrency(),
     });
     this.modalMode.set('create');
   }
@@ -261,6 +266,7 @@ export class VehicleMaintenanceTab {
       category: record.category,
       description: record.description,
       cost: record.cost,
+      currency: record.currency || this.currencyService.selectedCurrency(),
     });
     this.modalMode.set('edit');
   }
@@ -337,11 +343,12 @@ export class VehicleMaintenanceTab {
     return this.modalMode() === 'edit' ? 'Edit Service Record' : 'Add Service Record';
   }
 
-  protected formatMoney(value: number | null): string {
+  protected formatMoney(value: number | null, currency?: string): string {
     if (value === null || value === undefined) {
       return '-';
     }
-    return `${value.toFixed(2)} EUR`;
+    const currencyCode = currency || this.currencyService.selectedCurrency();
+    return this.currencyService.formatCurrency(value, currencyCode);
   }
 
   protected formatDateTime(isoString: string): string {
@@ -411,8 +418,9 @@ export class VehicleMaintenanceTab {
     const description = (this.form.controls.description.value ?? '').trim();
     const mileageValue = this.form.controls.mileage.value;
     const costValue = this.form.controls.cost.value;
+    const currencyValue = (this.form.controls.currency.value ?? '').trim();
 
-    if (!serviceDate || !title || !category || title.length > 50) {
+    if (!serviceDate || !title || !category || title.length > 50 || !currencyValue) {
       return null;
     }
 
@@ -437,6 +445,7 @@ export class VehicleMaintenanceTab {
       category,
       description,
       cost,
+      currency: currencyValue,
     };
   }
 
