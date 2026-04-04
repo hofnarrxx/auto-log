@@ -2,23 +2,50 @@
   <div class="tab-header">
     <div class="header-main">
       <h3>Fuel Records</h3>
-      <p class="header-summary">{{ fuelRecords().length }} entries</p>
+      <p class="header-summary">
+        {{ fuelRecords().length }} records | Total cost: {{ totalFuelCostByCurrency() || '-' }}
+      </p>
     </div>
 
-    <button type="button" class="add-record-btn" (click)="openCreateModal()">
-      Add Fuel Record
-    </button>
+    <div class="header-actions">
+      <label class="search-control">
+        <span>Search</span>
+        <input
+          type="text"
+          placeholder="Search by gas station"
+          [value]="gasStationSearch()"
+          (input)="onGasStationSearchChange($any($event.target).value)">
+      </label>
+
+      <label class="sort-control">
+        <span>Sort by</span>
+        <select [value]="selectedSort()" (change)="onSortChange($any($event.target).value)">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="price-low-high">Price: Low to High</option>
+          <option value="price-high-low">Price: High to Low</option>
+          <option value="price-per-unit-low-high">Price per Unit: Low to High</option>
+          <option value="price-per-unit-high-low">Price per Unit: High to Low</option>
+        </select>
+      </label>
+
+      <button type="button" class="add-record-btn" (click)="openCreateModal()">
+        Add Fuel Record
+      </button>
+    </div>
   </div>
 
   @if (isLoading()) {
     <p class="status-message">Loading fuel records...</p>
   } @else if (error()) {
     <p class="status-message error">{{ error() }}</p>
-  } @else if (!fuelRecords().length) {
-    <p class="status-message">No fuel records yet.</p>
+  } @else if (!filteredFuelRecords().length) {
+    <p class="status-message">
+      {{ hasAnyRecords() ? 'No fuel records match current search.' : 'No fuel records yet.' }}
+    </p>
   } @else {
     <div class="timeline">
-      @for (entry of fuelRecords(); track entry.id) {
+      @for (entry of visibleFuelRecords(); track entry.id) {
         <button type="button" class="timeline-item" (click)="openRecordDetails(entry)">
           <div class="entry-date">{{ formatDate(entry.date) }}</div>
 
@@ -28,11 +55,20 @@
 
           <div class="entry-content">
             <p class="entry-amount">Fuel: {{ formatFuelAmount(entry.amount) }}</p>
-            <p class="entry-price">Price: {{ formatMoney(entry.cost, entry.currency) }}</p>
+            <p class="entry-price">Price: {{ formatMoney(entry.cost, entry.currency) }}, {{ formatPricePerLitre(entry.cost, entry.amount, entry.currency) }}</p>
             @if (entry.gasStation) {
               <p class="entry-station">Station: {{ entry.gasStation }}</p>
             }
           </div>
+
+          @if (hasMileageWarning(entry)) {
+            <span
+              class="entry-warning-side"
+              title="Mileage is lower than an older record"
+              aria-label="Mileage anomaly">
+              ▲ Check Mileage
+            </span>
+          }
         </button>
       }
     </div>
@@ -56,10 +92,10 @@
 
         <label>
           Amount (L)
-          <input type="number" formControlName="amount" min="0" step="0.01">
+          <input type="number" formControlName="amount" min="0.01" step="0.01">
         </label>
         @if (form.controls.amount.invalid && form.controls.amount.touched) {
-          <p class="error-text">Amount is required.</p>
+          <p class="error-text">Amount must be greater than 0.</p>
         }
 
         <div class="cost-currency-row">
@@ -130,8 +166,17 @@
           <span>{{ formatMoney(record.cost, record.currency) }}</span>
         </div>
         <div class="detail-row">
+          <span class="label">Price per Litre</span>
+          <span>{{ formatPricePerLitre(record.cost, record.amount, record.currency) }}</span>
+        </div>
+        <div class="detail-row">
           <span class="label">Mileage</span>
-          <span>{{ record.mileage ?? '-' }} km</span>
+          <span>
+            {{ record.mileage ?? '-' }} km
+            @if (hasMileageWarning(record)) {
+              <span class="detail-warning" title="Mileage is lower than an older record">▲</span>
+            }
+          </span>
         </div>
         <div class="detail-row">
           <span class="label">Gas Station</span>

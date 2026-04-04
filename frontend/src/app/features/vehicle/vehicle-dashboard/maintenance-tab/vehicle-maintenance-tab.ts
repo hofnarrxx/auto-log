@@ -29,6 +29,8 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
   styleUrl: './vehicle-maintenance-tab.css',
 })
 export class VehicleMaintenanceTab {
+  protected readonly allCurrenciesOption = 'All';
+
   private readonly http = inject(HttpClient);
   private readonly currencyService = inject(CurrencyService);
   private readonly vehicleApi = 'http://localhost:8080/vehicles';
@@ -64,6 +66,7 @@ export class VehicleMaintenanceTab {
   protected readonly selectedCategories = signal<string[]>([]);
   protected readonly minPriceLimit = signal(0);
   protected readonly maxPriceLimit = signal(0);
+  protected readonly selectedCurrencyFilter = signal(this.allCurrenciesOption);
   protected readonly selectedSort = signal<SortOption>('newest');
   protected readonly titleSearch = signal('');
 
@@ -86,7 +89,7 @@ export class VehicleMaintenanceTab {
   });
 
   protected readonly maxAvailablePrice = computed(() => {
-    const costs = this.serviceRecords()
+    const costs = this.getRecordsForSelectedCurrencyFilter()
       .map(record => record.cost)
       .filter((cost): cost is number => cost !== null);
 
@@ -98,7 +101,7 @@ export class VehicleMaintenanceTab {
   });
 
   protected readonly minAvailablePrice = computed(() => {
-    const costs = this.serviceRecords()
+    const costs = this.getRecordsForSelectedCurrencyFilter()
       .map(record => record.cost)
       .filter((cost): cost is number => cost !== null);
 
@@ -119,11 +122,40 @@ export class VehicleMaintenanceTab {
     return categories.every(category => selected.has(category));
   });
 
+  protected readonly availableFilterCurrencies = computed(() => {
+    const unique = new Set<string>(
+      this.serviceRecords()
+        .map(record => this.getRecordCurrency(record))
+        .filter(currency => !!currency)
+    );
+
+    const selected = this.selectedCurrencyFilter();
+    if (selected !== this.allCurrenciesOption) {
+      unique.add(selected);
+    }
+
+    return Array.from(unique).sort((a, b) => a.localeCompare(b));
+  });
+
   protected readonly hasAnyRecords = computed(() => this.serviceRecords().length > 0);
   protected readonly totalRecords = computed(() => this.serviceRecords().length);
-  protected readonly totalServiceCost = computed(() =>
-    this.serviceRecords().reduce((total, record) => total + (record.cost ?? 0), 0)
-  );
+  protected readonly totalServiceCostByCurrency = computed(() => {
+    const totals = new Map<string, number>();
+
+    this.serviceRecords().forEach(record => {
+      if (record.cost === null) {
+        return;
+      }
+
+      const currency = this.getRecordCurrency(record);
+      totals.set(currency, (totals.get(currency) ?? 0) + record.cost);
+    });
+
+    return Array.from(totals.entries())
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([currency, total]) => this.formatMoney(total, currency))
+      .join(' | ');
+  });
 
   protected readonly timelineEntries = computed(() =>
     [...this.serviceRecords()]
@@ -134,6 +166,9 @@ export class VehicleMaintenanceTab {
           this.matchesTitleFilter(record)
       )
       .sort((a, b) => this.compareRecords(a, b))
+  );
+  protected readonly mileageWarningRecordIds = computed(() =>
+    this.findMileageWarningRecordIds(this.serviceRecords(), record => record.serviceDate)
   );
 
   protected readonly sliderTrackStyle = computed(() => {
@@ -229,8 +264,21 @@ export class VehicleMaintenanceTab {
     this.maxPriceLimit.set(Math.max(bounded, this.minPriceLimit()));
   }
 
+  protected onCurrencyFilterChange(rawValue: string) {
+    const available = this.availableFilterCurrencies();
+    const selected =
+      rawValue === this.allCurrenciesOption || available.includes(rawValue)
+        ? rawValue
+        : this.allCurrenciesOption;
+
+    this.selectedCurrencyFilter.set(selected);
+    this.minPriceLimit.set(0);
+    this.maxPriceLimit.set(this.maxAvailablePrice());
+  }
+
   protected resetFilters() {
     this.selectedCategories.set([...this.availableFilterCategories()]);
+    this.selectedCurrencyFilter.set(this.allCurrenciesOption);
     this.minPriceLimit.set(0);
     this.maxPriceLimit.set(this.maxAvailablePrice());
   }
@@ -472,6 +520,10 @@ export class VehicleMaintenanceTab {
     return iconMap[normalizedCategory] ?? '🧰';
   }
 
+  protected hasMileageWarning(record: ServiceRecord): boolean {
+    return this.mileageWarningRecordIds().has(record.id);
+  }
+
   private toTimestamp(serviceDate: string): number {
     const timestamp = new Date(`${serviceDate}T00:00:00`).getTime();
     return Number.isNaN(timestamp) ? 0 : timestamp;
@@ -479,6 +531,7 @@ export class VehicleMaintenanceTab {
 
   private ensureFilterDefaults() {
     const availableCategories = this.availableFilterCategories();
+
     const maxPrice = this.maxAvailablePrice();
 
     if (!this.filtersInitialized) {
@@ -524,11 +577,32 @@ export class VehicleMaintenanceTab {
   }
 
   private matchesPriceFilter(record: ServiceRecord): boolean {
+    const selectedCurrency = this.selectedCurrencyFilter();
+    const recordCurrency = this.getRecordCurrency(record);
+
+    if (selectedCurrency !== this.allCurrenciesOption && recordCurrency !== selectedCurrency) {
+      return false;
+    }
+
     if (record.cost === null) {
-      return true;
+      return selectedCurrency === this.allCurrenciesOption;
     }
 
     return record.cost >= this.minPriceLimit() && record.cost <= this.maxPriceLimit();
+  }
+
+  private getRecordsForSelectedCurrencyFilter(): ServiceRecord[] {
+    const selectedCurrency = this.selectedCurrencyFilter();
+    if (selectedCurrency === this.allCurrenciesOption) {
+      return this.serviceRecords();
+    }
+
+    return this.serviceRecords().filter(record => this.getRecordCurrency(record) === selectedCurrency);
+  }
+
+  private getRecordCurrency(record: ServiceRecord): string {
+    const fallbackCurrency = this.currencyService.selectedCurrency();
+    return (record.currency || fallbackCurrency).trim().toUpperCase();
   }
 
   private matchesTitleFilter(record: ServiceRecord): boolean {
@@ -568,5 +642,33 @@ export class VehicleMaintenanceTab {
     }
 
     return this.toTimestamp(b.serviceDate) - this.toTimestamp(a.serviceDate);
+  }
+
+  private findMileageWarningRecordIds<T extends { id: number; mileage: number | null }>(
+    records: T[],
+    getDate: (record: T) => string
+  ): Set<number> {
+    const sorted = [...records].sort(
+      (left, right) => this.toTimestamp(getDate(left)) - this.toTimestamp(getDate(right))
+    );
+
+    const warnings = new Set<number>();
+    let maxMileageSeen: number | null = null;
+
+    sorted.forEach(record => {
+      const mileage = record.mileage;
+      if (mileage === null) {
+        return;
+      }
+
+      if (maxMileageSeen !== null && mileage < maxMileageSeen) {
+        warnings.add(record.id);
+        return;
+      }
+
+      maxMileageSeen = maxMileageSeen === null ? mileage : Math.max(maxMileageSeen, mileage);
+    });
+
+    return warnings;
   }
 }

@@ -30,6 +30,54 @@
   font-weight: 600;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.search-control input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  font: inherit;
+  padding: 9px 12px;
+  width: 180px;
+}
+
+.search-control input::placeholder {
+  color: #94a3b8;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.sort-control select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  font: inherit;
+  font-weight: 600;
+  padding: 9px 12px;
+}
+
 .add-record-btn {
   border: 0;
   border-radius: 8px;
@@ -74,7 +122,7 @@
 .timeline-item {
   position: relative;
   display: grid;
-  grid-template-columns: 102px 52px auto;
+  grid-template-columns: 102px 52px auto auto;
   align-items: center;
   column-gap: 16px;
   border: 0;
@@ -136,11 +184,34 @@
   margin-top: 4px;
 }
 
+.entry-unit-price {
+  margin: 4px 0 0;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .entry-station {
   margin: 4px 0 0;
   color: #475569;
   font-size: 13px;
   font-weight: 600;
+}
+
+.entry-warning-side {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.detail-warning {
+  color: #dc2626;
+  font-size: 12px;
+  margin-left: 6px;
 }
 
 .record-details {
@@ -301,6 +372,27 @@
     align-items: stretch;
   }
 
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-control {
+    width: 100%;
+  }
+
+  .search-control input {
+    width: 100%;
+  }
+
+  .sort-control {
+    width: 100%;
+  }
+
+  .sort-control select {
+    width: 100%;
+  }
+
   .add-record-btn {
     width: 100%;
   }
@@ -310,7 +402,7 @@
   }
 
   .timeline-item {
-    grid-template-columns: 72px 40px auto;
+    grid-template-columns: 72px 40px auto auto;
     column-gap: 10px;
   }
 

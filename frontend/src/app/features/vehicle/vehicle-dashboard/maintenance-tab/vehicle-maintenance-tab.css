@@ -138,7 +138,7 @@
 .timeline-item {
   position: relative;
   display: grid;
-  grid-template-columns: 102px 52px auto;
+  grid-template-columns: 102px 52px auto auto;
   align-items: center;
   column-gap: 16px;
   border: 0;
@@ -206,6 +206,16 @@
   font-size: 13px;
 }
 
+.entry-warning-side {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .entry-category {
   margin: 0 0 4px;
   color: #1e3a8a;
@@ -232,6 +242,25 @@
 .filter-section h4 {
   margin: 0 0 8px;
   color: #334155;
+}
+
+.filter-currency-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.filter-currency-control select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  font: inherit;
+  font-weight: 600;
+  padding: 9px 12px;
 }
 
 .category-options {
@@ -418,6 +447,12 @@
   font-weight: 600;
 }
 
+.detail-warning {
+  color: #dc2626;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -515,7 +550,7 @@
   }
 
   .timeline-item {
-    grid-template-columns: 78px 52px 1fr;
+    grid-template-columns: 78px 52px 1fr auto;
     column-gap: 12px;
   }
 

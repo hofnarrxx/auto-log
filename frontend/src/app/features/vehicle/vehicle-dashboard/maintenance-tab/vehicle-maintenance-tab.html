@@ -3,7 +3,7 @@
     <div class="header-main">
       <h3>Service Records</h3>
       <p class="header-summary">
-        {{ totalRecords() }} records | Total cost: {{ formatMoney(totalServiceCost()) }}
+        {{ totalRecords() }} records | Total cost: {{ totalServiceCostByCurrency() || '-' }}
       </p>
     </div>
     <div class="header-actions">
@@ -62,6 +62,15 @@
             </p>
             <span class="entry-cost">{{ formatMoney(entry.cost, entry.currency) }}</span>
           </div>
+
+          @if (hasMileageWarning(entry)) {
+            <span
+              class="entry-warning-side"
+              title="Mileage is lower than an older record"
+              aria-label="Mileage anomaly">
+              ▲ Check Mileage
+            </span>
+          }
         </button>
       }
     </div>
@@ -101,7 +110,11 @@
         <h4>Cost Range</h4>
 
         <div class="price-readout">
-          {{ minPriceLimit().toFixed(0) }} EUR - {{ maxPriceLimit().toFixed(0) }} EUR
+          {{ minPriceLimit().toFixed(0) }} - {{ maxPriceLimit().toFixed(0) }}
+          @if (selectedCurrencyFilter() === allCurrenciesOption) {
+          } @else {
+            {{ selectedCurrencyFilter() }}
+          }
         </div>
 
         <div class="dual-range-slider-container">
@@ -127,6 +140,25 @@
             <div class="slider-track" [ngStyle]="sliderTrackStyle()"></div>
           </div>
         </div>
+      </section>
+
+      <section class="filter-section">
+        <h4>Currency</h4>
+
+        <label class="filter-currency-control">
+          <select (change)="onCurrencyFilterChange($any($event.target).value)">
+            <option
+              [value]="allCurrenciesOption"
+              [selected]="selectedCurrencyFilter() === allCurrenciesOption">
+              {{ allCurrenciesOption }}
+            </option>
+            @for (currency of availableFilterCurrencies(); track currency) {
+              <option [value]="currency" [selected]="selectedCurrencyFilter() === currency">
+                {{ currency }}
+              </option>
+            }
+          </select>
+        </label>
       </section>
 
       <div class="modal-actions">
@@ -252,7 +284,12 @@
           </div>
           <div class="detail-row">
             <span class="label">Mileage</span>
-            <span>{{ record.mileage ?? '-' }}</span>
+            <span>
+              {{ record.mileage ?? '-' }}
+              @if (hasMileageWarning(record)) {
+                <span class="detail-warning" title="Mileage is lower than an older record">▲</span>
+              }
+            </span>
           </div>
           <div class="detail-row">
             <span class="label">Cost</span>
