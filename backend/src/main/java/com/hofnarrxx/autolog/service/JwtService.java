@@ -13,17 +13,17 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("${JWT_SECRET}")
+    @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${JWT_EXPIRATION}")
+    @Value("${jwt.expiration}")
     private long expiration;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String email) {
+    public String generateAccessToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
@@ -44,6 +44,7 @@ public class JwtService {
     public boolean isValid(String token, String email) {
         return extractEmail(token).equals(email);
     }
+
     public boolean isValid(String token) {
         try {
             Jwts.parserBuilder()

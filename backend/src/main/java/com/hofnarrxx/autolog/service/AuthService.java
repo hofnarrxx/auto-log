@@ -1,6 +1,7 @@
 package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.dto.AuthRequest;
+import com.hofnarrxx.autolog.dto.AuthTokens;
 import com.hofnarrxx.autolog.exception.EmailAlreadyExistsException;
 import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -21,21 +24,28 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthService(UserRepository userRepository, AuthProviderRepository providerRepository, PasswordEncoder encoder,
-                       JwtService jwtService, AuthenticationManager authManager){
+    public AuthService(UserRepository userRepository,
+                       AuthProviderRepository providerRepository,
+                       PasswordEncoder encoder,
+                       JwtService jwtService,
+                       AuthenticationManager authManager,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.providerRepository = providerRepository;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.authManager = authManager;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
-    public String register(AuthRequest request) {
+    public AuthTokens register(AuthRequest request) {
 
-        if (userRepository.findByEmail(request.email()).isPresent())
+        if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new EmailAlreadyExistsException();
+        }
 
         User user = new User();
         user.setEmail(request.email());
@@ -47,10 +57,11 @@ public class AuthService {
         provider.setUser(user);
         providerRepository.save(provider);
 
-        return jwtService.generateToken(user.getEmail());
+        return issueTokens(user);
     }
 
-    public String login(AuthRequest request) {
+    @Transactional
+    public AuthTokens login(AuthRequest request) {
 
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -59,7 +70,21 @@ public class AuthService {
                 )
         );
 
-        return jwtService.generateToken(request.email());
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow();
+
+        return issueTokens(user);
+    }
+
+    @Transactional
+    public Optional<AuthTokens> refresh(String refreshToken) {
+        Optional<User> user = refreshTokenService.rotate(refreshToken);
+
+        if (user.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(issueTokens(user.get()));
     }
 
     public User getCurrentUser() {
@@ -70,5 +95,11 @@ public class AuthService {
 
         return userRepository.findByEmail(email)
                 .orElseThrow();
+    }
+
+    private AuthTokens issueTokens(User user) {
+        String accessToken = jwtService.generateAccessToken(user.getEmail());
+        String refreshToken = refreshTokenService.createForUser(user);
+        return new AuthTokens(accessToken, refreshToken);
     }
 }

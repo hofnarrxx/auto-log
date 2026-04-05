@@ -1,7 +1,6 @@
 package com.hofnarrxx.autolog.config;
 
 import com.hofnarrxx.autolog.service.CustomOAuth2UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,11 +21,14 @@ import java.util.List;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
     private final CustomOAuth2UserService oauth2UserService;
+    private final OAuth2JwtSuccessHandler oauth2JwtSuccessHandler;
 
     public SecurityConfig(JwtAuthenticationFilter jwtFilter,
-                          CustomOAuth2UserService oauth2UserService){
+                          CustomOAuth2UserService oauth2UserService,
+                          OAuth2JwtSuccessHandler oauth2JwtSuccessHandler){
         this.jwtFilter = jwtFilter;
         this.oauth2UserService = oauth2UserService;
+        this.oauth2JwtSuccessHandler = oauth2JwtSuccessHandler;
     }
 
     @Bean
@@ -35,7 +37,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors ->{})
                 .sessionManagement(sm ->
-                        sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                        sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/oauth2/**").permitAll()
                         .anyRequest().authenticated()
@@ -46,16 +48,8 @@ public class SecurityConfig {
                         .userInfoEndpoint(user ->
                                 user.userService(oauth2UserService)
                         )
-                        .defaultSuccessUrl("http://localhost:4200/dashboard",
-                                true)
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout")
-                        .logoutSuccessHandler((request, response, authentication) ->
-                                response.setStatus(HttpServletResponse.SC_OK))
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID", "access_token"));
+                        .successHandler(oauth2JwtSuccessHandler)
+                );
 
         return http.build();
     }
