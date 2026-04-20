@@ -3,12 +3,23 @@ import { Vehicle } from './vehicle-model';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
+export interface ShareLinkResponse {
+  id: number;
+  token: string;
+  carId: number;
+  createdBy: number;
+  createdAt: string;
+  expiresAt: string | null;
+  revoked: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class VehicleStore {
   private http = inject(HttpClient);
   private api = 'http://localhost:8080/vehicles';
+  private shareApi = 'http://localhost:8080/api/share-links';
 
   vehicles = signal<Vehicle[]>([]);
 
@@ -37,6 +48,15 @@ export class VehicleStore {
   load() {
     this.http.get<Vehicle[]>(this.api).subscribe(data => {
       this.vehicles.set(data);
+    });
+  }
+
+  createShareLink(carId: number): Observable<ShareLinkResponse> {
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    return this.http.post<ShareLinkResponse>(this.shareApi, {
+      carId,
+      expiresAt,
     });
   }
 }

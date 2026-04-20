@@ -10,4 +10,5 @@ export class VehicleDetailsTab {
   @Input({ required: true }) vehicle!: Vehicle;
   @Output() editRequested = new EventEmitter<void>();
   @Output() deleteRequested = new EventEmitter<void>();
+  @Output() shareRequested = new EventEmitter<void>();
 }

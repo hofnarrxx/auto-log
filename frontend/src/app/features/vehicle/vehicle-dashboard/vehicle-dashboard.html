@@ -7,6 +7,7 @@
         <app-vehicle-details-tab
           [vehicle]="vehicle()!"
           (editRequested)="openEdit()"
+          (shareRequested)="createShareLink()"
           (deleteRequested)="deleteVehicle()">
         </app-vehicle-details-tab>
       }
@@ -21,13 +22,43 @@
     </div>
   </div>
 
-  @if (showModal()) {
-    <app-modal (closed)="closeModal()">
+  @if (showEditModal()) {
+    <app-modal (closed)="closeEditModal()">
       <app-vehicle-form
         [vehicle]="vehicle()"
-        (closed)="closeModal()">
+        (closed)="closeEditModal()">
       </app-vehicle-form>
     </app-modal>
+  }
+
+  @if (showShareModal()) {
+    <app-modal (closed)="closeShareModal()">
+      <div class="share-modal-content">
+        <h3>Share Link</h3>
+        <p>Anybody with this link can view this vehicle data.</p>
+
+        <div class="share-link-row">
+          <input type="text" [value]="shareLink()" readonly aria-label="Generated share link" />
+          <button type="button" class="copy-btn" (click)="copyShareLink()">Copy</button>
+        </div>
+
+        @if (copySuccess()) {
+          <p class="copy-success">Link copied to clipboard.</p>
+        }
+
+        <div class="share-modal-actions">
+          <button type="button" class="close-btn" (click)="closeShareModal()">Close</button>
+        </div>
+      </div>
+    </app-modal>
+  }
+
+  @if (isCreatingShareLink()) {
+    <p class="share-status">Generating share link...</p>
+  }
+
+  @if (shareError()) {
+    <p class="share-error">{{ shareError() }}</p>
   }
 
 } @else {

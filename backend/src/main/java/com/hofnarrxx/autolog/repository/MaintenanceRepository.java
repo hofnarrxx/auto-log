@@ -12,5 +12,6 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
     List<Maintenance> findByVehicleIdAndVehicleUserId(Long vehicleId, Long userId);
 
     Optional<Maintenance> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
-}
 
+    List<Maintenance> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
+}

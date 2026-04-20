@@ -3,24 +3,27 @@ package com.hofnarrxx.autolog.service;
 import com.hofnarrxx.autolog.model.RefreshToken;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.RefreshTokenRepository;
+import com.hofnarrxx.autolog.utils.SecureTokenGenerator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SecureTokenGenerator secureTokenGenerator;
 
     @Value("${jwt.refresh-expiration}")
     private long refreshExpirationMs;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository,
+                               SecureTokenGenerator secureTokenGenerator) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.secureTokenGenerator = secureTokenGenerator;
     }
 
     @Transactional
@@ -28,7 +31,7 @@ public class RefreshTokenService {
         refreshTokenRepository.deleteByUser(user);
 
         RefreshToken token = new RefreshToken();
-        token.setToken(UUID.randomUUID().toString());
+        token.setToken(secureTokenGenerator.generateToken());
         token.setUser(user);
         token.setExpiresAt(Instant.now().plusMillis(refreshExpirationMs));
         token.setRevoked(false);
@@ -70,4 +73,3 @@ public class RefreshTokenService {
                 });
     }
 }
-

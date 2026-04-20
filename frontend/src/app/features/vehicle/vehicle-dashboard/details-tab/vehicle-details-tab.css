@@ -76,6 +76,15 @@
   transform: translateY(1px);
 }
 
+.share-btn {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.share-btn:hover {
+  background: #bbf7d0;
+}
+
 .edit-btn {
   background: #e0f2fe;
   color: #0369a1;

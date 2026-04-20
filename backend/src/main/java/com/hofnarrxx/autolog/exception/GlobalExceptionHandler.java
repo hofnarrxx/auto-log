@@ -69,4 +69,24 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "error", "INVALID_REQUEST",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(ShareLinkNotFoundException.class)
+    public ResponseEntity<?> handleShareLinkNotFound(ShareLinkNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "SHARE_LINK_NOT_FOUND",
+                        "message", ex.getMessage()
+                ));
+    }
 }

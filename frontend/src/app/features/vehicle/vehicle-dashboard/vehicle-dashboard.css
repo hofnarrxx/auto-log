@@ -47,3 +47,77 @@
 .tab-content {
   padding: 24px 28px 28px;
 }
+
+.share-status,
+.share-error {
+  margin: 0 28px 16px;
+  font-size: 14px;
+}
+
+.share-error {
+  color: #b91c1c;
+}
+
+.share-modal-content h3 {
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.share-modal-content p {
+  margin: 0 0 16px;
+  color: #4b5563;
+}
+
+.share-link-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.share-link-row input {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #111827;
+}
+
+.copy-btn,
+.close-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.copy-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.copy-btn:hover {
+  background: #1d4ed8;
+}
+
+.share-modal-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-btn {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.close-btn:hover {
+  background: #d1d5db;
+}
+
+.copy-success {
+  margin-top: 10px;
+  color: #15803d;
+  font-size: 13px;
+}

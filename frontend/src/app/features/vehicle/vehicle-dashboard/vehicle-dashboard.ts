@@ -7,6 +7,7 @@ import { Modal } from '../../../shared/ui/modal/modal';
 import { VehicleDetailsTab } from './details-tab/vehicle-details-tab';
 import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab';
 import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-vehicle-dashboard',
@@ -18,7 +19,12 @@ export class VehicleDashboard {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private vehicleStore = inject(VehicleStore);
-  showModal = signal(false);
+  showEditModal = signal(false);
+  showShareModal = signal(false);
+  shareLink = signal('');
+  isCreatingShareLink = signal(false);
+  shareError = signal('');
+  copySuccess = signal(false);
   private queryParamMap = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
@@ -46,11 +52,77 @@ export class VehicleDashboard {
   });
 
   openEdit() {
-    this.showModal.set(true);
+    this.showEditModal.set(true);
   }
 
-  closeModal() {
-    this.showModal.set(false);
+  closeEditModal() {
+    this.showEditModal.set(false);
+  }
+
+  createShareLink() {
+    const vehicle = this.vehicle();
+    if (!vehicle) return;
+
+    this.isCreatingShareLink.set(true);
+    this.shareError.set('');
+    this.copySuccess.set(false);
+
+    this.vehicleStore.createShareLink(vehicle.id).pipe(
+      finalize(() => this.isCreatingShareLink.set(false))
+    ).subscribe({
+      next: response => {
+        this.shareLink.set(`http://localhost:8080/api/public/cars/${response.token}`);
+        this.showShareModal.set(true);
+      },
+      error: () => {
+        this.shareError.set('Could not generate a share link. Please try again.');
+      }
+    });
+  }
+
+  closeShareModal() {
+    this.showShareModal.set(false);
+    this.copySuccess.set(false);
+  }
+
+  async copyShareLink() {
+    const link = this.shareLink();
+    if (!link) return;
+
+    let copied = false;
+
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(link);
+        copied = true;
+      } catch {
+        copied = false;
+      }
+    }
+
+    if (!copied) {
+      copied = this.copyWithFallback(link);
+    }
+
+    this.copySuccess.set(copied);
+    if (copied) {
+      window.setTimeout(() => this.copySuccess.set(false), 2000);
+    }
+  }
+
+  private copyWithFallback(text: string): boolean {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      return document.execCommand('copy');
+    } finally {
+      document.body.removeChild(textarea);
+    }
   }
 
   deleteVehicle() {

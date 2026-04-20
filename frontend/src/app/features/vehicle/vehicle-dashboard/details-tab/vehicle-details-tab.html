@@ -5,6 +5,16 @@
       <div class="details-actions">
         <button
           type="button"
+          class="icon-btn share-btn"
+          title="Share vehicle"
+          aria-label="Share vehicle"
+          (click)="shareRequested.emit()">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M18 16.08c-.76 0-1.44.3-1.96.77l-7.13-4.15a2.98 2.98 0 0 0 0-1.39l7.13-4.15A2.99 2.99 0 1 0 15 5a2.96 2.96 0 0 0 .04.49L7.91 9.64a3 3 0 1 0 0 4.72l7.13 4.15c-.03.16-.04.33-.04.49a3 3 0 1 0 3-2.92z"/>
+          </svg>
+        </button>
+        <button
+          type="button"
           class="icon-btn edit-btn"
           title="Edit vehicle"
           aria-label="Edit vehicle"
