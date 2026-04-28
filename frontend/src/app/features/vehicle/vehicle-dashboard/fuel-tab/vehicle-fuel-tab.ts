@@ -100,16 +100,11 @@ export class VehicleFuelTab {
       return '-';
     }
 
-    const parsed = new Date(date);
-    if (Number.isNaN(parsed.getTime())) {
-      return '-';
+    const [year, month, day] = date.split('-');
+    if (!year || !month || !day) {
+      return date;
     }
-
-    return parsed.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+    return `${day}.${month}.${year}`;
   }
 
   protected formatMoney(value: number | null | undefined, currency?: string): string {

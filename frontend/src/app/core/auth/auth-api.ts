@@ -37,6 +37,15 @@ export class AuthApi {
     );
   }
 
+  refreshSession() {
+    return this.http.post<void>(
+      'http://localhost:8080/api/auth/refresh',
+      {}
+    ).pipe(
+      tap(() => this.isAuthenticated.set(true))
+    );
+  }
+
   logout() {
     return this.http.post(
       'http://localhost:8080/api/auth/logout',

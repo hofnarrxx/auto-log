@@ -55,15 +55,22 @@ public class MaintenanceService {
         applyRequest(maintenance, request);
         maintenance.setVehicle(vehicle);
 
-        return toResponse(maintenanceRepository.save(maintenance));
+        Maintenance savedMaintenance = maintenanceRepository.save(maintenance);
+        updateVehicleMileageIfNeeded(vehicle, savedMaintenance.getMileage());
+
+        return toResponse(savedMaintenance);
     }
 
     public MaintenanceResponse update(Long vehicleId, Long maintenanceId, MaintenanceRequest request) {
         Long userId = authService.getCurrentUser().getId();
         Maintenance existing = findOwnedMaintenance(vehicleId, maintenanceId, userId);
+        Vehicle vehicle = existing.getVehicle();
         applyRequest(existing, request);
 
-        return toResponse(maintenanceRepository.save(existing));
+        Maintenance savedMaintenance = maintenanceRepository.save(existing);
+        updateVehicleMileageIfNeeded(vehicle, savedMaintenance.getMileage());
+
+        return toResponse(savedMaintenance);
     }
 
     public void delete(Long vehicleId, Long maintenanceId) {
@@ -124,5 +131,12 @@ public class MaintenanceService {
                 maintenance.getCreatedAt(),
                 maintenance.getUpdatedAt()
         );
+    }
+
+    private void updateVehicleMileageIfNeeded(Vehicle vehicle, Integer maintenanceMileage) {
+        if (maintenanceMileage != null && (vehicle.getMileage() == null || maintenanceMileage > vehicle.getMileage())) {
+            vehicle.setMileage(maintenanceMileage.doubleValue());
+            vehicleRepository.save(vehicle);
+        }
     }
 }

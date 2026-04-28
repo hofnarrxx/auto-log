@@ -43,15 +43,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (email != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            var userDetails = userDetailsService.loadUserByUsername(email);
+            try {
+                var userDetails = userDetailsService.loadUserByUsername(email);
 
-            if (jwtService.isValid(token, email)) {
-                var auth = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
+                if (jwtService.isValid(token, email)) {
+                    var auth = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+                // Ignore - token may be stale, user may have been deleted or environment changed
+                // This is common during registration with old tokens in cookies
             }
         }
 

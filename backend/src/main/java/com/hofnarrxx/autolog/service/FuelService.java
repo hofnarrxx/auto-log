@@ -53,15 +53,22 @@ public class FuelService {
         applyRequest(fuel, request);
         fuel.setVehicle(vehicle);
 
-        return toResponse(fuelRepository.save(fuel));
+        Fuel savedFuel = fuelRepository.save(fuel);
+        updateVehicleMileageIfNeeded(vehicle, savedFuel.getMileage());
+
+        return toResponse(savedFuel);
     }
 
     public FuelResponse update(Long vehicleId, Long fuelId, FuelRequest request) {
         Long userId = authService.getCurrentUser().getId();
         Fuel existing = findOwnedFuel(vehicleId, fuelId, userId);
+        Vehicle vehicle = existing.getVehicle();
         applyRequest(existing, request);
 
-        return toResponse(fuelRepository.save(existing));
+        Fuel savedFuel = fuelRepository.save(existing);
+        updateVehicleMileageIfNeeded(vehicle, savedFuel.getMileage());
+
+        return toResponse(savedFuel);
     }
 
     public void delete(Long vehicleId, Long fuelId) {
@@ -109,5 +116,12 @@ public class FuelService {
                 fuel.getCreatedAt(),
                 fuel.getUpdatedAt()
         );
+    }
+
+    private void updateVehicleMileageIfNeeded(Vehicle vehicle, Integer fuelMileage) {
+        if (fuelMileage != null && (vehicle.getMileage() == null || fuelMileage > vehicle.getMileage())) {
+            vehicle.setMileage(fuelMileage.doubleValue());
+            vehicleRepository.save(vehicle);
+        }
     }
 }

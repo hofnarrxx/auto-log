@@ -35,6 +35,7 @@ public class VehicleService {
         existing.setMileage(vehicle.getMileage());
         existing.setImage(vehicle.getImage());
         existing.setYear(vehicle.getYear());
+        existing.setLicensePlate(vehicle.getLicensePlate());
         return repository.save(existing);
     }
 

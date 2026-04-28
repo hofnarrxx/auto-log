@@ -23,6 +23,7 @@
 		"gasStation": "Gas station",
 		"loading": "Loading...",
 		"mileage": "Mileage",
+        "licensePlate": "License plate",
 		"mileageAnomaly": "Mileage anomaly",
 		"mileageWarning": "Mileage is lower than an older record",
 		"model": "Model",
@@ -124,7 +125,11 @@
 			"title": "Vehicle details",
 			"shareVehicle": "Share vehicle",
 			"editVehicle": "Edit vehicle",
-			"deleteVehicle": "Delete vehicle"
+			"deleteVehicle": "Delete vehicle",
+			"thumbnailAlt": "Vehicle thumbnail",
+			"avgEfficiency": "Average fuel efficiency",
+			"lastOdometerReading": "Last odometer reading",
+			"lastOdometerDate": "Recorded on"
 		},
 		"dashboard": {
 			"share": {
@@ -149,6 +154,7 @@
 				"model": "Model",
 				"year": "Year",
 				"mileage": "Mileage",
+				"licensePlate": "License plate",
 				"selectFuelType": "Select fuel type"
 			},
 			"errors": {

@@ -14,6 +14,8 @@ public class Vehicle {
     private Integer year;
     @Column(columnDefinition = "TEXT")
     private String image;
+    @Column(length = 20)
+    private String licensePlate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -46,7 +48,7 @@ public class Vehicle {
         this.user = user;
     }
 
-    public double getMileage() {
+    public Double getMileage() {
         return mileage;
     }
 
@@ -58,7 +60,7 @@ public class Vehicle {
         this.image = image;
     }
 
-    public void setMileage(double mileage) {
+    public void setMileage(Double mileage) {
         this.mileage = mileage;
     }
 
@@ -76,5 +78,13 @@ public class Vehicle {
 
     public void setFuelType(String fuelType) {
         this.fuelType = fuelType;
+    }
+
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 }

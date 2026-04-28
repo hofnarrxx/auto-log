@@ -37,6 +37,8 @@
   <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
   }
 
+  <input type="text" [placeholder]="'vehicle.form.placeholders.licensePlate' | translate" formControlName="licensePlate">
+
   <input type="file" accept="image/*" (change)="onFileSelected($event)">
 
   @if (selectedImageBase64) {

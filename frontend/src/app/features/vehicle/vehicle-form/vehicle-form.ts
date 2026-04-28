@@ -57,7 +57,8 @@ export class VehicleForm {
       Validators.required,
       Validators.min(0),
     ]),
-    fuelType: new FormControl<string | null>(null, Validators.required)
+    fuelType: new FormControl<string | null>(null, Validators.required),
+    licensePlate: new FormControl<string | null>(null)
   });
 
   ngOnInit() {

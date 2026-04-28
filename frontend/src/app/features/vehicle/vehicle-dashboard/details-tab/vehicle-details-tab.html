@@ -1,59 +1,94 @@
 <div class="details-tab">
-  <div class="info-group">
-    <div class="info-header">
-      <h3>{{ vehicleInfoTitle() }}</h3>
-      <div class="details-actions">
-        <button
-          type="button"
-          class="icon-btn share-btn"
-          [attr.title]="shareVehicleLabel()"
-          [attr.aria-label]="shareVehicleLabel()"
-          (click)="shareRequested.emit()">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M18 16.08c-.76 0-1.44.3-1.96.77l-7.13-4.15a2.98 2.98 0 0 0 0-1.39l7.13-4.15A2.99 2.99 0 1 0 15 5a2.96 2.96 0 0 0 .04.49L7.91 9.64a3 3 0 1 0 0 4.72l7.13 4.15c-.03.16-.04.33-.04.49a3 3 0 1 0 3-2.92z"/>
-          </svg>
-        </button>
-        <button
-          type="button"
-          class="icon-btn edit-btn"
-          [attr.title]="editVehicleLabel()"
-          [attr.aria-label]="editVehicleLabel()"
-          (click)="editRequested.emit()">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.33H5v-.92l9.06-9.06.92.92-9.06 9.06zM20.71 7.04a1.003 1.003 0 0 0 0-1.42L18.37 3.29a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.83z"/>
-          </svg>
-        </button>
-        <button
-          type="button"
-          class="icon-btn delete-btn"
-          [attr.title]="deleteVehicleLabel()"
-          [attr.aria-label]="deleteVehicleLabel()"
-          (click)="deleteRequested.emit()">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M6 7h12l-1 14H7L6 7zm3 2v10h2V9H9zm4 0v10h2V9h-2zM9 4h6l1 2h4v2H4V6h4l1-2z"/>
-          </svg>
-        </button>
+  <div class="content-grid">
+    <div class="hero-grid">
+      <div class="thumbnail-card">
+        @if (vehicle.image) {
+          <img [src]="vehicle.image" [alt]="vehicleThumbnailAlt()" />
+        } @else {
+          <div class="thumbnail-placeholder">
+            <span>{{ 'dashboard.noImage' | translate }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="info-card">
+        <div class="card-header">
+          <h3>{{ vehicleInfoTitle() }}</h3>
+          <div class="details-actions">
+            <button
+              type="button"
+              class="icon-btn share-btn"
+              [attr.title]="shareVehicleLabel()"
+              [attr.aria-label]="shareVehicleLabel()"
+              (click)="shareRequested.emit()">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M18 16.08c-.76 0-1.44.3-1.96.77l-7.13-4.15a2.98 2.98 0 0 0 0-1.39l7.13-4.15A2.99 2.99 0 1 0 15 5a2.96 2.96 0 0 0 .04.49L7.91 9.64a3 3 0 1 0 0 4.72l7.13 4.15c-.03.16-.04.33-.04.49a3 3 0 1 0 3-2.92z"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="icon-btn edit-btn"
+              [attr.title]="editVehicleLabel()"
+              [attr.aria-label]="editVehicleLabel()"
+              (click)="editRequested.emit()">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.33H5v-.92l9.06-9.06.92.92-9.06 9.06zM20.71 7.04a1.003 1.003 0 0 0 0-1.42L18.37 3.29a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.83z"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="icon-btn delete-btn"
+              [attr.title]="deleteVehicleLabel()"
+              [attr.aria-label]="deleteVehicleLabel()"
+              (click)="deleteRequested.emit()">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 7h12l-1 14H7L6 7zm3 2v10h2V9H9zm4 0v10h2V9h-2zM9 4h6l1 2h4v2H4V6h4l1-2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="info-grid">
+            <div class="info-row">
+              <span class="label">{{ brandLabel() }}</span>
+              <span class="value">{{ vehicle.brand }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ modelLabel() }}</span>
+              <span class="value">{{ vehicle.model }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ yearLabel() }}</span>
+              <span class="value">{{ vehicle.year }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">{{ 'common.licensePlate' | translate }}</span>
+              <span class="value">{{ vehicle.licensePlate || '-' }}</span>
+            </div>
+            <div class="info-row full-width">
+              <span class="label">{{ 'common.fuelType' | translate }}</span>
+              <span class="value">{{ fuelTypeLabel() }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="info-item">
-      <label>{{ brandLabel() }}:</label>
-      <span>{{ vehicle.brand }}</span>
-    </div>
-    <div class="info-item">
-      <label>{{ modelLabel() }}:</label>
-      <span>{{ vehicle.model }}</span>
-    </div>
-    <div class="info-item">
-      <label>{{ yearLabel() }}:</label>
-      <span>{{ vehicle.year }}</span>
-    </div>
-    <div class="info-item">
-      <label>{{ mileageLabel() }}:</label>
-      <span>{{ vehicle.mileage }} km</span>
-    </div>
-    <div class="info-item">
-      <label>{{ 'common.fuelType' | translate }}:</label>
-      <span>{{ fuelTypeLabel() }}</span>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-body">
+          <h4>{{ 'vehicle.details.avgEfficiency' | translate }}</h4>
+          <p class="stat-value">{{ avgFuelEfficiency() }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-body">
+          <h4>{{ 'vehicle.details.lastOdometerReading' | translate }}</h4>
+          <p class="stat-value">{{ lastOdometerReading() }}</p>
+          <p class="stat-subvalue">{{ 'vehicle.details.lastOdometerDate' | translate }}: {{ lastOdometerDate() }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

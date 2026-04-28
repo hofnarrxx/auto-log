@@ -5,5 +5,6 @@ export interface Vehicle {
   year: number | null;
   fuelType: string | null;
   mileage: number | null;
+  licensePlate?: string | null;
   image?: string;
 }

@@ -23,6 +23,7 @@
 		"gasStation": "Stacja paliw",
 		"loading": "Ładowanie...",
 		"mileage": "Przebieg",
+        "licensePlate": "Numer rejestracyjny",
 		"mileageAnomaly": "Nieprawidłowy przebieg",
 		"mileageWarning": "Przebieg jest niższy niż w starszym wpisie",
 		"model": "Model",
@@ -124,7 +125,11 @@
 			"title": "Szczegóły pojazdu",
 			"shareVehicle": "Udostępnij pojazd",
 			"editVehicle": "Edytuj pojazd",
-			"deleteVehicle": "Usuń pojazd"
+			"deleteVehicle": "Usuń pojazd",
+			"thumbnailAlt": "Miniatura pojazdu",
+			"avgEfficiency": "Średnie zużycie paliwa",
+			"lastOdometerReading": "Ostatni odczyt licznika",
+			"lastOdometerDate": "Zapisano"
 		},
 		"dashboard": {
 			"share": {
@@ -148,8 +153,7 @@
 				"brand": "Marka",
 				"model": "Model",
 				"year": "Rok",
-				"mileage": "Przebieg",
-				"selectFuelType": "Wybierz rodzaj paliwa"
+				"mileage": "Przebieg",				"licensePlate": "Numer rejestracyjny",				"selectFuelType": "Wybierz rodzaj paliwa"
 			},
 			"errors": {
 				"brandRequired": "Marka jest wymagana.",

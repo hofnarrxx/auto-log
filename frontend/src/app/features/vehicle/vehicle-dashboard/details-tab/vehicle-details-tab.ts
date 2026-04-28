@@ -1,6 +1,14 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import { Vehicle } from '../../vehicle-model';
+
+interface FuelRecord {
+  date: string;
+  mileage: number | null;
+  amount: number | null;
+}
 
 @Component({
   selector: 'app-vehicle-details-tab',
@@ -10,11 +18,95 @@ import { Vehicle } from '../../vehicle-model';
 })
 export class VehicleDetailsTab {
   private translate = inject(TranslateService);
+  private http = inject(HttpClient);
+  private vehicleApi = 'http://localhost:8080/vehicles';
 
   @Input({ required: true }) vehicle!: Vehicle;
   @Output() editRequested = new EventEmitter<void>();
   @Output() deleteRequested = new EventEmitter<void>();
   @Output() shareRequested = new EventEmitter<void>();
+
+  protected readonly isLoadingStats = signal(false);
+  protected readonly fuelRecords = signal<FuelRecord[]>([]);
+
+  protected readonly avgFuelEfficiency = computed(() => {
+    const records = [...this.fuelRecords()]
+      .filter(record => record.mileage !== null && record.amount !== null && record.amount > 0)
+      .sort((left, right) => this.toTimestamp(left.date) - this.toTimestamp(right.date));
+
+    if (records.length < 2) {
+      return '-';
+    }
+
+    let totalKm = 0;
+    let totalLiters = 0;
+
+    for (let index = 1; index < records.length; index++) {
+      const previous = records[index - 1];
+      const current = records[index];
+
+      if (previous.mileage === null || current.mileage === null) {
+        continue;
+      }
+
+      if (current.mileage < previous.mileage) {
+        continue;
+      }
+
+      const distance = current.mileage - previous.mileage;
+      if (distance <= 0 || current.amount === null) {
+        continue;
+      }
+
+      totalKm += distance;
+      totalLiters += current.amount;
+    }
+
+    if (totalKm <= 0 || totalLiters <= 0) {
+      return '-';
+    }
+
+    return `${((totalLiters / totalKm) * 100).toFixed(2)} L/100km`;
+  });
+
+  ngOnInit() {
+    if (this.vehicle?.id) {
+      this.loadFuelRecords();
+    }
+  }
+
+  protected lastOdometerReading(): string {
+    const mileage = this.getLatestOdometerMileage();
+
+    if (mileage === null) {
+      return '-';
+    }
+
+    return `${mileage.toLocaleString()} km`;
+  }
+
+  protected lastOdometerDate(): string {
+    const latest = this.getLatestFuelRecord();
+
+    if (!latest) {
+      return '-';
+    }
+
+    return this.formatDate(latest.date);
+  }
+
+  protected formatDate(date: string | null | undefined): string {
+    if (!date) {
+      return '-';
+    }
+
+    const [year, month, day] = date.split('-');
+    if (!year || !month || !day) {
+      return date;
+    }
+
+    return `${day}.${month}.${year}`;
+  }
 
   protected vehicleInfoTitle(): string {
     return this.translate.instant('vehicle.details.title');
@@ -66,5 +158,52 @@ export class VehicleDetailsTab {
       default:
         return this.vehicle.fuelType ?? '-';
     }
+  }
+
+  protected vehicleThumbnailAlt(): string {
+    return this.translate.instant('vehicle.details.thumbnailAlt');
+  }
+
+  private loadFuelRecords() {
+    if (!this.vehicle?.id) {
+      return;
+    }
+
+    this.isLoadingStats.set(true);
+
+    this.http
+      .get<FuelRecord[]>(`${this.vehicleApi}/${this.vehicle.id}/fuel`)
+      .pipe(finalize(() => this.isLoadingStats.set(false)))
+      .subscribe({
+        next: records => this.fuelRecords.set(records ?? []),
+        error: () => this.fuelRecords.set([]),
+      });
+  }
+
+  private getLatestFuelRecord(): FuelRecord | null {
+    const records = this.fuelRecords().filter(record => record.mileage !== null);
+
+    if (!records.length) {
+      return null;
+    }
+
+    return [...records].sort((left, right) => this.toTimestamp(right.date) - this.toTimestamp(left.date))[0];
+  }
+
+  private getLatestOdometerMileage(): number | null {
+    const latest = this.getLatestFuelRecord();
+
+    if (latest && latest.mileage !== null && latest.mileage !== undefined) {
+      return latest.mileage;
+    }
+
+    return this.vehicle.mileage === null || this.vehicle.mileage === undefined
+      ? null
+      : Math.trunc(this.vehicle.mileage);
+  }
+
+  private toTimestamp(date: string): number {
+    const timestamp = new Date(`${date}T00:00:00`).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 }
