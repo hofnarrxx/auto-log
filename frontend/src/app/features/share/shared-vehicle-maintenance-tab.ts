@@ -1,69 +1,33 @@
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { CurrencyService } from '../../../../shared/services/currency.service';
+import { CurrencyService } from '../../shared/services/currency.service';
+import type { SharedMaintenanceEntry } from './shared-vehicle-model';
 
-interface ServiceRecord {
-  id: number;
-  vehicleId: number;
-  serviceDate: string;
-  title: string | null;
-  mileage: number | null;
-  category: string;
-  description: string;
-  cost: number | null;
-  currency?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-type ModalMode = 'closed' | 'create' | 'view' | 'edit';
 type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 
 @Component({
-  selector: 'app-vehicle-maintenance-tab',
-  imports: [ReactiveFormsModule, CommonModule, TranslateModule],
-  templateUrl: './vehicle-maintenance-tab.html',
-  styleUrl: './vehicle-maintenance-tab.css',
+  selector: 'app-shared-vehicle-maintenance-tab',
+  standalone: true,
+  imports: [CommonModule, TranslateModule],
+  templateUrl: './shared-vehicle-maintenance-tab.html',
+  styleUrl: './shared-vehicle-maintenance-tab.css',
 })
-export class VehicleMaintenanceTab {
+export class SharedVehicleMaintenanceTab {
   protected readonly allCurrenciesOption = 'All';
 
-  private readonly http = inject(HttpClient);
   private readonly currencyService = inject(CurrencyService);
-  private readonly vehicleApi = 'http://localhost:8080/vehicles';
-  private readonly metadataApi = 'http://localhost:8080/metadata/maintenance/categories';
-
-  readonly form = new FormGroup({
-    serviceDate: new FormControl('', Validators.required),
-    title: new FormControl('', [Validators.required, Validators.maxLength(50)]),
-    mileage: new FormControl<number | null>(null, [Validators.min(0), Validators.required]),
-    category: new FormControl('', Validators.required),
-    description: new FormControl('', [Validators.maxLength(200)]),
-    cost: new FormControl<number | null>(null, [Validators.min(0), Validators.required]),
-    currency: new FormControl<string>('', Validators.required),
-  });
 
   @Input({ required: true })
-  set vehicleId(value: number) {
-    this.currentVehicleId = value;
-    this.loadServiceRecords();
+  set records(value: SharedMaintenanceEntry[]) {
+    this.serviceRecords.set(value ?? []);
+    this.ensureFilterDefaults();
   }
 
-  private currentVehicleId: number | null = null;
-
-  protected readonly categories = signal<string[]>([]);
-  protected readonly isLoading = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly actionError = signal<string | null>(null);
-  protected readonly isSaving = signal(false);
-  protected readonly isDeleting = signal(false);
   protected readonly isFilterModalOpen = signal(false);
-  protected readonly modalMode = signal<ModalMode>('closed');
-  protected readonly selectedRecord = signal<ServiceRecord | null>(null);
+  protected readonly isModalOpen = signal(false);
+  protected readonly selectedRecord = signal<SharedMaintenanceEntry | null>(null);
   protected readonly selectedCategories = signal<string[]>([]);
   protected readonly minPriceLimit = signal(0);
   protected readonly maxPriceLimit = signal(0);
@@ -71,21 +35,11 @@ export class VehicleMaintenanceTab {
   protected readonly selectedSort = signal<SortOption>('newest');
   protected readonly titleSearch = signal('');
 
-  private readonly serviceRecords = signal<ServiceRecord[]>([]);
+  private readonly serviceRecords = signal<SharedMaintenanceEntry[]>([]);
   private filtersInitialized = false;
 
-  protected readonly isModalOpen = computed(() => this.modalMode() !== 'closed');
-  protected readonly isFormMode = computed(() => {
-    const mode = this.modalMode();
-    return mode === 'create' || mode === 'edit';
-  });
-
   protected readonly availableFilterCategories = computed(() => {
-    const unique = new Set<string>([
-      ...this.categories(),
-      ...this.serviceRecords().map(record => record.category),
-    ]);
-
+    const unique = new Set<string>(this.serviceRecords().map(record => record.category));
     return Array.from(unique);
   });
 
@@ -99,18 +53,6 @@ export class VehicleMaintenanceTab {
     }
 
     return Math.ceil(Math.max(...costs));
-  });
-
-  protected readonly minAvailablePrice = computed(() => {
-    const costs = this.getRecordsForSelectedCurrencyFilter()
-      .map(record => record.cost)
-      .filter((cost): cost is number => cost !== null);
-
-    if (!costs.length) {
-      return 0;
-    }
-
-    return Math.floor(Math.min(...costs));
   });
 
   protected readonly allCategoriesChecked = computed(() => {
@@ -168,6 +110,7 @@ export class VehicleMaintenanceTab {
       )
       .sort((a, b) => this.compareRecords(a, b))
   );
+
   protected readonly mileageWarningRecordIds = computed(() =>
     this.findMileageWarningRecordIds(this.serviceRecords(), record => record.serviceDate)
   );
@@ -185,31 +128,10 @@ export class VehicleMaintenanceTab {
     };
   });
 
-  constructor() {
-    this.loadCategories();
-  }
-
-  protected openCreateModal() {
-    this.closeFilterModal();
-    this.selectedRecord.set(null);
-    this.actionError.set(null);
-    this.form.reset({
-      serviceDate: '',
-      title: '',
-      mileage: null,
-      category: '',
-      description: '',
-      cost: null,
-      currency: this.currencyService.selectedCurrency(),
-    });
-    this.modalMode.set('create');
-  }
-
-  protected openRecordDetails(record: ServiceRecord) {
+  protected openRecordDetails(record: SharedMaintenanceEntry) {
     this.closeFilterModal();
     this.selectedRecord.set(record);
-    this.actionError.set(null);
-    this.modalMode.set('view');
+    this.isModalOpen.set(true);
   }
 
   protected openFilterModal() {
@@ -219,6 +141,11 @@ export class VehicleMaintenanceTab {
 
   protected closeFilterModal() {
     this.isFilterModalOpen.set(false);
+  }
+
+  protected closeModal() {
+    this.isModalOpen.set(false);
+    this.selectedRecord.set(null);
   }
 
   protected toggleAllCategories(checked: boolean) {
@@ -322,99 +249,6 @@ export class VehicleMaintenanceTab {
     }
   }
 
-  protected startEditSelectedRecord() {
-    const record = this.selectedRecord();
-    if (!record) {
-      return;
-    }
-
-    this.actionError.set(null);
-    this.form.reset({
-      serviceDate: record.serviceDate,
-      title: record.title ?? '',
-      mileage: record.mileage,
-      category: record.category,
-      description: record.description,
-      cost: record.cost,
-      currency: record.currency || this.currencyService.selectedCurrency(),
-    });
-    this.modalMode.set('edit');
-  }
-
-  protected saveRecord() {
-    if (this.form.invalid || !this.currentVehicleId) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const payload = this.buildPayload();
-    if (!payload) {
-      this.actionError.set('vehicle.maintenanceTab.errors.invalidData');
-      return;
-    }
-
-    const selected = this.selectedRecord();
-    const isEdit = this.modalMode() === 'edit' && !!selected;
-
-    this.isSaving.set(true);
-    this.actionError.set(null);
-
-    const request$ = isEdit
-      ? this.http.put<ServiceRecord>(
-          `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${selected.id}`,
-          payload
-        )
-      : this.http.post<ServiceRecord>(
-          `${this.vehicleApi}/${this.currentVehicleId}/maintenance`,
-          payload
-        );
-
-    request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
-      next: () => {
-        this.closeModal();
-        this.loadServiceRecords();
-      },
-      error: () => {
-        this.actionError.set('vehicle.maintenanceTab.errors.saveFailed');
-      },
-    });
-  }
-
-  protected deleteSelectedRecord() {
-    const selected = this.selectedRecord();
-    if (!selected || !this.currentVehicleId) {
-      return;
-    }
-
-    this.isDeleting.set(true);
-    this.actionError.set(null);
-
-    this.http
-      .delete<void>(`${this.vehicleApi}/${this.currentVehicleId}/maintenance/${selected.id}`)
-      .pipe(finalize(() => this.isDeleting.set(false)))
-      .subscribe({
-        next: () => {
-          this.closeModal();
-          this.loadServiceRecords();
-        },
-        error: () => {
-          this.actionError.set('vehicle.maintenanceTab.errors.deleteFailed');
-        },
-      });
-  }
-
-  protected closeModal() {
-    this.modalMode.set('closed');
-    this.selectedRecord.set(null);
-    this.actionError.set(null);
-  }
-
-  protected modalTitle(): string {
-    return this.modalMode() === 'edit'
-      ? 'vehicle.maintenanceTab.modalTitle.edit'
-      : 'vehicle.maintenanceTab.modalTitle.add';
-  }
-
   protected formatMoney(value: number | null, currency?: string): string {
     if (value === null || value === undefined) {
       return '-';
@@ -436,89 +270,6 @@ export class VehicleMaintenanceTab {
     const minute = `${date.getMinutes()}`.padStart(2, '0');
 
     return `${day}.${month}.${year} ${hour}:${minute}`;
-  }
-
-  private loadCategories() {
-    this.http.get<string[]>(this.metadataApi).subscribe({
-      next: categories => {
-        this.categories.set(categories);
-        this.ensureFilterDefaults();
-      },
-      error: () => {
-        this.categories.set([
-          'Inspection',
-          'Oil change',
-          'Repair',
-          'Part Replacement',
-          'Fluid refill',
-          'Tires & Wheels',
-          'Cosmetic',
-        ]);
-        this.ensureFilterDefaults();
-      },
-    });
-  }
-
-  private loadServiceRecords() {
-    if (!this.currentVehicleId) {
-      this.serviceRecords.set([]);
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.http
-      .get<ServiceRecord[]>(`${this.vehicleApi}/${this.currentVehicleId}/maintenance`)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: data => {
-          this.serviceRecords.set(data);
-          this.ensureFilterDefaults();
-        },
-        error: () => {
-          this.serviceRecords.set([]);
-          this.error.set('vehicle.maintenanceTab.errors.loadFailed');
-        },
-      });
-  }
-
-  private buildPayload() {
-    const serviceDate = (this.form.controls.serviceDate.value ?? '').trim();
-    const title = (this.form.controls.title.value ?? '').trim();
-    const category = (this.form.controls.category.value ?? '').trim();
-    const description = (this.form.controls.description.value ?? '').trim();
-    const mileageValue = this.form.controls.mileage.value;
-    const costValue = this.form.controls.cost.value;
-    const currencyValue = (this.form.controls.currency.value ?? '').trim();
-
-    if (!serviceDate || !title || !category || title.length > 50 || !currencyValue) {
-      return null;
-    }
-
-    const mileage =
-      mileageValue === null || mileageValue === undefined || mileageValue === ('' as any)
-        ? null
-        : Math.trunc(Number(mileageValue));
-
-    const cost =
-      costValue === null || costValue === undefined || costValue === ('' as any)
-        ? null
-        : Number(costValue);
-
-    if ((mileage !== null && Number.isNaN(mileage)) || (cost !== null && Number.isNaN(cost))) {
-      return null;
-    }
-
-    return {
-      serviceDate,
-      title,
-      mileage,
-      category,
-      description,
-      cost,
-      currency: currencyValue,
-    };
   }
 
   protected formatDate(serviceDate: string): string {
@@ -544,7 +295,7 @@ export class VehicleMaintenanceTab {
     return iconMap[normalizedCategory] ?? '🧰';
   }
 
-  protected hasMileageWarning(record: ServiceRecord): boolean {
+  protected hasMileageWarning(record: SharedMaintenanceEntry): boolean {
     return this.mileageWarningRecordIds().has(record.id);
   }
 
@@ -555,7 +306,6 @@ export class VehicleMaintenanceTab {
 
   private ensureFilterDefaults() {
     const availableCategories = this.availableFilterCategories();
-
     const maxPrice = this.maxAvailablePrice();
 
     if (!this.filtersInitialized) {
@@ -572,7 +322,6 @@ export class VehicleMaintenanceTab {
 
     this.selectedCategories.set(selected);
 
-    
     if (this.minPriceLimit() === 0 && this.maxPriceLimit() === 0 && maxPrice > 0) {
       this.maxPriceLimit.set(maxPrice);
     }
@@ -590,7 +339,7 @@ export class VehicleMaintenanceTab {
     }
   }
 
-  private matchesCategoryFilter(record: ServiceRecord): boolean {
+  private matchesCategoryFilter(record: SharedMaintenanceEntry): boolean {
     const selectedCategories = this.selectedCategories();
 
     if (!selectedCategories.length) {
@@ -600,7 +349,7 @@ export class VehicleMaintenanceTab {
     return selectedCategories.includes(record.category);
   }
 
-  private matchesPriceFilter(record: ServiceRecord): boolean {
+  private matchesPriceFilter(record: SharedMaintenanceEntry): boolean {
     const selectedCurrency = this.selectedCurrencyFilter();
     const recordCurrency = this.getRecordCurrency(record);
 
@@ -615,7 +364,7 @@ export class VehicleMaintenanceTab {
     return record.cost >= this.minPriceLimit() && record.cost <= this.maxPriceLimit();
   }
 
-  private getRecordsForSelectedCurrencyFilter(): ServiceRecord[] {
+  private getRecordsForSelectedCurrencyFilter(): SharedMaintenanceEntry[] {
     const selectedCurrency = this.selectedCurrencyFilter();
     if (selectedCurrency === this.allCurrenciesOption) {
       return this.serviceRecords();
@@ -624,12 +373,12 @@ export class VehicleMaintenanceTab {
     return this.serviceRecords().filter(record => this.getRecordCurrency(record) === selectedCurrency);
   }
 
-  private getRecordCurrency(record: ServiceRecord): string {
+  private getRecordCurrency(record: SharedMaintenanceEntry): string {
     const fallbackCurrency = this.currencyService.selectedCurrency();
     return (record.currency || fallbackCurrency).trim().toUpperCase();
   }
 
-  private matchesTitleFilter(record: ServiceRecord): boolean {
+  private matchesTitleFilter(record: SharedMaintenanceEntry): boolean {
     const query = this.titleSearch().trim().toLowerCase();
     if (!query) {
       return true;
@@ -639,7 +388,7 @@ export class VehicleMaintenanceTab {
     return title.includes(query);
   }
 
-  private compareRecords(a: ServiceRecord, b: ServiceRecord): number {
+  private compareRecords(a: SharedMaintenanceEntry, b: SharedMaintenanceEntry): number {
     const sort = this.selectedSort();
 
     if (sort === 'oldest') {
@@ -657,7 +406,7 @@ export class VehicleMaintenanceTab {
     return this.toTimestamp(b.serviceDate) - this.toTimestamp(a.serviceDate);
   }
 
-  private compareByPrice(a: ServiceRecord, b: ServiceRecord, direction: 'asc' | 'desc'): number {
+  private compareByPrice(a: SharedMaintenanceEntry, b: SharedMaintenanceEntry, direction: 'asc' | 'desc'): number {
     const left = a.cost ?? Number.POSITIVE_INFINITY;
     const right = b.cost ?? Number.POSITIVE_INFINITY;
 

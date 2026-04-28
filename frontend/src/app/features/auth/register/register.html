@@ -2,16 +2,16 @@
 
   <div class="auth-card">
 
-    <h1 class="logo">AutoLog</h1>
+    <h1 class="logo">{{ 'common.appName' | translate }}</h1>
 
     <form [formGroup]="form" (ngSubmit)="register()" class="auth-form">
 
       <div class="form-field">
-        <label>Email</label>
+        <label>{{ 'auth.register.emailLabel' | translate }}</label>
 
         <input
           type="email"
-          placeholder="Enter your email"
+          [placeholder]="'auth.register.emailPlaceholder' | translate"
           formControlName="email"
         >
 
@@ -20,11 +20,11 @@
           <div class="error">
 
             @if(form.controls.email.errors?.['required']) {
-              <span>Email is required</span>
+              <span>{{ 'auth.register.errors.emailRequired' | translate }}</span>
             }
 
             @if(form.controls.email.errors?.['email']) {
-              <span>Enter a valid email</span>
+              <span>{{ 'auth.register.errors.emailInvalid' | translate }}</span>
             }
 
           </div>
@@ -33,11 +33,11 @@
       </div>
 
       <div class="form-field">
-        <label>Password</label>
+        <label>{{ 'auth.register.passwordLabel' | translate }}</label>
 
         <input
           type="password"
-          placeholder="Create password"
+          [placeholder]="'auth.register.passwordPlaceholder' | translate"
           formControlName="password"
         >
 
@@ -46,11 +46,11 @@
           <div class="error">
 
             @if(form.controls.password.errors?.['required']) {
-              <span>Password is required</span>
+              <span>{{ 'auth.register.errors.passwordRequired' | translate }}</span>
             }
 
             @if(form.controls.password.errors?.['minlength']) {
-              <span>Password must be at least 6 characters</span>
+              <span>{{ 'auth.register.errors.passwordMinLength' | translate }}</span>
             }
 
           </div>
@@ -59,18 +59,18 @@
       </div>
 
       <div class="form-field">
-        <label>Confirm Password</label>
+        <label>{{ 'auth.register.confirmPasswordLabel' | translate }}</label>
 
         <input
           type="password"
-          placeholder="Repeat password"
+          [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate"
           formControlName="confirmPassword"
         >
 
         @if(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
 
           <div class="error">
-            <span>Password confirmation is required</span>
+            <span>{{ 'auth.register.errors.confirmPasswordRequired' | translate }}</span>
           </div>
 
         }
@@ -78,7 +78,7 @@
         @if(form.value.password !== form.value.confirmPassword && form.controls.confirmPassword.touched) {
 
           <div class="error">
-            <span>Passwords do not match</span>
+            <span>{{ 'auth.register.errors.passwordMismatch' | translate }}</span>
           </div>
 
         }
@@ -90,14 +90,14 @@
         type="submit"
         [disabled]="form.invalid"
       >
-        Create account
+        {{ 'auth.register.submit' | translate }}
       </button>
 
     </form>
 
     <p class="auth-switch">
-      Already have an account?
-      <a routerLink="/login">Login</a>
+      {{ 'auth.register.switchPrompt' | translate }}
+      <a routerLink="/login">{{ 'auth.register.switchLink' | translate }}</a>
     </p>
 
   </div>

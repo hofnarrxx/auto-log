@@ -2,7 +2,7 @@ package com.hofnarrxx.autolog.dto;
 
 import java.util.List;
 
-public record PublicCarResponse(
+public record PublicVehicleAccessResponse(
         Long carId,
         String brand,
         String model,

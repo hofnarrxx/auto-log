@@ -9,6 +9,10 @@ export class AuthApi {
   isAuthenticated = signal<boolean>(false);
 
   constructor(private http: HttpClient) {
+    if (window.location.pathname.startsWith('/share/')) {
+      return;
+    }
+
     this.checkAuth().subscribe({
       next: () => this.isAuthenticated.set(true),
       error: () => this.isAuthenticated.set(false)

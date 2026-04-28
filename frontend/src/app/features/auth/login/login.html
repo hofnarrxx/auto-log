@@ -2,23 +2,23 @@
 
   <div class="auth-card">
 
-    <h1 class="logo">AutoLog</h1>
+    <h1 class="logo">{{ 'common.appName' | translate }}</h1>
 
     <form [formGroup]="form" (ngSubmit)="login()" class="auth-form">
 
       <div class="form-field">
-        <label>Email</label>
-        <input type="email" placeholder="Enter your email" formControlName="email">
+        <label>{{ 'auth.login.emailLabel' | translate }}</label>
+        <input type="email" [placeholder]="'auth.login.emailPlaceholder' | translate" formControlName="email">
         @if(form.controls.email.touched && form.controls.email.invalid) {
 
         <div class="error">
 
           @if(form.controls.email.errors?.['required']) {
-          <span>Email is required</span>
+          <span>{{ 'auth.login.errors.emailRequired' | translate }}</span>
           }
 
           @if(form.controls.email.errors?.['email']) {
-          <span>Enter a valid email address</span>
+          <span>{{ 'auth.login.errors.emailInvalid' | translate }}</span>
           }
 
         </div>
@@ -27,19 +27,19 @@
       </div>
 
       <div class="form-field">
-        <label>Password</label>
-        <input type="password" placeholder="Enter your password" formControlName="password">
+        <label>{{ 'auth.login.passwordLabel' | translate }}</label>
+        <input type="password" [placeholder]="'auth.login.passwordPlaceholder' | translate" formControlName="password">
 
         @if(form.controls.password.touched && form.controls.password.invalid) {
 
         <div class="error">
 
           @if(form.controls.password.errors?.['required']) {
-          <span>Password is required</span>
+          <span>{{ 'auth.login.errors.passwordRequired' | translate }}</span>
           }
 
           @if(form.controls.password.errors?.['minlength']) {
-          <span>Password must be at least 6 characters</span>
+          <span>{{ 'auth.login.errors.passwordMinLength' | translate }}</span>
           }
 
         </div>
@@ -48,18 +48,18 @@
       </div>
 
       <button class="auth-button" type="submit" [disabled]="form.invalid">
-        Log In
+        {{ 'auth.login.submit' | translate }}
       </button>
 
     </form>
 
     <button class="google-btn" (click)="googleLogin()">
-      Continue with Google
+      {{ 'auth.login.google' | translate }}
     </button>
 
     <p class="auth-switch">
-      Don't have an account?
-      <a routerLink="/register">Register</a>
+      {{ 'auth.login.switchPrompt' | translate }}
+      <a routerLink="/register">{{ 'auth.login.switchLink' | translate }}</a>
     </p>
 
   </div>

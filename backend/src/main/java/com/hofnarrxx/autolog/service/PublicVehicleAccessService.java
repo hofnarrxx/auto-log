@@ -2,7 +2,7 @@ package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.dto.FuelResponse;
 import com.hofnarrxx.autolog.dto.MaintenanceResponse;
-import com.hofnarrxx.autolog.dto.PublicCarResponse;
+import com.hofnarrxx.autolog.dto.PublicVehicleAccessResponse;
 import com.hofnarrxx.autolog.exception.ShareLinkNotFoundException;
 import com.hofnarrxx.autolog.model.Fuel;
 import com.hofnarrxx.autolog.model.Maintenance;
@@ -17,14 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class PublicCarService {
+public class PublicVehicleAccessService {
 
     private final ShareLinkService shareLinkService;
     private final VehicleRepository vehicleRepository;
     private final FuelRepository fuelRepository;
     private final MaintenanceRepository maintenanceRepository;
 
-    public PublicCarService(ShareLinkService shareLinkService,
+    public PublicVehicleAccessService(ShareLinkService shareLinkService,
                             VehicleRepository vehicleRepository,
                             FuelRepository fuelRepository,
                             MaintenanceRepository maintenanceRepository) {
@@ -35,7 +35,7 @@ public class PublicCarService {
     }
 
     @Transactional(readOnly = true)
-    public PublicCarResponse getByToken(String token) {
+    public PublicVehicleAccessResponse getByToken(String token) {
         ShareLink shareLink = shareLinkService.resolveActive(token)
                 .orElseThrow(ShareLinkNotFoundException::new);
 
@@ -53,7 +53,7 @@ public class PublicCarService {
                 .map(this::toMaintenanceResponse)
                 .toList();
 
-        return new PublicCarResponse(
+        return new PublicVehicleAccessResponse(
                 vehicle.getId(),
                 vehicle.getBrand(),
                 vehicle.getModel(),

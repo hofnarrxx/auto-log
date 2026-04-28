@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
 import { VehicleForm } from '../vehicle-form/vehicle-form';
 import { Modal } from '../../../shared/ui/modal/modal';
@@ -11,7 +12,7 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-vehicle-dashboard',
-  imports: [VehicleForm, Modal, VehicleDetailsTab, VehicleMaintenanceTab, VehicleFuelTab],
+  imports: [VehicleForm, Modal, VehicleDetailsTab, VehicleMaintenanceTab, VehicleFuelTab, TranslateModule],
   templateUrl: './vehicle-dashboard.html',
   styleUrl: './vehicle-dashboard.css',
 })
@@ -71,11 +72,11 @@ export class VehicleDashboard {
       finalize(() => this.isCreatingShareLink.set(false))
     ).subscribe({
       next: response => {
-        this.shareLink.set(`http://localhost:8080/api/public/cars/${response.token}`);
+        this.shareLink.set(`${window.location.origin}/share/${response.token}`);
         this.showShareModal.set(true);
       },
       error: () => {
-        this.shareError.set('Could not generate a share link. Please try again.');
+        this.shareError.set('vehicle.dashboard.share.errors.generate');
       }
     });
   }

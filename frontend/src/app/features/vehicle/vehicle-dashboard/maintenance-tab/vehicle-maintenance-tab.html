@@ -1,47 +1,47 @@
 <div class="maintenance-tab">
   <div class="tab-header">
     <div class="header-main">
-      <h3>Service Records</h3>
+      <h3>{{ 'vehicle.maintenanceTab.title' | translate }}</h3>
       <p class="header-summary">
-        {{ totalRecords() }} records | Total cost: {{ totalServiceCostByCurrency() || '-' }}
+        {{ totalRecords() }} {{ 'common.records' | translate }} | {{ 'common.totalCost' | translate }}: {{ totalServiceCostByCurrency() || '-' }}
       </p>
     </div>
     <div class="header-actions">
       <label class="search-control">
-        <span>Search</span>
+        <span>{{ 'common.search' | translate }}</span>
         <input
           type="text"
-          placeholder="Search by title"
+          [placeholder]="'vehicle.maintenanceTab.placeholders.search' | translate"
           [value]="titleSearch()"
           (input)="onTitleSearchChange($any($event.target).value)">
       </label>
 
       <label class="sort-control">
-        <span>Sort by</span>
+        <span>{{ 'common.sortBy' | translate }}</span>
         <select [value]="selectedSort()" (change)="onSortChange($any($event.target).value)">
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="price-low-high">Price: Low to High</option>
-          <option value="price-high-low">Price: High to Low</option>
+          <option value="newest">{{ 'common.sort.newest' | translate }}</option>
+          <option value="oldest">{{ 'common.sort.oldest' | translate }}</option>
+          <option value="price-low-high">{{ 'common.sort.priceLowHigh' | translate }}</option>
+          <option value="price-high-low">{{ 'common.sort.priceHighLow' | translate }}</option>
         </select>
       </label>
 
       <button type="button" class="filter-btn" (click)="openFilterModal()">
-        Filter
+        {{ 'common.filter' | translate }}
       </button>
       <button type="button" class="add-record-btn" (click)="openCreateModal()">
-        Add Service Record
+        {{ 'vehicle.maintenanceTab.addRecord' | translate }}
       </button>
     </div>
   </div>
 
   @if (isLoading()) {
-    <p class="status-message">Loading service records...</p>
+    <p class="status-message">{{ 'vehicle.maintenanceTab.loading' | translate }}</p>
   } @else if (error()) {
     <p class="status-message error">{{ error() }}</p>
   } @else if (!timelineEntries().length) {
     <p class="status-message">
-      {{ hasAnyRecords() ? 'No service records match current filters.' : 'No service records yet.' }}
+      {{ hasAnyRecords() ? ('vehicle.maintenanceTab.empty.filtered' | translate) : ('vehicle.maintenanceTab.empty.none' | translate) }}
     </p>
   } @else {
     <div class="timeline">
@@ -52,13 +52,13 @@
           (click)="openRecordDetails(entry)">
           <div class="entry-date">{{ formatDate(entry.serviceDate) }}</div>
 
-          <div class="entry-point" [attr.aria-label]="entry.category">
+          <div class="entry-point" [attr.aria-label]="categoryLabel(entry.category) | translate">
             <span aria-hidden="true">{{ iconForCategory(entry.category) }}</span>
           </div>
 
           <div class="entry-content">
             <p class="entry-title">
-              {{ entry.title || 'Untitled Service' }}
+              {{ entry.title || ('vehicle.maintenanceTab.untitled' | translate) }}
             </p>
             <span class="entry-cost">{{ formatMoney(entry.cost, entry.currency) }}</span>
           </div>
@@ -66,266 +66,262 @@
           @if (hasMileageWarning(entry)) {
             <span
               class="entry-warning-side"
-              title="Mileage is lower than an older record"
-              aria-label="Mileage anomaly">
-              ▲ Check Mileage
+              [attr.title]="'common.mileageWarning' | translate"
+              [attr.aria-label]="'common.mileageAnomaly' | translate">
+              ▲ {{ 'common.checkMileage' | translate }}
             </span>
-          }
-        </button>
-      }
-    </div>
-  }
-
-  @if (isFilterModalOpen()) {
-    <div class="service-modal-backdrop" (click)="closeFilterModal()"></div>
-
-    <div class="service-modal filter-modal" (click)="$event.stopPropagation()">
-      <h2>Filter Service Records</h2>
-
-      <section class="filter-section">
-        <h4>Categories</h4>
-
-        <label class="filter-option all-option">
-          <input
-            type="checkbox"
-            [checked]="allCategoriesChecked()"
-            (change)="toggleAllCategories($any($event.target).checked)">
-          <span>All categories</span>
-        </label>
-
-        <div class="category-options">
-          @for (category of availableFilterCategories(); track category) {
-            <label class="filter-option">
-              <input
-                type="checkbox"
-                [checked]="isCategorySelected(category)"
-                (change)="toggleCategory(category, $any($event.target).checked)">
-              <span>{{ category }}</span>
-            </label>
-          }
-        </div>
-      </section>
-
-      <section class="filter-section">
-        <h4>Cost Range</h4>
-
-        <div class="price-readout">
-          {{ minPriceLimit().toFixed(0) }} - {{ maxPriceLimit().toFixed(0) }}
-          @if (selectedCurrencyFilter() === allCurrenciesOption) {
-          } @else {
-            {{ selectedCurrencyFilter() }}
-          }
-        </div>
-
-        <div class="dual-range-slider-container">
-          <div class="dual-range-slider">
-            <input
-              type="range"
-              class="slider-min"
-              [min]="0"
-              [max]="maxAvailablePrice()"
-              [value]="minPriceLimit()"
-              [step]="1"
-              [disabled]="maxAvailablePrice() === 0"
-              (input)="onMinPriceLimitChange($any($event.target).value)">
-            <input
-              type="range"
-              class="slider-max"
-              [min]="0"
-              [max]="maxAvailablePrice()"
-              [value]="maxPriceLimit()"
-              [step]="1"
-              [disabled]="maxAvailablePrice() === 0"
-              (input)="onMaxPriceLimitChange($any($event.target).value)">
-            <div class="slider-track" [ngStyle]="sliderTrackStyle()"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="filter-section">
-        <h4>Currency</h4>
-
-        <label class="filter-currency-control">
-          <select (change)="onCurrencyFilterChange($any($event.target).value)">
-            <option
-              [value]="allCurrenciesOption"
-              [selected]="selectedCurrencyFilter() === allCurrenciesOption">
-              {{ allCurrenciesOption }}
-            </option>
-            @for (currency of availableFilterCurrencies(); track currency) {
-              <option [value]="currency" [selected]="selectedCurrencyFilter() === currency">
-                {{ currency }}
-              </option>
+                    }
+                  </button>
+                }
+              </div>
             }
-          </select>
-        </label>
-      </section>
 
-      <div class="modal-actions">
-        <button type="button" class="secondary-btn" (click)="resetFilters()">Reset</button>
-        <button type="button" class="primary-btn" (click)="closeFilterModal()">Done</button>
-      </div>
-    </div>
-  }
+            @if (isFilterModalOpen()) {
+              <div class="service-modal-backdrop" (click)="closeFilterModal()"></div>
 
-  @if (isModalOpen()) {
-    <div class="service-modal-backdrop" (click)="closeModal()"></div>
+              <div class="service-modal filter-modal" (click)="$event.stopPropagation()">
+                <h2>{{ 'vehicle.maintenanceTab.filter.title' | translate }}</h2>
 
-    <div class="service-modal" (click)="$event.stopPropagation()">
-      <div class="record-modal-content">
-      @if (isFormMode()) {
-        <h2>{{ modalTitle() }}</h2>
+                <section class="filter-section">
+                  <h4>{{ 'vehicle.maintenanceTab.filter.categories' | translate }}</h4>
 
-        <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
-          <label>
-            Title
-            <input type="text" formControlName="title" maxlength="50" placeholder="e.g. Annual inspection">
-          </label>
+                  <label class="filter-option all-option">
+                    <input
+                      type="checkbox"
+                      [checked]="allCategoriesChecked()"
+                      (change)="toggleAllCategories($any($event.target).checked)">
+                    <span>{{ 'vehicle.maintenanceTab.filter.allCategories' | translate }}</span>
+                  </label>
 
-          @if (form.controls.title.invalid && form.controls.title.touched) {
-            <p class="error-text">Title is required and can be up to 50 characters.</p>
-          }
+                  <div class="category-options">
+                    @for (category of availableFilterCategories(); track category) {
+                      <label class="filter-option">
+                        <input
+                          type="checkbox"
+                          [checked]="isCategorySelected(category)"
+                          (change)="toggleCategory(category, $any($event.target).checked)">
+                        <span>{{ categoryLabel(category) | translate }}</span>
+                      </label>
+                    }
+                  </div>
+                </section>
 
-          <label>
-            Service Date
-            <input type="date" formControlName="serviceDate">
-          </label>
+                <section class="filter-section">
+                  <h4>{{ 'common.priceRange' | translate }}</h4>
 
-          @if (form.controls.serviceDate.invalid && form.controls.serviceDate.touched) {
-            <p class="error-text">Service date is required.</p>
-          }
+                  <div class="price-readout">
+                    {{ minPriceLimit().toFixed(0) }} - {{ maxPriceLimit().toFixed(0) }}
+                    @if (selectedCurrencyFilter() === allCurrenciesOption) {
+                    } @else {
+                      {{ selectedCurrencyFilter() }}
+                    }
+                  </div>
 
-          <label>
-            Category
-            <select formControlName="category">
-              <option value="" disabled>Select category</option>
-              @for (category of categories(); track category) {
-                <option [value]="category">{{ category }}</option>
-              }
-            </select>
-          </label>
+                  <div class="dual-range-slider-container">
+                    <div class="dual-range-slider">
+                      <input
+                        type="range"
+                        class="slider-min"
+                        [min]="0"
+                        [max]="maxAvailablePrice()"
+                        [value]="minPriceLimit()"
+                        [step]="1"
+                        [disabled]="maxAvailablePrice() === 0"
+                        (input)="onMinPriceLimitChange($any($event.target).value)">
+                      <input
+                        type="range"
+                        class="slider-max"
+                        [min]="0"
+                        [max]="maxAvailablePrice()"
+                        [value]="maxPriceLimit()"
+                        [step]="1"
+                        [disabled]="maxAvailablePrice() === 0"
+                        (input)="onMaxPriceLimitChange($any($event.target).value)">
+                      <div class="slider-track" [ngStyle]="sliderTrackStyle()"></div>
+                    </div>
+                  </div>
+                </section>
 
-          @if (form.controls.category.invalid && form.controls.category.touched) {
-            <p class="error-text">Category is required.</p>
-          }
+                <section class="filter-section">
+                  <h4>{{ 'common.currency' | translate }}</h4>
 
-          <div class="cost-currency-row">
-            <div class="field-group">
-              <label>
-                Cost
-                <input type="number" formControlName="cost" min="0" step="0.01">
-              </label>
+                  <label class="filter-currency-control">
+                    <select (change)="onCurrencyFilterChange($any($event.target).value)">
+                      <option
+                        [value]="allCurrenciesOption"
+                        [selected]="selectedCurrencyFilter() === allCurrenciesOption">
+                        {{ 'common.all' | translate }}
+                      </option>
+                      @for (currency of availableFilterCurrencies(); track currency) {
+                        <option [value]="currency" [selected]="selectedCurrencyFilter() === currency">
+                          {{ currency }}
+                        </option>
+                      }
+                    </select>
+                  </label>
+                </section>
 
-              @if (form.controls.cost.invalid && form.controls.cost.touched) {
-                <p class="error-text">Cost is required.</p>
-              }
-            </div>
+                <div class="modal-actions">
+                  <button type="button" class="secondary-btn" (click)="resetFilters()">{{ 'common.reset' | translate }}</button>
+                  <button type="button" class="primary-btn" (click)="closeFilterModal()">{{ 'common.done' | translate }}</button>
+                </div>
+              </div>
+            }
 
-            <div class="field-group">
-              <label>
-                Currency
-                <select formControlName="currency">
-                  <option value="EUR">EUR</option>
-                  <option value="USD">USD</option>
-                  <option value="PLN">PLN</option>
-                </select>
-              </label>
+            @if (isModalOpen()) {
+              <div class="service-modal-backdrop" (click)="closeModal()"></div>
 
-              @if (form.controls.currency.invalid && form.controls.currency.touched) {
-                <p class="error-text">Currency is required.</p>
-              }
-            </div>
+              <div class="service-modal" (click)="$event.stopPropagation()">
+                <div class="record-modal-content">
+                @if (isFormMode()) {
+                  <h2>{{ modalTitle() | translate }}</h2>
+
+                  <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
+                    <label>
+                      {{ 'common.title' | translate }}
+                      <input type="text" formControlName="title" maxlength="50" [placeholder]="'vehicle.maintenanceTab.placeholders.title' | translate">
+                    </label>
+
+                    @if (form.controls.title.invalid && form.controls.title.touched) {
+                      <p class="error-text">{{ 'vehicle.maintenanceTab.errors.titleRequired' | translate }}</p>
+                    }
+
+                    <label>
+                      {{ 'common.date' | translate }}
+                      <input type="date" formControlName="serviceDate">
+                    </label>
+
+                    @if (form.controls.serviceDate.invalid && form.controls.serviceDate.touched) {
+                      <p class="error-text">{{ 'vehicle.maintenanceTab.errors.serviceDateRequired' | translate }}</p>
+                    }
+
+                    <label>
+                      {{ 'common.category' | translate }}
+                      <select formControlName="category">
+                        <option value="" disabled>{{ 'common.selectCategory' | translate }}</option>
+                        @for (category of categories(); track category) {
+                          <option [value]="category">{{ categoryLabel(category) | translate }}</option>
+                        }
+                      </select>
+                    </label>
+
+                    @if (form.controls.category.invalid && form.controls.category.touched) {
+                      <p class="error-text">{{ 'vehicle.maintenanceTab.errors.categoryRequired' | translate }}</p>
+                    }
+
+                    <div class="cost-currency-row">
+                      <div class="field-group">
+                        <label>
+                          {{ 'common.cost' | translate }}
+                          <input type="number" formControlName="cost" min="0" step="0.01">
+                        </label>
+
+                        @if (form.controls.cost.invalid && form.controls.cost.touched) {
+                          <p class="error-text">{{ 'vehicle.maintenanceTab.errors.costRequired' | translate }}</p>
+                        }
+                      </div>
+
+                      <div class="field-group">
+                        <label>
+                          {{ 'common.currency' | translate }}
+                          <select formControlName="currency">
+                            <option value="EUR">EUR</option>
+                            <option value="USD">USD</option>
+                            <option value="PLN">PLN</option>
+                          </select>
+                        </label>
+
+                        @if (form.controls.currency.invalid && form.controls.currency.touched) {
+                          <p class="error-text">{{ 'vehicle.maintenanceTab.errors.currencyRequired' | translate }}</p>
+                        }
+                      </div>
+                    </div>
+
+                    <label>
+                      {{ 'common.mileage' | translate }} (km)
+                      <input type="number" formControlName="mileage" min="0" step="1">
+                    </label>
+
+                    @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+                      <p class="error-text">{{ 'vehicle.maintenanceTab.errors.mileageRequired' | translate }}</p>
+                    }
+
+                    <label>
+                      {{ 'common.description' | translate }}
+                      <textarea formControlName="description" rows="4"></textarea>
+                    </label>
+
+                    @if (form.controls.description.invalid && form.controls.description.touched) {
+                      <p class="error-text">{{ 'vehicle.maintenanceTab.errors.descriptionMaxLength' | translate }}</p>
+                    }
+
+                    @if (actionError()) {
+                      <p class="error-text">{{ actionError() }}</p>
+                    }
+
+                    <div class="modal-actions">
+                      <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
+                      <button type="submit" class="primary-btn" [disabled]="isSaving()">
+                        {{ isSaving() ? ('common.saving' | translate) : ('common.save' | translate) }}
+                      </button>
+                    </div>
+                  </form>
+                } @else if (selectedRecord(); as record) {
+                  <h2>{{ 'vehicle.maintenanceTab.detailsTitle' | translate }}</h2>
+
+                  <div class="record-details">
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.title' | translate }}</span>
+                      <span>{{ record.title || '-' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.date' | translate }}</span>
+                      <span>{{ formatDate(record.serviceDate) }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.category' | translate }}</span>
+                      <span>{{ categoryLabel(record.category) | translate }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.mileage' | translate }}</span>
+                      <span>
+                        {{ record.mileage ?? '-' }}
+                        @if (hasMileageWarning(record)) {
+                          <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate">▲</span>
+                        }
+                      </span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.cost' | translate }}</span>
+                      <span>{{ formatMoney(record.cost, record.currency) }}</span>
+                    </div>
+                    <div class="detail-row description">
+                      <span class="label">{{ 'common.description' | translate }}</span>
+                      <p>{{ record.description }}</p>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.created' | translate }}</span>
+                      <span>{{ formatDateTime(record.createdAt) }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">{{ 'common.updated' | translate }}</span>
+                      <span>{{ formatDateTime(record.updatedAt) }}</span>
+                    </div>
+                  </div>
+
+                  @if (actionError()) {
+                    <p class="error-text">{{ actionError() }}</p>
+                  }
+
+                  <div class="modal-actions">
+                    <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.close' | translate }}</button>
+                    <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">{{ 'common.edit' | translate }}</button>
+                    <button type="button" class="danger-btn" (click)="deleteSelectedRecord()" [disabled]="isDeleting()">
+                      {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
+                    </button>
+                  </div>
+                }
+                </div>
+              </div>
+            }
           </div>
-
-          <label>
-            Mileage (km)
-            <input type="number" formControlName="mileage" min="0" step="1">
-          </label>
-
-          @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-            <p class="error-text">Mileage is required.</p>
-          }
-
-          <label>
-            Description
-            <textarea formControlName="description" rows="4"></textarea>
-          </label>
-
-          @if (form.controls.description.invalid && form.controls.description.touched) {
-            <p class="error-text">Description can be up to 200 characters.</p>
-          }
-
-          @if (actionError()) {
-            <p class="error-text">{{ actionError() }}</p>
-          }
-
-          <div class="modal-actions">
-            <button type="button" class="secondary-btn" (click)="closeModal()">Cancel</button>
-            <button type="submit" class="primary-btn" [disabled]="isSaving()">
-              {{ isSaving() ? 'Saving...' : 'Save' }}
-            </button>
-          </div>
-        </form>
-      } @else if (selectedRecord(); as record) {
-        <h2>Service Record</h2>
-
-        <div class="record-details">
-          <div class="detail-row">
-            <span class="label">Title</span>
-            <span>{{ record.title || '-' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Service Date</span>
-            <span>{{ formatDate(record.serviceDate) }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Category</span>
-            <span>{{ record.category }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Mileage</span>
-            <span>
-              {{ record.mileage ?? '-' }}
-              @if (hasMileageWarning(record)) {
-                <span class="detail-warning" title="Mileage is lower than an older record">▲</span>
-              }
-            </span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Cost</span>
-            <span>{{ formatMoney(record.cost, record.currency) }}</span>
-          </div>
-          <div class="detail-row description">
-            <span class="label">Description</span>
-            <p>{{ record.description }}</p>
-          </div>
-          <div class="detail-row">
-            <span class="label">Created</span>
-            <span>{{ formatDateTime(record.createdAt) }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Updated</span>
-            <span>{{ formatDateTime(record.updatedAt) }}</span>
-          </div>
-        </div>
-
-        @if (actionError()) {
-          <p class="error-text">{{ actionError() }}</p>
-        }
-
-        <div class="modal-actions">
-          <button type="button" class="secondary-btn" (click)="closeModal()">Close</button>
-          <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">Edit</button>
-          <button
-            type="button"
-            class="danger-btn"
-            (click)="deleteSelectedRecord()"
-            [disabled]="isDeleting()">
-            {{ isDeleting() ? 'Deleting...' : 'Delete' }}
-          </button>
-        </div>
-      }
-      </div>
-    </div>
-  }
-</div>

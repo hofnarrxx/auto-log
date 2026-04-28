@@ -34,27 +34,27 @@
   @if (showShareModal()) {
     <app-modal (closed)="closeShareModal()">
       <div class="share-modal-content">
-        <h3>Share Link</h3>
-        <p>Anybody with this link can view this vehicle data.</p>
+        <h3>{{ 'vehicle.dashboard.share.title' | translate }}</h3>
+        <p>{{ 'vehicle.dashboard.share.description' | translate }}</p>
 
         <div class="share-link-row">
-          <input type="text" [value]="shareLink()" readonly aria-label="Generated share link" />
-          <button type="button" class="copy-btn" (click)="copyShareLink()">Copy</button>
+          <input type="text" [value]="shareLink()" readonly [attr.aria-label]="'vehicle.dashboard.share.generatedLink' | translate" />
+          <button type="button" class="copy-btn" (click)="copyShareLink()">{{ 'vehicle.dashboard.share.copy' | translate }}</button>
         </div>
 
         @if (copySuccess()) {
-          <p class="copy-success">Link copied to clipboard.</p>
+          <p class="copy-success">{{ 'vehicle.dashboard.share.copySuccess' | translate }}</p>
         }
 
         <div class="share-modal-actions">
-          <button type="button" class="close-btn" (click)="closeShareModal()">Close</button>
+          <button type="button" class="close-btn" (click)="closeShareModal()">{{ 'common.close' | translate }}</button>
         </div>
       </div>
     </app-modal>
   }
 
   @if (isCreatingShareLink()) {
-    <p class="share-status">Generating share link...</p>
+    <p class="share-status">{{ 'vehicle.dashboard.share.generating' | translate }}</p>
   }
 
   @if (shareError()) {
@@ -62,5 +62,5 @@
   }
 
 } @else {
-  <p>Vehicle not found.</p>
+  <p>{{ 'common.vehicleNotFound' | translate }}</p>
 }

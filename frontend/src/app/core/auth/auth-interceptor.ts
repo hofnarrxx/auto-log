@@ -12,7 +12,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError(err => {
-      if (err.status === 401) {
+      const isShareRequest = req.url.includes('/share/');
+      const isOnSharePage =
+        router.url.startsWith('/share/') || window.location.pathname.startsWith('/share/');
+
+      if (err.status === 401 && !isShareRequest && !isOnSharePage) {
         router.navigate(['/login']);
       }
       return throwError(() => err);

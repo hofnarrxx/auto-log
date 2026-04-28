@@ -1,11 +1,12 @@
 import { Component, inject, HostListener, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthApi } from '../../auth/auth-api';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-app-layout',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, TranslateModule],
   templateUrl: './app-layout.html',
   styleUrl: './app-layout.css',
 })

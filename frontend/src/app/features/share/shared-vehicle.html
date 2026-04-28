@@ -1,0 +1,84 @@
+<div class="shared-page">
+  <div class="shared-card">
+    <p class="eyebrow">{{ 'sharedVehicle.title' | translate }}</p>
+
+    @if (isLoading()) {
+      <p class="status">{{ 'sharedVehicle.loading' | translate }}</p>
+    } @else if (error()) {
+      <p class="status error">{{ error() }}</p>
+    } @else if (data()) {
+      <header class="vehicle-header">
+        <h1>{{ data()!.brand }} {{ data()!.model }}</h1>
+        <p>{{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} • {{ data()!.mileage ?? '-' }} km</p>
+      </header>
+
+      <div class="shared-tabs" role="tablist" [attr.aria-label]="'sharedVehicle.tabs.ariaLabel' | translate">
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'details'"
+          [class.active]="activeTab() === 'details'"
+          (click)="setTab('details')">
+          {{ 'sharedVehicle.tabs.details' | translate }}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'maintenance'"
+          [class.active]="activeTab() === 'maintenance'"
+          (click)="setTab('maintenance')">
+          {{ 'sharedVehicle.tabs.maintenance' | translate }}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'fuel'"
+          [class.active]="activeTab() === 'fuel'"
+          (click)="setTab('fuel')">
+          {{ 'sharedVehicle.tabs.fuel' | translate }}
+        </button>
+      </div>
+
+      @if (activeTab() === 'details') {
+        <section class="section details-section" role="tabpanel">
+          <div class="info-item">
+            <label>{{ 'common.brand' | translate }}:</label>
+            <span>{{ data()!.brand }}</span>
+          </div>
+          <div class="info-item">
+            <label>{{ 'common.model' | translate }}:</label>
+            <span>{{ data()!.model }}</span>
+          </div>
+          <div class="info-item">
+            <label>{{ 'common.year' | translate }}:</label>
+            <span>{{ data()!.year || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <label>{{ 'common.mileage' | translate }}:</label>
+            <span>{{ data()!.mileage ?? '-' }} km</span>
+          </div>
+          <div class="info-item">
+            <label>{{ 'common.fuelType' | translate }}:</label>
+            <span>{{ fuelTypeLabel(data()!.fuelType) }}</span>
+          </div>
+        </section>
+      }
+
+      @if (activeTab() === 'maintenance') {
+        <section class="section" role="tabpanel">
+          <app-shared-vehicle-maintenance-tab
+            [records]="data()!.maintenanceEntries">
+          </app-shared-vehicle-maintenance-tab>
+        </section>
+      }
+
+      @if (activeTab() === 'fuel') {
+        <section class="section" role="tabpanel">
+          <app-shared-vehicle-fuel-tab
+            [records]="data()!.fuelEntries">
+          </app-shared-vehicle-fuel-tab>
+        </section>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,290 @@
+{
+	"common": {
+		"appName": "AutoLog",
+		"all": "Wszystkie",
+		"amount": "Ilość",
+		"brand": "Marka",
+		"cancel": "Anuluj",
+		"category": "Kategoria",
+		"checkMileage": "Sprawdź przebieg",
+		"close": "Zamknij",
+		"cost": "Koszt",
+		"created": "Utworzono",
+		"currency": "Waluta",
+		"date": "Data",
+		"delete": "Usuń",
+		"deleting": "Usuwanie...",
+		"description": "Opis",
+		"done": "Gotowe",
+		"edit": "Edytuj",
+		"filter": "Filtruj",
+		"fuel": "Paliwo",
+		"fuelType": "Rodzaj paliwa",
+		"gasStation": "Stacja paliw",
+		"loading": "Ładowanie...",
+		"mileage": "Przebieg",
+		"mileageAnomaly": "Nieprawidłowy przebieg",
+		"mileageWarning": "Przebieg jest niższy niż w starszym wpisie",
+		"model": "Model",
+		"optional": "opcjonalnie",
+		"price": "Cena",
+		"pricePerLitre": "Cena za litr",
+		"priceRange": "Zakres cen",
+		"records": "wpisy",
+		"reset": "Resetuj",
+		"save": "Zapisz",
+		"saving": "Zapisywanie...",
+		"search": "Szukaj",
+		"selectCategory": "Wybierz kategorię",
+		"selectCurrency": "Wybierz walutę",
+		"sortBy": "Sortuj według",
+		"station": "Stacja",
+		"title": "Tytuł",
+		"totalCost": "Łączny koszt",
+		"update": "Aktualizuj",
+		"updated": "Zaktualizowano",
+		"updating": "Aktualizowanie...",
+		"vehicleNotFound": "Nie znaleziono pojazdu.",
+		"year": "Rok",
+		"sort": {
+			"newest": "Najnowsze",
+			"oldest": "Najstarsze",
+			"priceLowHigh": "Cena: od najniższej do najwyższej",
+			"priceHighLow": "Cena: od najwyższej do najniższej",
+			"pricePerUnitLowHigh": "Cena za litr: od najniższej do najwyższej",
+			"pricePerUnitHighLow": "Cena za litr: od najwyższej do najniższej"
+		}
+	},
+	"nav": {
+		"details": "Szczegóły",
+		"fuel": "Paliwo",
+		"logout": "Wyloguj",
+		"maintenance": "Serwis",
+		"myCars": "Moje samochody",
+		"profile": "Profil",
+		"settings": "Ustawienia"
+	},
+	"dashboard": {
+		"addVehicle": "Dodaj pojazd",
+		"noImage": "Brak zdjęcia"
+	},
+	"settings": {
+		"title": "Ustawienia",
+		"selectCurrency": "Wybierz walutę",
+		"selectLanguage": "Wybierz język",
+		"languages": {
+			"en": "Angielski",
+			"pl": "Polski"
+		}
+	},
+	"auth": {
+		"login": {
+			"title": "Logowanie",
+			"emailLabel": "E-mail",
+			"emailPlaceholder": "Wpisz e-mail",
+			"passwordLabel": "Hasło",
+			"passwordPlaceholder": "Wpisz hasło",
+			"submit": "Zaloguj się",
+			"google": "Kontynuuj z Google",
+			"switchPrompt": "Nie masz konta?",
+			"switchLink": "Zarejestruj się",
+			"errors": {
+				"emailRequired": "E-mail jest wymagany.",
+				"emailInvalid": "Wpisz prawidłowy adres e-mail.",
+				"passwordRequired": "Hasło jest wymagane.",
+				"passwordMinLength": "Hasło musi mieć co najmniej 6 znaków.",
+				"invalidCredentials": "Nieprawidłowe dane logowania."
+			}
+		},
+		"register": {
+			"title": "Utwórz konto",
+			"emailLabel": "E-mail",
+			"emailPlaceholder": "Wpisz e-mail",
+			"passwordLabel": "Hasło",
+			"passwordPlaceholder": "Utwórz hasło",
+			"confirmPasswordLabel": "Potwierdź hasło",
+			"confirmPasswordPlaceholder": "Powtórz hasło",
+			"submit": "Zarejestruj się",
+			"switchPrompt": "Masz już konto?",
+			"switchLink": "Zaloguj się",
+			"errors": {
+				"emailRequired": "E-mail jest wymagany.",
+				"emailInvalid": "Wpisz prawidłowy adres e-mail.",
+				"passwordRequired": "Hasło jest wymagane.",
+				"passwordMinLength": "Hasło musi mieć co najmniej 6 znaków.",
+				"confirmPasswordRequired": "Potwierdź swoje hasło.",
+				"passwordMismatch": "Hasła nie są zgodne.",
+				"emailExists": "Ten adres e-mail jest już zarejestrowany.",
+				"registrationFailed": "Rejestracja nie powiodła się."
+			}
+		}
+	},
+	"vehicle": {
+		"details": {
+			"title": "Szczegóły pojazdu",
+			"shareVehicle": "Udostępnij pojazd",
+			"editVehicle": "Edytuj pojazd",
+			"deleteVehicle": "Usuń pojazd"
+		},
+		"dashboard": {
+			"share": {
+				"title": "Link do udostępniania",
+				"description": "Wygeneruj publiczny link do udostępnienia tego pojazdu.",
+				"generatedLink": "Link do udostępnionego pojazdu",
+				"copy": "Kopiuj link",
+				"copySuccess": "Link został skopiowany.",
+				"generating": "Generowanie linku...",
+				"errors": {
+					"generate": "Nie udało się wygenerować linku do udostępniania."
+				}
+			}
+		},
+		"form": {
+			"title": {
+				"add": "Dodaj pojazd",
+				"edit": "Edytuj pojazd"
+			},
+			"placeholders": {
+				"brand": "Marka",
+				"model": "Model",
+				"year": "Rok",
+				"mileage": "Przebieg",
+				"selectFuelType": "Wybierz rodzaj paliwa"
+			},
+			"errors": {
+				"brandRequired": "Marka jest wymagana.",
+				"modelRequired": "Model jest wymagany.",
+				"fuelTypeRequired": "Rodzaj paliwa jest wymagany.",
+				"yearInteger": "Rok musi być liczbą całkowitą.",
+				"yearRange": "Rok musi mieścić się w zakresie od 1886 do {{ currentYear }}.",
+				"mileageNonNegative": "Przebieg nie może być ujemny."
+			},
+			"fuelTypes": {
+				"petrol": "Benzyna",
+				"diesel": "Diesel",
+				"hybrid": "Hybryda",
+				"electric": "Elektryczny",
+				"lpg": "LPG",
+				"cng": "CNG"
+			}
+		},
+		"fuelTab": {
+			"title": "Wpisy tankowania",
+			"placeholders": {
+				"search": "Szukaj po stacji",
+				"gasStation": "Stacja paliw"
+			},
+			"addRecord": "Dodaj wpis tankowania",
+			"loading": "Ładowanie wpisów tankowania...",
+			"empty": {
+				"filtered": "Brak wpisów tankowania pasujących do bieżących filtrów.",
+				"none": "Brak wpisów tankowania."
+			},
+			"modalTitle": {
+				"add": "Dodaj wpis tankowania",
+				"edit": "Edytuj wpis tankowania",
+				"details": "Szczegóły wpisu tankowania"
+			},
+			"errors": {
+				"dateRequired": "Data jest wymagana.",
+				"amountPositive": "Ilość paliwa musi być większa od 0.",
+				"costRequired": "Koszt jest wymagany.",
+				"currencyRequired": "Waluta jest wymagana.",
+				"mileageRequired": "Przebieg jest wymagany.",
+				"gasStationMaxLength": "Nazwa stacji paliw nie może przekraczać 50 znaków.",
+				"invalidData": "Przed zapisaniem wprowadź poprawne dane.",
+				"saveFailed": "Nie można zapisać wpisu tankowania.",
+				"deleteFailed": "Nie można usunąć wpisu tankowania.",
+				"loadFailed": "Nie udało się wczytać wpisów tankowania."
+			}
+		},
+		"maintenanceTab": {
+			"title": "Wpisy serwisowe",
+			"untitled": "Bez tytułu",
+			"placeholders": {
+				"search": "Szukaj po tytule",
+				"title": "Tytuł wpisu serwisowego"
+			},
+			"addRecord": "Dodaj wpis serwisowy",
+			"loading": "Ładowanie wpisów serwisowych...",
+			"empty": {
+				"filtered": "Brak wpisów serwisowych pasujących do bieżących filtrów.",
+				"none": "Brak wpisów serwisowych."
+			},
+			"detailsTitle": "Szczegóły wpisu serwisowego",
+			"modalTitle": {
+				"add": "Dodaj wpis serwisowy",
+				"edit": "Edytuj wpis serwisowy"
+			},
+			"filter": {
+				"title": "Filtruj wpisy",
+				"categories": "Kategorie",
+				"allCategories": "Wszystkie kategorie"
+			},
+			"errors": {
+				"titleRequired": "Tytuł jest wymagany.",
+				"serviceDateRequired": "Data serwisu jest wymagana.",
+				"categoryRequired": "Kategoria jest wymagana.",
+				"costRequired": "Koszt jest wymagany.",
+				"currencyRequired": "Waluta jest wymagana.",
+				"mileageRequired": "Przebieg jest wymagany.",
+				"descriptionMaxLength": "Opis nie może przekraczać 200 znaków.",
+				"invalidData": "Przed zapisaniem wprowadź poprawne dane.",
+				"saveFailed": "Nie można zapisać wpisu serwisowego.",
+				"deleteFailed": "Nie można usunąć wpisu serwisowego.",
+				"loadFailed": "Nie można teraz wczytać wpisów serwisowych."
+			},
+			"categories": {
+				"inspection": "Przegląd",
+				"oilChange": "Wymiana oleju",
+				"repair": "Naprawa",
+				"partReplacement": "Wymiana części",
+				"fluidRefill": "Uzupełnienie płynów",
+				"tiresAndWheels": "Opony i koła",
+				"cosmetic": "Prace kosmetyczne"
+			}
+		}
+	},
+	"sharedVehicle": {
+		"title": "Udostępniony pojazd",
+		"loading": "Ładowanie udostępnionego pojazdu...",
+		"tabs": {
+			"ariaLabel": "Sekcje udostępnionego pojazdu",
+			"details": "Szczegóły",
+			"maintenance": "Serwis",
+			"fuel": "Paliwo"
+		},
+		"errors": {
+			"invalidLink": "Nieprawidłowy link udostępniania.",
+			"expiredOrInvalid": "Ten link udostępniania wygasł lub jest nieprawidłowy."
+		},
+		"fuelTab": {
+			"title": "Wpisy tankowania",
+			"placeholders": {
+				"search": "Szukaj po stacji"
+			},
+			"empty": {
+				"filtered": "Brak wpisów tankowania pasujących do bieżących filtrów.",
+				"none": "Brak wpisów tankowania."
+			},
+			"detailsTitle": "Szczegóły wpisu tankowania"
+		},
+		"maintenanceTab": {
+			"title": "Wpisy serwisowe",
+			"placeholders": {
+				"search": "Szukaj po tytule"
+			},
+			"empty": {
+				"filtered": "Brak wpisów serwisowych pasujących do bieżących filtrów.",
+				"none": "Brak wpisów serwisowych."
+			},
+			"detailsTitle": "Szczegóły wpisu serwisowego",
+			"untitled": "Bez tytułu",
+			"filter": {
+				"title": "Filtruj wpisy",
+				"categories": "Kategorie",
+				"allCategories": "Wszystkie kategorie"
+			}
+		}
+	}
+}

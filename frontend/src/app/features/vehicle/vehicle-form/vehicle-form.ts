@@ -1,11 +1,12 @@
 import { Component, inject, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
 import { Vehicle as VehicleModel } from '../vehicle-model';
 
 @Component({
   selector: 'app-vehicle-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './vehicle-form.html',
   styleUrl: './vehicle-form.css',
 })
@@ -17,6 +18,25 @@ export class VehicleForm {
 
   readonly currentYear = new Date().getFullYear();
   readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'LPG', 'CNG'];
+
+  protected fuelTypeLabel(fuelType: string): string {
+    switch (fuelType.trim().toLowerCase()) {
+      case 'petrol':
+        return 'vehicle.form.fuelTypes.petrol';
+      case 'diesel':
+        return 'vehicle.form.fuelTypes.diesel';
+      case 'hybrid':
+        return 'vehicle.form.fuelTypes.hybrid';
+      case 'electric':
+        return 'vehicle.form.fuelTypes.electric';
+      case 'lpg':
+        return 'vehicle.form.fuelTypes.lpg';
+      case 'cng':
+        return 'vehicle.form.fuelTypes.cng';
+      default:
+        return fuelType;
+    }
+  }
 
   private integerValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;

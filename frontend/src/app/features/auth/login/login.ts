@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthApi } from '../../../core/auth/auth-api';
 
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslateModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -14,6 +15,7 @@ export class Login {
   private authApi = inject(AuthApi);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -27,7 +29,7 @@ export class Login {
 
     this.authApi.login(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => alert('Invalid credentials')
+      error: () => alert(this.translate.instant('auth.login.errors.invalidCredentials'))
     });
   }
 

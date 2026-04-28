@@ -1,12 +1,24 @@
 <div class="settings-container">
-  <h1>Settings</h1>
-  
+  <h1>{{ 'settings.title' | translate }}</h1>
+
   <div class="settings-section">
-    <label for="currency-select">Select currency:</label>
-    <select 
-      id="currency-select" 
-      [(ngModel)]="selectedCurrency" 
-      (change)="onCurrencyChange(selectedCurrency())">
+    <label for="language-select">{{ 'settings.selectLanguage' | translate }}</label>
+    <select
+      id="language-select"
+      [ngModel]="selectedLanguage"
+      (ngModelChange)="onLanguageChange($event)">
+      @for (language of languages; track language.code) {
+        <option [value]="language.code">{{ language.labelKey | translate }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="settings-section">
+    <label for="currency-select">{{ 'common.selectCurrency' | translate }}</label>
+    <select
+      id="currency-select"
+      [ngModel]="selectedCurrency()"
+      (ngModelChange)="onCurrencyChange($event)">
       @for (currency of currencies; track currency) {
         <option [value]="currency">{{ currency }}</option>
       }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 
 interface FuelRecord {
@@ -28,7 +29,7 @@ type SortOption =
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './vehicle-fuel-tab.html',
   styleUrl: './vehicle-fuel-tab.css',
 })
@@ -170,6 +171,26 @@ export class VehicleFuelTab {
     this.selectedSort.set(rawValue);
   }
 
+  protected modalTitle(): string {
+    if (this.isEditMode()) {
+      return 'vehicle.fuelTab.modalTitle.edit';
+    }
+
+    if (this.isCreateMode()) {
+      return 'vehicle.fuelTab.modalTitle.add';
+    }
+
+    return 'vehicle.fuelTab.modalTitle.details';
+  }
+
+  protected saveButtonLabel(): string {
+    if (this.isSaving()) {
+      return this.isEditMode() ? 'common.updating' : 'common.saving';
+    }
+
+    return this.isEditMode() ? 'common.update' : 'common.save';
+  }
+
   protected openCreateModal() {
     this.isCreateMode.set(true);
     this.isEditMode.set(false);
@@ -221,26 +242,6 @@ export class VehicleFuelTab {
     this.actionError.set(null);
   }
 
-  protected modalTitle(): string {
-    if (this.isEditMode()) {
-      return 'Edit Fuel Record';
-    }
-
-    if (this.isCreateMode()) {
-      return 'Add Fuel Record';
-    }
-
-    return 'Fuel Record Details';
-  }
-
-  protected saveButtonLabel(): string {
-    if (this.isSaving()) {
-      return this.isEditMode() ? 'Updating...' : 'Saving...';
-    }
-
-    return this.isEditMode() ? 'Update' : 'Save';
-  }
-
   protected formatDateTime(isoString: string | null | undefined): string {
     if (!isoString) {
       return '-';
@@ -268,7 +269,7 @@ export class VehicleFuelTab {
 
     const payload = this.buildPayload();
     if (!payload) {
-      this.actionError.set('Please enter valid data before saving.');
+      this.actionError.set('vehicle.fuelTab.errors.invalidData');
       return;
     }
 
@@ -289,7 +290,7 @@ export class VehicleFuelTab {
         this.loadFuelRecords();
       },
       error: () => {
-        this.actionError.set('Unable to save fuel record. Please try again.');
+        this.actionError.set('vehicle.fuelTab.errors.saveFailed');
       },
     });
   }
@@ -312,7 +313,7 @@ export class VehicleFuelTab {
           this.loadFuelRecords();
         },
         error: () => {
-          this.actionError.set('Unable to delete fuel record. Please try again.');
+          this.actionError.set('vehicle.fuelTab.errors.deleteFailed');
         },
       });
   }
@@ -338,7 +339,7 @@ export class VehicleFuelTab {
           this.fuelRecords.set(sorted);
         },
         error: () => {
-          this.error.set('Failed to load fuel records.');
+          this.error.set('vehicle.fuelTab.errors.loadFailed');
           this.fuelRecords.set([]);
         },
       });

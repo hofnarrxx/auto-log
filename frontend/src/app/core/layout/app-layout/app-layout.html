@@ -1,5 +1,5 @@
 <nav class="navbar">
-  <div class="logo">AutoLog</div>
+  <div class="logo">{{ 'common.appName' | translate }}</div>
 
   @if (isVehicleDashboardPage() && currentVehicleId()) {
   <div class="vehicle-navbar-tabs">
@@ -7,30 +7,30 @@
       [routerLink]="['/vehicles', currentVehicleId()]"
       [queryParams]="{ tab: 'details' }"
       [class.active]="isVehicleTabActive('details')">
-      Details
+      {{ 'nav.details' | translate }}
     </a>
     <a
       [routerLink]="['/vehicles', currentVehicleId()]"
       [queryParams]="{ tab: 'maintenance' }"
       [class.active]="isVehicleTabActive('maintenance')">
-      Maintenance
+      {{ 'nav.maintenance' | translate }}
     </a>
     <a
       [routerLink]="['/vehicles', currentVehicleId()]"
       [queryParams]="{ tab: 'fuel' }"
       [class.active]="isVehicleTabActive('fuel')">
-      Fuel
+      {{ 'nav.fuel' | translate }}
     </a>
   </div>
   }
 
   <div class="profile" (click)="toggleMenu($event)">
-    <button type="button" class="profile-btn" [attr.aria-expanded]="menuOpen()"> Profile </button>
+    <button type="button" class="profile-btn" [attr.aria-expanded]="menuOpen()"> {{ 'nav.profile' | translate }} </button>
     @if (menuOpen()) {
     <div class="dropdown">
-      <a routerLink="/dashboard" (click)="closeMenu()">My Cars</a>
-      <a routerLink="/settings" (click)="closeMenu()">Settings</a>
-      <button type="button" class="dropdown-logout" (click)="logout()">Log Out</button>
+      <a routerLink="/dashboard" (click)="closeMenu()">{{ 'nav.myCars' | translate }}</a>
+      <a routerLink="/settings" (click)="closeMenu()">{{ 'nav.settings' | translate }}</a>
+      <button type="button" class="dropdown-logout" (click)="logout()">{{ 'nav.logout' | translate }}</button>
     </div>
     }
   </div>

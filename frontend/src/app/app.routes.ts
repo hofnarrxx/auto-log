@@ -7,6 +7,13 @@ import { AppLayout } from './core/layout/app-layout/app-layout';
 
 export const routes: Routes = [
     {
+        path: 'share/:token',
+        loadComponent: () =>
+            import('./features/share/shared-vehicle')
+                .then(m => m.SharedVehicle)
+    },
+
+    {
         path: 'login',
         loadComponent: () =>
             import('./features/auth/login/login')
