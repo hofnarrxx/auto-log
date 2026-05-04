@@ -8,6 +8,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const authApi = inject(AuthApi);
 
+  const isApiRequest = req.url.startsWith('http://localhost:8080');
+
+  if (!isApiRequest) {
+    return next(req);
+  }
+
   const authReq = req.clone({
     withCredentials: true
   });

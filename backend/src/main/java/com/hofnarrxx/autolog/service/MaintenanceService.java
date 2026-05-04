@@ -1,5 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
+import com.hofnarrxx.autolog.dto.MaintenanceAttachmentResponse;
 import com.hofnarrxx.autolog.dto.MaintenanceRequest;
 import com.hofnarrxx.autolog.dto.MaintenanceResponse;
 import com.hofnarrxx.autolog.exception.InvalidCurrencyException;
@@ -34,7 +35,7 @@ public class MaintenanceService {
         Long userId = authService.getCurrentUser().getId();
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
 
-        return maintenanceRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId)
+        return maintenanceRepository.findWithAttachmentsByVehicleIdAndVehicleUserId(vehicleId, userId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -86,7 +87,7 @@ public class MaintenanceService {
 
     private Maintenance findOwnedMaintenance(Long vehicleId, Long maintenanceId, Long userId) {
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
-        return maintenanceRepository.findByIdAndVehicleIdAndVehicleUserId(maintenanceId, vehicleId, userId)
+        return maintenanceRepository.findWithAttachmentsByIdAndVehicleIdAndVehicleUserId(maintenanceId, vehicleId, userId)
                 .orElseThrow(MaintenanceNotFoundException::new);
     }
 
@@ -118,6 +119,18 @@ public class MaintenanceService {
     }
 
     private MaintenanceResponse toResponse(Maintenance maintenance) {
+        List<MaintenanceAttachmentResponse> attachments = maintenance.getAttachments()
+            .stream()
+            .map(attachment -> new MaintenanceAttachmentResponse(
+                attachment.getId(),
+                attachment.getFileName(),
+                attachment.getContentType(),
+                attachment.getSizeBytes(),
+                attachment.getUrl(),
+                attachment.getCreatedAt()
+            ))
+            .toList();
+
         return new MaintenanceResponse(
                 maintenance.getId(),
                 maintenance.getVehicle().getId(),
@@ -128,6 +141,7 @@ public class MaintenanceService {
                 maintenance.getDescription(),
                 maintenance.getCost(),
                 maintenance.getCurrency() == null ? null : maintenance.getCurrency().getDisplayName(),
+            attachments,
                 maintenance.getCreatedAt(),
                 maintenance.getUpdatedAt()
         );

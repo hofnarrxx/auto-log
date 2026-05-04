@@ -1,10 +1,19 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
+import { catchError, concatMap, finalize, from, map, of, switchMap, toArray, throwError } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../shared/services/currency.service';
+
+interface MaintenanceAttachment {
+  id: number;
+  fileName: string;
+  contentType: string | null;
+  sizeBytes: number | null;
+  url: string | null;
+  createdAt: string;
+}
 
 interface ServiceRecord {
   id: number;
@@ -16,8 +25,18 @@ interface ServiceRecord {
   description: string;
   cost: number | null;
   currency?: string;
+  attachments?: MaintenanceAttachment[];
   createdAt: string;
   updatedAt: string;
+}
+
+interface UploadUrlResponse {
+  uploadUrl: string;
+  objectKey: string;
+}
+
+interface DownloadUrlResponse {
+  downloadUrl: string;
 }
 
 type ModalMode = 'closed' | 'create' | 'view' | 'edit';
@@ -64,6 +83,7 @@ export class VehicleMaintenanceTab {
   protected readonly isFilterModalOpen = signal(false);
   protected readonly modalMode = signal<ModalMode>('closed');
   protected readonly selectedRecord = signal<ServiceRecord | null>(null);
+  protected readonly pendingAttachments = signal<File[]>([]);
   protected readonly selectedCategories = signal<string[]>([]);
   protected readonly minPriceLimit = signal(0);
   protected readonly maxPriceLimit = signal(0);
@@ -193,6 +213,7 @@ export class VehicleMaintenanceTab {
     this.closeFilterModal();
     this.selectedRecord.set(null);
     this.actionError.set(null);
+    this.pendingAttachments.set([]);
     this.form.reset({
       serviceDate: '',
       title: '',
@@ -329,6 +350,7 @@ export class VehicleMaintenanceTab {
     }
 
     this.actionError.set(null);
+    this.pendingAttachments.set([]);
     this.form.reset({
       serviceDate: record.serviceDate,
       title: record.title ?? '',
@@ -369,15 +391,24 @@ export class VehicleMaintenanceTab {
           payload
         );
 
-    request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
-      next: () => {
-        this.closeModal();
-        this.loadServiceRecords();
-      },
-      error: () => {
-        this.actionError.set('vehicle.maintenanceTab.errors.saveFailed');
-      },
-    });
+    request$
+      .pipe(
+        switchMap(saved =>
+          this.uploadAttachmentsIfNeeded(saved.id).pipe(map(() => saved))
+        ),
+        finalize(() => this.isSaving.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.closeModal();
+          this.loadServiceRecords();
+        },
+        error: () => {
+          if (!this.actionError()) {
+            this.actionError.set('vehicle.maintenanceTab.errors.saveFailed');
+          }
+        },
+      });
   }
 
   protected deleteSelectedRecord() {
@@ -407,6 +438,7 @@ export class VehicleMaintenanceTab {
     this.modalMode.set('closed');
     this.selectedRecord.set(null);
     this.actionError.set(null);
+    this.pendingAttachments.set([]);
   }
 
   protected modalTitle(): string {
@@ -546,6 +578,115 @@ export class VehicleMaintenanceTab {
 
   protected hasMileageWarning(record: ServiceRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
+  }
+
+  protected onAttachmentSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const selected = Array.from(input.files);
+    const valid = selected.filter(file => this.isAllowedAttachment(file));
+    if (valid.length !== selected.length) {
+      this.actionError.set('vehicle.maintenanceTab.errors.invalidAttachmentType');
+    } else if (valid.length) {
+      this.actionError.set(null);
+    }
+
+    const existing = this.pendingAttachments();
+    this.pendingAttachments.set([...existing, ...valid]);
+    input.value = '';
+  }
+
+  protected removePendingAttachment(index: number) {
+    const files = [...this.pendingAttachments()];
+    files.splice(index, 1);
+    this.pendingAttachments.set(files);
+  }
+
+  private uploadAttachmentsIfNeeded(maintenanceId: number) {
+    const files = this.pendingAttachments();
+    if (!files.length || !this.currentVehicleId) {
+      return of(undefined);
+    }
+
+    return from(files).pipe(
+      concatMap(file =>
+        this.requestUploadUrl(maintenanceId, file).pipe(
+          switchMap(response =>
+            this.uploadToR2(response.uploadUrl, file).pipe(
+              switchMap(() =>
+                this.saveAttachmentMetadata(maintenanceId, file, response.objectKey)
+              )
+            )
+          )
+        )
+      ),
+      toArray(),
+      map(() => undefined),
+      catchError(err => {
+        this.actionError.set('vehicle.maintenanceTab.errors.uploadFailed');
+        return throwError(() => err);
+      })
+    );
+  }
+
+  private requestUploadUrl(maintenanceId: number, file: File) {
+    return this.http.post<UploadUrlResponse>(
+      `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${maintenanceId}/attachments/upload-url`,
+      {
+        fileName: file.name,
+        contentType: file.type,
+        sizeBytes: file.size,
+      }
+    );
+  }
+
+  private uploadToR2(uploadUrl: string, file: File) {
+    return this.http.put(uploadUrl, file, {
+      headers: new HttpHeaders({ 'Content-Type': file.type }),
+      responseType: 'text',
+    });
+  }
+
+  private saveAttachmentMetadata(maintenanceId: number, file: File, objectKey: string) {
+    return this.http.post<MaintenanceAttachment>(
+      `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${maintenanceId}/attachments`,
+      {
+        objectKey,
+        fileName: file.name,
+        contentType: file.type,
+        sizeBytes: file.size,
+      }
+    );
+  }
+
+  private isAllowedAttachment(file: File): boolean {
+    return file.type === 'application/pdf' || file.type.startsWith('image/');
+  }
+
+  protected openAttachment(attachment: MaintenanceAttachment) {
+    if (!this.currentVehicleId || !this.selectedRecord()) {
+      return;
+    }
+
+    this.actionError.set(null);
+
+    this.http
+      .get<DownloadUrlResponse>(
+        `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${this.selectedRecord()!.id}/attachments/${attachment.id}/download-url`
+      )
+      .subscribe({
+        next: response => {
+          if (response.downloadUrl) {
+            window.open(response.downloadUrl, '_blank', 'noopener');
+          }
+        },
+        error: () => {
+          this.actionError.set('vehicle.maintenanceTab.errors.downloadFailed');
+        },
+      });
   }
 
   private toTimestamp(serviceDate: string): number {

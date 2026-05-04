@@ -3,6 +3,7 @@
 		"appName": "AutoLog",
 		"all": "Wszystkie",
 		"amount": "Ilość",
+		"attachments": "Załączniki",
 		"brand": "Marka",
 		"cancel": "Anuluj",
 		"category": "Kategoria",
@@ -28,10 +29,12 @@
 		"mileageWarning": "Przebieg jest niższy niż w starszym wpisie",
 		"model": "Model",
 		"optional": "opcjonalnie",
+		"open": "Otworz",
 		"price": "Cena",
 		"pricePerLitre": "Cena za litr",
 		"priceRange": "Zakres cen",
-		"records": "wpisy",
+		"records": "Wpisy",
+		"remove": "Usun",
 		"reset": "Resetuj",
 		"save": "Zapisz",
 		"saving": "Zapisywanie...",
@@ -58,7 +61,7 @@
 	},
 	"nav": {
 		"details": "Szczegóły",
-		"fuel": "Paliwo",
+		"fuel": "Tankowanie",
 		"logout": "Wyloguj",
 		"maintenance": "Serwis",
 		"myCars": "Moje samochody",
@@ -178,7 +181,7 @@
 				"search": "Szukaj po stacji",
 				"gasStation": "Stacja paliw"
 			},
-			"addRecord": "Dodaj wpis tankowania",
+			"addRecord": "Dodaj",
 			"loading": "Ładowanie wpisów tankowania...",
 			"empty": {
 				"filtered": "Brak wpisów tankowania pasujących do bieżących filtrów.",
@@ -206,10 +209,10 @@
 			"title": "Wpisy serwisowe",
 			"untitled": "Bez tytułu",
 			"placeholders": {
-				"search": "Szukaj po tytule",
+				"search": "Wpisz tytuł",
 				"title": "Tytuł wpisu serwisowego"
 			},
-			"addRecord": "Dodaj wpis serwisowy",
+			"addRecord": "Dodaj",
 			"loading": "Ładowanie wpisów serwisowych...",
 			"empty": {
 				"filtered": "Brak wpisów serwisowych pasujących do bieżących filtrów.",
@@ -234,7 +237,10 @@
 				"mileageRequired": "Przebieg jest wymagany.",
 				"descriptionMaxLength": "Opis nie może przekraczać 200 znaków.",
 				"invalidData": "Przed zapisaniem wprowadź poprawne dane.",
+				"invalidAttachmentType": "Dozwolone są tylko pliki PDF lub obrazy.",
+				"downloadFailed": "Nie udało się pobrać linku do załącznika.",
 				"saveFailed": "Nie można zapisać wpisu serwisowego.",
+				"uploadFailed": "Nie udało się przesłać załączników.",
 				"deleteFailed": "Nie można usunąć wpisu serwisowego.",
 				"loadFailed": "Nie można teraz wczytać wpisów serwisowych."
 			},

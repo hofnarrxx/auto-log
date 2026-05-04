@@ -21,8 +21,18 @@ export interface SharedMaintenanceEntry {
   description: string;
   cost: number | null;
   currency?: string;
+  attachments?: SharedMaintenanceAttachment[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SharedMaintenanceAttachment {
+  id: number;
+  fileName: string;
+  contentType: string | null;
+  sizeBytes: number | null;
+  url: string | null;
+  createdAt: string;
 }
 
 export interface SharedVehicleResponse {

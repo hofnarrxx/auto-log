@@ -216,6 +216,53 @@
   line-height: 1;
 }
 
+.attachments-field input[type='file'] {
+  margin-top: 6px;
+}
+
+.attachments-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attachments-list.pending {
+  padding-left: 0;
+  list-style: none;
+}
+
+.attachments-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attachments-list a,
+.attachments-list span {
+  color: #1d4ed8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.attachments-list a:hover {
+  text-decoration: underline;
+}
+
+.link-btn {
+  background: transparent;
+  border: 0;
+  color: #475569;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+}
+
+.link-btn:hover {
+  color: #1d4ed8;
+}
+
 .entry-category {
   margin: 0 0 4px;
   color: #1e3a8a;

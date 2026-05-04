@@ -3,7 +3,7 @@
     <div class="header-main">
       <h3>{{ 'vehicle.maintenanceTab.title' | translate }}</h3>
       <p class="header-summary">
-        {{ totalRecords() }} {{ 'common.records' | translate }} | {{ 'common.totalCost' | translate }}: {{ totalServiceCostByCurrency() || '-' }}
+        {{ 'common.records' | translate }}: {{ totalRecords() }} | {{ 'common.totalCost' | translate }}: {{ totalServiceCostByCurrency() || '-' }}
       </p>
     </div>
     <div class="header-actions">
@@ -255,6 +255,28 @@
                       <p class="error-text">{{ 'vehicle.maintenanceTab.errors.descriptionMaxLength' | translate }}</p>
                     }
 
+                    <label class="attachments-field">
+                      {{ 'common.attachments' | translate }}
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        multiple
+                        (change)="onAttachmentSelected($event)">
+                    </label>
+
+                    @if (pendingAttachments().length) {
+                      <ul class="attachments-list pending">
+                        @for (file of pendingAttachments(); track $index) {
+                          <li>
+                            <span>{{ file.name }}</span>
+                            <button type="button" class="link-btn" (click)="removePendingAttachment($index)">
+                              {{ 'common.remove' | translate }}
+                            </button>
+                          </li>
+                        }
+                      </ul>
+                    }
+
                     @if (actionError()) {
                       <p class="error-text">{{ actionError() }}</p>
                     }
@@ -299,6 +321,21 @@
                       <span class="label">{{ 'common.description' | translate }}</span>
                       <p>{{ record.description }}</p>
                     </div>
+                    @if (record.attachments?.length) {
+                      <div class="detail-row">
+                        <span class="label">{{ 'common.attachments' | translate }}</span>
+                        <ul class="attachments-list">
+                          @for (attachment of record.attachments; track attachment.id) {
+                            <li>
+                              <span>{{ attachment.fileName }}</span>
+                              <button type="button" class="link-btn" (click)="openAttachment(attachment)">
+                                {{ 'common.open' | translate }}
+                              </button>
+                            </li>
+                          }
+                        </ul>
+                      </div>
+                    }
                     <div class="detail-row">
                       <span class="label">{{ 'common.created' | translate }}</span>
                       <span>{{ formatDateTime(record.createdAt) }}</span>

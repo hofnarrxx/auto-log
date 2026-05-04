@@ -9,7 +9,7 @@
     } @else if (data()) {
       <header class="vehicle-header">
         <h1>{{ data()!.brand }} {{ data()!.model }}</h1>
-        <p>{{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} • {{ data()!.mileage ?? '-' }} km</p>
+        <p>{{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} • {{ lastOdometerReading() }}</p>
       </header>
 
       <div class="shared-tabs" role="tablist" [attr.aria-label]="'sharedVehicle.tabs.ariaLabel' | translate">
@@ -55,7 +55,11 @@
           </div>
           <div class="info-item">
             <label>{{ 'common.mileage' | translate }}:</label>
-            <span>{{ data()!.mileage ?? '-' }} km</span>
+            <span>{{ lastOdometerReading() }}</span>
+          </div>
+          <div class="info-item">
+            <label>{{ 'vehicle.details.lastOdometerDate' | translate }}:</label>
+            <span>{{ lastOdometerDate() }}</span>
           </div>
           <div class="info-item">
             <label>{{ 'common.fuelType' | translate }}:</label>

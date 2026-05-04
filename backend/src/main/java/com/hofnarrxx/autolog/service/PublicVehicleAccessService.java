@@ -1,6 +1,7 @@
 package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.dto.FuelResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceAttachmentResponse;
 import com.hofnarrxx.autolog.dto.MaintenanceResponse;
 import com.hofnarrxx.autolog.dto.PublicVehicleAccessResponse;
 import com.hofnarrxx.autolog.exception.ShareLinkNotFoundException;
@@ -48,7 +49,7 @@ public class PublicVehicleAccessService {
                 .toList();
 
         List<MaintenanceResponse> maintenanceEntries = maintenanceRepository
-                .findByVehicleIdOrderByCreatedAtDesc(vehicle.getId())
+                .findWithAttachmentsByVehicleIdOrderByCreatedAtDesc(vehicle.getId())
                 .stream()
                 .map(this::toMaintenanceResponse)
                 .toList();
@@ -81,6 +82,18 @@ public class PublicVehicleAccessService {
     }
 
     private MaintenanceResponse toMaintenanceResponse(Maintenance maintenance) {
+        List<MaintenanceAttachmentResponse> attachments = maintenance.getAttachments()
+                .stream()
+                .map(attachment -> new MaintenanceAttachmentResponse(
+                        attachment.getId(),
+                        attachment.getFileName(),
+                        attachment.getContentType(),
+                        attachment.getSizeBytes(),
+                        attachment.getUrl(),
+                        attachment.getCreatedAt()
+                ))
+                .toList();
+
         return new MaintenanceResponse(
                 maintenance.getId(),
                 maintenance.getVehicle().getId(),
@@ -91,6 +104,7 @@ public class PublicVehicleAccessService {
                 maintenance.getDescription(),
                 maintenance.getCost(),
                 maintenance.getCurrency() == null ? null : maintenance.getCurrency().getDisplayName(),
+                attachments,
                 maintenance.getCreatedAt(),
                 maintenance.getUpdatedAt()
         );

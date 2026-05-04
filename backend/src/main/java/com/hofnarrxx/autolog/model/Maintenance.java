@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "maintenance")
@@ -40,6 +42,9 @@ public class Maintenance {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
+
+    @OneToMany(mappedBy = "maintenance", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MaintenanceAttachment> attachments = new ArrayList<>();
 
     @PrePersist
     public void onCreate() {
@@ -127,6 +132,10 @@ public class Maintenance {
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
+    }
+
+    public List<MaintenanceAttachment> getAttachments() {
+        return attachments;
     }
 }
 

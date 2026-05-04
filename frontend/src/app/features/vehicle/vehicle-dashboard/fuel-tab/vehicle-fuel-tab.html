@@ -3,7 +3,7 @@
     <div class="header-main">
       <h3>{{ 'vehicle.fuelTab.title' | translate }}</h3>
       <p class="header-summary">
-        {{ fuelRecords().length }} {{ 'common.records' | translate }} | {{ 'common.totalCost' | translate }}: {{ totalFuelCostByCurrency() || '-' }}
+        {{ 'common.records' | translate }}: {{ fuelRecords().length }} | {{ 'common.totalCost' | translate }}: {{ totalFuelCostByCurrency() || '-' }}
       </p>
     </div>
 
@@ -147,7 +147,7 @@
         <div class="modal-actions">
           <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
           <button type="submit" class="primary-btn" [disabled]="isSaving()">
-            {{ saveButtonLabel() }}
+            {{ saveButtonLabel() | translate }}
           </button>
         </div>
       </form>

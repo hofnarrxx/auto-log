@@ -29,3 +29,10 @@ jwt:
   expiration: 3600000
   # 7 days
   refresh-expiration: 604800000
+
+r2:
+  endpoint: ${R2_ENDPOINT}
+  access-key: ${R2_ACCESS_KEY}
+  secret-key: ${R2_SECRET_KEY}
+  bucket: ${R2_BUCKET}
+  region: ${R2_REGION:auto}

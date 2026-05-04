@@ -3,6 +3,7 @@ package com.hofnarrxx.autolog.dto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 public record MaintenanceResponse(
         Long id,
@@ -14,6 +15,7 @@ public record MaintenanceResponse(
         String description,
         BigDecimal cost,
         String currency,
+        List<MaintenanceAttachmentResponse> attachments,
         Instant createdAt,
         Instant updatedAt
 ) {

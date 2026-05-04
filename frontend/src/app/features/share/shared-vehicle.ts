@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
-import type { SharedVehicleResponse } from './shared-vehicle-model';
+import type { SharedFuelEntry, SharedMaintenanceEntry, SharedVehicleResponse } from './shared-vehicle-model';
 
 type SharedTab = 'details' | 'maintenance' | 'fuel';
 
@@ -97,7 +97,65 @@ export class SharedVehicle {
     });
   }
 
+  lastOdometerReading(): string {
+    const mileage = this.getLatestOdometerMileage();
+
+    if (mileage === null) {
+      return '-';
+    }
+
+    return `${mileage.toLocaleString()} km`;
+  }
+
+  lastOdometerDate(): string {
+    const latest = this.getLatestOdometerRecord();
+
+    if (!latest) {
+      return '-';
+    }
+
+    const date = (latest as SharedFuelEntry).date ?? (latest as SharedMaintenanceEntry).serviceDate;
+    return this.formatDate(date);
+  }
+
   setTab(tab: SharedTab) {
     this.activeTab.set(tab);
+  }
+
+  private getLatestOdometerRecord(): SharedFuelEntry | SharedMaintenanceEntry | null {
+    const response = this.data();
+    if (!response) {
+      return null;
+    }
+
+    const fuelRecords = (response.fuelEntries ?? []).filter(record => record.mileage !== null);
+    const maintenanceRecords = (response.maintenanceEntries ?? []).filter(record => record.mileage !== null);
+    const allRecords = [...fuelRecords, ...maintenanceRecords] as (SharedFuelEntry | SharedMaintenanceEntry)[];
+
+    if (!allRecords.length) {
+      return null;
+    }
+
+    return [...allRecords].sort((left, right) => {
+      const leftDate = (left as SharedFuelEntry).date ?? (left as SharedMaintenanceEntry).serviceDate;
+      const rightDate = (right as SharedFuelEntry).date ?? (right as SharedMaintenanceEntry).serviceDate;
+      return this.toTimestamp(rightDate) - this.toTimestamp(leftDate);
+    })[0];
+  }
+
+  private getLatestOdometerMileage(): number | null {
+    const latest = this.getLatestOdometerRecord();
+
+    if (latest && latest.mileage !== null && latest.mileage !== undefined) {
+      return latest.mileage;
+    }
+
+    const fallbackMileage = this.data()?.mileage;
+    return fallbackMileage === null || fallbackMileage === undefined ? null : Math.trunc(fallbackMileage);
+  }
+
+  private toTimestamp(date: string): number {
+    const timestamp = new Date(`${date}T00:00:00`).getTime();
+    return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 }

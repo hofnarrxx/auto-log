@@ -360,6 +360,25 @@
   justify-content: space-between;
   gap: 14px;
   border-bottom: 1px solid #f1f5f9;
+
+.attachments-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attachments-list a,
+.attachments-list span {
+  color: #1d4ed8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.attachments-list a:hover {
+  text-decoration: underline;
+}
   padding-bottom: 8px;
 }
 

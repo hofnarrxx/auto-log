@@ -10,6 +10,11 @@ interface FuelRecord {
   amount: number | null;
 }
 
+interface MaintenanceRecord {
+  serviceDate: string;
+  mileage: number | null;
+}
+
 @Component({
   selector: 'app-vehicle-details-tab',
   imports: [TranslateModule],
@@ -28,6 +33,7 @@ export class VehicleDetailsTab {
 
   protected readonly isLoadingStats = signal(false);
   protected readonly fuelRecords = signal<FuelRecord[]>([]);
+  protected readonly maintenanceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly avgFuelEfficiency = computed(() => {
     const records = [...this.fuelRecords()]
@@ -72,6 +78,7 @@ export class VehicleDetailsTab {
   ngOnInit() {
     if (this.vehicle?.id) {
       this.loadFuelRecords();
+      this.loadMaintenanceRecords();
     }
   }
 
@@ -86,13 +93,14 @@ export class VehicleDetailsTab {
   }
 
   protected lastOdometerDate(): string {
-    const latest = this.getLatestFuelRecord();
+    const latest = this.getLatestOdometerRecord();
 
     if (!latest) {
       return '-';
     }
 
-    return this.formatDate(latest.date);
+    const date = (latest as FuelRecord).date ?? (latest as MaintenanceRecord).serviceDate;
+    return this.formatDate(date);
   }
 
   protected formatDate(date: string | null | undefined): string {
@@ -180,6 +188,19 @@ export class VehicleDetailsTab {
       });
   }
 
+  private loadMaintenanceRecords() {
+    if (!this.vehicle?.id) {
+      return;
+    }
+
+    this.http
+      .get<MaintenanceRecord[]>(`${this.vehicleApi}/${this.vehicle.id}/maintenance`)
+      .subscribe({
+        next: records => this.maintenanceRecords.set(records ?? []),
+        error: () => this.maintenanceRecords.set([]),
+      });
+  }
+
   private getLatestFuelRecord(): FuelRecord | null {
     const records = this.fuelRecords().filter(record => record.mileage !== null);
 
@@ -190,8 +211,24 @@ export class VehicleDetailsTab {
     return [...records].sort((left, right) => this.toTimestamp(right.date) - this.toTimestamp(left.date))[0];
   }
 
+  private getLatestOdometerRecord(): FuelRecord | MaintenanceRecord | null {
+    const fuelRecords = this.fuelRecords().filter(record => record.mileage !== null);
+    const maintenanceRecords = this.maintenanceRecords().filter(record => record.mileage !== null);
+    const allRecords = [...fuelRecords, ...maintenanceRecords] as (FuelRecord | MaintenanceRecord)[];
+
+    if (!allRecords.length) {
+      return null;
+    }
+
+    return [...allRecords].sort((left, right) => {
+      const leftDate = (left as FuelRecord).date ?? (left as MaintenanceRecord).serviceDate;
+      const rightDate = (right as FuelRecord).date ?? (right as MaintenanceRecord).serviceDate;
+      return this.toTimestamp(rightDate) - this.toTimestamp(leftDate);
+    })[0];
+  }
+
   private getLatestOdometerMileage(): number | null {
-    const latest = this.getLatestFuelRecord();
+    const latest = this.getLatestOdometerRecord();
 
     if (latest && latest.mileage !== null && latest.mileage !== undefined) {
       return latest.mileage;
