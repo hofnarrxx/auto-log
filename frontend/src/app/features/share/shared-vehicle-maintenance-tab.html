@@ -48,7 +48,11 @@
           <div class="entry-date">{{ formatDate(entry.serviceDate) }}</div>
 
           <div class="entry-point" [attr.aria-label]="categoryLabel(entry.category) | translate">
-            <span aria-hidden="true">{{ iconForCategory(entry.category) }}</span>
+            <lucide-icon
+              [name]="iconForCategory(entry.category)"
+              size="16"
+              strokeWidth="2"
+              aria-hidden="true"></lucide-icon>
           </div>
 
           <div class="entry-content">

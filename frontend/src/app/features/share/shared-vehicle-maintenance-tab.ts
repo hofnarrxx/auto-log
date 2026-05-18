@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  LucideAngularModule,
+} from 'lucide-angular';
 import { CurrencyService } from '../../shared/services/currency.service';
 import type { SharedMaintenanceEntry } from './shared-vehicle-model';
 
@@ -9,7 +12,11 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 @Component({
   selector: 'app-shared-vehicle-maintenance-tab',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    LucideAngularModule,
+  ],
   templateUrl: './shared-vehicle-maintenance-tab.html',
   styleUrl: './shared-vehicle-maintenance-tab.css',
 })
@@ -283,16 +290,16 @@ export class SharedVehicleMaintenanceTab {
   protected iconForCategory(category: string): string {
     const normalizedCategory = category.trim().toLowerCase();
     const iconMap: Record<string, string> = {
-      inspection: '🔍',
-      'oil change': '🛢️',
-      repair: '🔧',
-      'part replacement': '⚙️',
-      'fluid refill': '💧',
-      'tires & wheels': '🛞',
-      cosmetic: '✨',
+      inspection: 'search',
+      'oil change': 'droplet',
+      repair: 'wrench',
+      'part replacement': 'toolbox',
+      'fluid refill': 'droplets',
+      'tires & wheels': 'disc',
+      cosmetic: 'sparkles',
     };
 
-    return iconMap[normalizedCategory] ?? '🧰';
+    return iconMap[normalizedCategory] ?? 'tool-case';
   }
 
   protected hasMileageWarning(record: SharedMaintenanceEntry): boolean {

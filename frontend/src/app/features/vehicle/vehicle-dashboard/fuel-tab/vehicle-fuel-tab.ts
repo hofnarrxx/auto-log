@@ -5,6 +5,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../shared/services/currency.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 interface FuelRecord {
   id: number;
@@ -29,7 +30,7 @@ type SortOption =
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LucideAngularModule],
   templateUrl: './vehicle-fuel-tab.html',
   styleUrl: './vehicle-fuel-tab.css',
 })

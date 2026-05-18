@@ -26,10 +26,10 @@
 .thumbnail-card,
 .info-card,
 .stat-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .thumbnail-card {
@@ -49,8 +49,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-  color: #64748b;
+  background: linear-gradient(135deg, #0b1324 0%, #1b243a 100%);
+  color: var(--text-muted);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -62,7 +62,7 @@
 
 .info-card:hover,
 .stat-card:hover {
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 24px rgba(3, 7, 18, 0.35);
 }
 
 .card-header {
@@ -71,14 +71,14 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 16px;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--border);
 }
 
 .card-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .card-content {
@@ -106,11 +106,11 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .info-row .value {
-  color: #0f172a;
+  color: var(--text);
   font-weight: 600;
   font-size: 14px;
 }
@@ -137,11 +137,11 @@
 }
 
 .stat-marker.efficiency {
-  background: #0c4a6e;
+  background: var(--accent);
 }
 
 .stat-marker.odometer {
-  background: #334155;
+  background: var(--border);
 }
 
 .stat-body {
@@ -152,7 +152,7 @@
   margin: 0 0 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -161,14 +161,14 @@
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text);
   word-break: break-word;
 }
 
 .stat-subvalue {
   margin: 4px 0 0;
   font-size: 13px;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .details-actions {
@@ -200,30 +200,30 @@
 }
 
 .share-btn {
-  background: #dcfce7;
-  color: #166534;
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
 }
 
 .share-btn:hover {
-  background: #bbf7d0;
+  background: rgba(16, 185, 129, 0.28);
 }
 
 .edit-btn {
-  background: #e0f2fe;
-  color: #0369a1;
+  background: rgba(34, 211, 238, 0.18);
+  color: var(--accent);
 }
 
 .edit-btn:hover {
-  background: #bae6fd;
+  background: rgba(34, 211, 238, 0.28);
 }
 
 .delete-btn {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
 }
 
 .delete-btn:hover {
-  background: #fecaca;
+  background: rgba(239, 68, 68, 0.3);
 }
 
 @media (max-width: 768px) {

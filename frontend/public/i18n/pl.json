@@ -184,7 +184,7 @@
 		"fuelTab": {
 			"title": "Wpisy tankowania",
 			"placeholders": {
-				"search": "Szukaj po stacji",
+				"search": "Wpisz stację",
 				"gasStation": "Stacja paliw"
 			},
 			"addRecord": "Dodaj",

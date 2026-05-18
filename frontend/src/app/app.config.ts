@@ -7,6 +7,20 @@ import { authInterceptor } from './core/auth/auth-interceptor';
 
 import { provideTranslateService } from '@ngx-translate/core';
 import {provideTranslateHttpLoader} from "@ngx-translate/http-loader";
+import {
+  Disc,
+  Droplet,
+  Droplets,
+  Fuel,
+  LucideIconProvider,
+  LUCIDE_ICONS,
+  Search,
+  Sparkles,
+  ToolCase,
+  Toolbox,
+  Cog,
+  Wrench,
+} from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,6 +37,22 @@ export const appConfig: ApplicationConfig = {
       }),
       fallbackLang: 'en',
       lang: 'en'
-    })
+    }),
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider({
+        Search,
+        Droplet,
+        Droplets,
+        Fuel,
+        Wrench,
+        Toolbox,
+        Cog,
+        Disc,
+        Sparkles,
+        ToolCase,
+      }),
+    },
   ]
 };

@@ -4,6 +4,9 @@ import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, concatMap, finalize, from, map, of, switchMap, toArray, throwError } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  LucideAngularModule,
+} from 'lucide-angular';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 
 interface MaintenanceAttachment {
@@ -44,7 +47,12 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 
 @Component({
   selector: 'app-vehicle-maintenance-tab',
-  imports: [ReactiveFormsModule, CommonModule, TranslateModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    TranslateModule,
+    LucideAngularModule,
+  ],
   templateUrl: './vehicle-maintenance-tab.html',
   styleUrl: './vehicle-maintenance-tab.css',
 })
@@ -567,16 +575,16 @@ export class VehicleMaintenanceTab {
   protected iconForCategory(category: string): string {
     const normalizedCategory = category.trim().toLowerCase();
     const iconMap: Record<string, string> = {
-      inspection: '🔍',
-      'oil change': '🛢️',
-      repair: '🔧',
-      'part replacement': '⚙️',
-      'fluid refill': '💧',
-      'tires & wheels': '🛞',
-      cosmetic: '✨',
+      inspection: 'search',
+      'oil change': 'droplet',
+      repair: 'wrench',
+      'part replacement': 'cog',
+      'fluid refill': 'droplets',
+      'tires & wheels': 'disc',
+      cosmetic: 'sparkles',
     };
 
-    return iconMap[normalizedCategory] ?? '🧰';
+    return iconMap[normalizedCategory] ?? 'tool-case';
   }
 
   protected hasMileageWarning(record: ServiceRecord): boolean {
