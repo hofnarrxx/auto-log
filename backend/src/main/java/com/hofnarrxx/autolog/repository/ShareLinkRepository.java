@@ -19,5 +19,7 @@ public interface ShareLinkRepository extends JpaRepository<ShareLink, Long> {
     Optional<ShareLink> findByIdAndCreatedBy(Long id, Long createdBy);
 
     List<ShareLink> findByCarIdAndCreatedByOrderByCreatedAtDesc(Long carId, Long createdBy);
+
+    int countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(Long carId, Long createdBy, Instant now);
 }
 

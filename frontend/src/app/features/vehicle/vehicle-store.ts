@@ -59,4 +59,12 @@ export class VehicleStore {
       expiresAt,
     });
   }
+
+  listShareLinks(carId: number): Observable<ShareLinkResponse[]> {
+    return this.http.get<ShareLinkResponse[]>(`${this.shareApi}?carId=${carId}`);
+  }
+
+  revokeShareLink(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.shareApi}/${id}`);
+  }
 }

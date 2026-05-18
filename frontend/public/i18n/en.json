@@ -137,13 +137,19 @@
 		"dashboard": {
 			"share": {
 				"title": "Share link",
-				"description": "Generate a public link to share this vehicle.",
+				"description": "Review active share links for this vehicle.",
 				"generatedLink": "Shared vehicle link",
 				"copy": "Copy link",
 				"copySuccess": "Link copied.",
-				"generating": "Generating share link...",
+				"create": "Create link",
+				"delete": "Delete link",
+				"remainingTime": "Remaining time",
+				"loadingLinks": "Loading share links...",
+				"noActiveLinks": "No active share links yet.",
 				"errors": {
-					"generate": "Could not generate a share link."
+					"generate": "Could not generate a share link.",
+					"delete": "Could not delete the share link.",
+					"load": "Could not load share links."
 				}
 			}
 		},

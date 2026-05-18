@@ -137,13 +137,19 @@
 		"dashboard": {
 			"share": {
 				"title": "Link do udostępniania",
-				"description": "Wygeneruj publiczny link do udostępnienia tego pojazdu.",
+				"description": "Sprawdź aktywne linki udostępniania dla tego pojazdu.",
 				"generatedLink": "Link do udostępnionego pojazdu",
 				"copy": "Kopiuj link",
 				"copySuccess": "Link został skopiowany.",
-				"generating": "Generowanie linku...",
+				"create": "Utwórz link",
+				"delete": "Usuń link",
+				"remainingTime": "Pozostały czas",
+				"loadingLinks": "Ładowanie linków udostępniania...",
+				"noActiveLinks": "Brak aktywnych linków udostępniania.",
 				"errors": {
-					"generate": "Nie udało się wygenerować linku do udostępniania."
+					"generate": "Nie udało się wygenerować linku do udostępniania.",
+					"delete": "Nie udało się usunąć linku udostępniania.",
+					"load": "Nie udało się wczytać linków udostępniania."
 				}
 			}
 		},

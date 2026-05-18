@@ -39,6 +39,15 @@ public class ShareLinkService {
         vehicleRepository.findByIdAndUserId(carId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
+        int activeLinks = shareLinkRepository.countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(
+            carId,
+            userId,
+            Instant.now()
+        );
+        if (activeLinks >= 1) {
+            throw new IllegalArgumentException("Active share link limit reached");
+        }
+
         validateExpiry(expiresAt);
 
         ShareLink shareLink = new ShareLink();
