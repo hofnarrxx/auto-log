@@ -49,6 +49,9 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
   styleUrl: './vehicle-maintenance-tab.css',
 })
 export class VehicleMaintenanceTab {
+  private static readonly MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+  private static readonly MAX_IMAGE_DIMENSION = 1600;
+  private static readonly IMAGE_QUALITY = 0.75;
   protected readonly allCurrenciesOption = 'All';
 
   private readonly http = inject(HttpClient);
@@ -595,7 +598,12 @@ export class VehicleMaintenanceTab {
     }
 
     const existing = this.pendingAttachments();
-    this.pendingAttachments.set([...existing, ...valid]);
+    const withinLimit = valid.filter(file => file.size <= VehicleMaintenanceTab.MAX_ATTACHMENT_BYTES);
+    if (withinLimit.length !== valid.length) {
+      this.actionError.set('vehicle.maintenanceTab.errors.attachmentTooLarge');
+    }
+
+    this.pendingAttachments.set([...existing, ...withinLimit]);
     input.value = '';
   }
 
@@ -613,11 +621,15 @@ export class VehicleMaintenanceTab {
 
     return from(files).pipe(
       concatMap(file =>
-        this.requestUploadUrl(maintenanceId, file).pipe(
-          switchMap(response =>
-            this.uploadToR2(response.uploadUrl, file).pipe(
-              switchMap(() =>
-                this.saveAttachmentMetadata(maintenanceId, file, response.objectKey)
+        from(this.prepareAttachment(file)).pipe(
+          switchMap(prepared =>
+            this.requestUploadUrl(maintenanceId, prepared).pipe(
+              switchMap(response =>
+                this.uploadToR2(response.uploadUrl, prepared).pipe(
+                  switchMap(() =>
+                    this.saveAttachmentMetadata(maintenanceId, prepared, response.objectKey)
+                  )
+                )
               )
             )
           )
@@ -626,10 +638,54 @@ export class VehicleMaintenanceTab {
       toArray(),
       map(() => undefined),
       catchError(err => {
+        if (err instanceof Error && err.message === 'Attachment too large') {
+          this.actionError.set('vehicle.maintenanceTab.errors.attachmentTooLarge');
+          return throwError(() => err);
+        }
+
         this.actionError.set('vehicle.maintenanceTab.errors.uploadFailed');
         return throwError(() => err);
       })
     );
+  }
+
+  private async prepareAttachment(file: File): Promise<File> {
+    if (!file.type.startsWith('image/')) {
+      return file;
+    }
+
+    const maxSize = VehicleMaintenanceTab.MAX_IMAGE_DIMENSION;
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return file;
+    }
+
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>(resolve =>
+      canvas.toBlob(resolve, 'image/jpeg', VehicleMaintenanceTab.IMAGE_QUALITY)
+    );
+
+    if (!blob) {
+      return file;
+    }
+
+    const name = file.name.replace(/\.[^.]+$/, '.jpg');
+    const compressed = new File([blob], name, { type: 'image/jpeg' });
+
+    if (compressed.size > VehicleMaintenanceTab.MAX_ATTACHMENT_BYTES) {
+      throw new Error('Attachment too large');
+    }
+
+    return compressed;
   }
 
   private requestUploadUrl(maintenanceId: number, file: File) {
