@@ -78,6 +78,14 @@
           }
         }
 
+        <label class="share-toggle">
+          <input
+            type="checkbox"
+            [checked]="shareAttachments()"
+            (change)="shareAttachments.set($any($event.target).checked)">
+          <span>{{ 'vehicle.dashboard.share.includeAttachments' | translate }}</span>
+        </label>
+
         <div class="share-modal-actions">
           <button
             type="button"

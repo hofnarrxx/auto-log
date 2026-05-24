@@ -4,8 +4,8 @@
   <div class="vehicle-card clickable" [routerLink]="['/vehicles', v.id]">
 
     <div class="image-wrapper">
-      @if (v.image) {
-      <img [src]="v.image" alt="Vehicle image">
+      @if (v.imageUrl) {
+      <img [src]="v.imageUrl" alt="Vehicle image">
       } @else {
       <div class="no-image">
         {{ 'dashboard.noImage' | translate }}

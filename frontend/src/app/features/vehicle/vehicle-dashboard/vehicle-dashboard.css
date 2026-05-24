@@ -184,6 +184,21 @@
   gap: 8px;
 }
 
+.share-toggle {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.share-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
 .close-btn {
   background: rgba(15, 23, 42, 0.6);
   color: var(--text);

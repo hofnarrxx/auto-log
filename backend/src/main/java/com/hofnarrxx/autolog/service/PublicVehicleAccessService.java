@@ -51,7 +51,7 @@ public class PublicVehicleAccessService {
         List<MaintenanceResponse> maintenanceEntries = maintenanceRepository
                 .findWithAttachmentsByVehicleIdOrderByCreatedAtDesc(vehicle.getId())
                 .stream()
-                .map(this::toMaintenanceResponse)
+                .map(maintenance -> toMaintenanceResponse(maintenance, shareLink.isIncludeAttachments()))
                 .toList();
 
         return new PublicVehicleAccessResponse(
@@ -81,18 +81,20 @@ public class PublicVehicleAccessService {
         );
     }
 
-    private MaintenanceResponse toMaintenanceResponse(Maintenance maintenance) {
-        List<MaintenanceAttachmentResponse> attachments = maintenance.getAttachments()
-                .stream()
-                .map(attachment -> new MaintenanceAttachmentResponse(
-                        attachment.getId(),
-                        attachment.getFileName(),
-                        attachment.getContentType(),
-                        attachment.getSizeBytes(),
-                        attachment.getUrl(),
-                        attachment.getCreatedAt()
-                ))
-                .toList();
+    private MaintenanceResponse toMaintenanceResponse(Maintenance maintenance, boolean includeAttachments) {
+        List<MaintenanceAttachmentResponse> attachments = includeAttachments
+                ? maintenance.getAttachments()
+                    .stream()
+                    .map(attachment -> new MaintenanceAttachmentResponse(
+                            attachment.getId(),
+                            attachment.getFileName(),
+                            attachment.getContentType(),
+                            attachment.getSizeBytes(),
+                            attachment.getUrl(),
+                            attachment.getCreatedAt()
+                    ))
+                    .toList()
+                : List.of();
 
         return new MaintenanceResponse(
                 maintenance.getId(),

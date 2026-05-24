@@ -28,6 +28,7 @@ export class VehicleDashboard {
   deletingShareLinkId = signal<number | null>(null);
   shareError = signal('');
   copySuccess = signal(false);
+  shareAttachments = signal(true);
   private readonly maxActiveShareLinks = 1;
   readonly canCreateShareLink = computed(() => this.shareLinks().length < this.maxActiveShareLinks);
   private queryParamMap = toSignal(this.route.queryParamMap, {
@@ -72,6 +73,7 @@ export class VehicleDashboard {
     this.shareError.set('');
     this.copySuccess.set(false);
     this.shareLinks.set([]);
+    this.shareAttachments.set(true);
 
     this.vehicleStore.listShareLinks(vehicle.id).pipe(
       finalize(() => this.isLoadingShareLinks.set(false))
@@ -93,6 +95,7 @@ export class VehicleDashboard {
     this.shareError.set('');
     this.shareLinks.set([]);
     this.deletingShareLinkId.set(null);
+    this.shareAttachments.set(true);
   }
 
   async copyShareLink(token: string) {
@@ -152,7 +155,7 @@ export class VehicleDashboard {
     this.shareError.set('');
     this.copySuccess.set(false);
 
-    this.vehicleStore.createShareLink(vehicle.id).pipe(
+    this.vehicleStore.createShareLink(vehicle.id, this.shareAttachments()).pipe(
       finalize(() => this.isCreatingShareLink.set(false))
     ).subscribe({
       next: response => {

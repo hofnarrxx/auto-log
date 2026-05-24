@@ -11,6 +11,7 @@ export interface ShareLinkResponse {
   createdAt: string;
   expiresAt: string | null;
   revoked: boolean;
+  includeAttachments: boolean;
 }
 
 @Injectable({
@@ -23,18 +24,22 @@ export class VehicleStore {
 
   vehicles = signal<Vehicle[]>([]);
 
-  add(vehicle: Vehicle) {
-    this.http.post<Vehicle>(this.api, vehicle).subscribe(newVehicle => {
-      this.vehicles.update(v => [...v, newVehicle]);
-    });
+  add(vehicle: Vehicle): Observable<Vehicle> {
+    return this.http.post<Vehicle>(this.api, vehicle).pipe(
+      tap(newVehicle => {
+        this.vehicles.update(v => [...v, newVehicle]);
+      })
+    );
   }
 
-  update(vehicle: Vehicle) {
-    this.http.put<Vehicle>(`${this.api}/${vehicle.id}`, vehicle).subscribe(updated => {
-      this.vehicles.update(list =>
-        list.map(v => (v.id === updated.id ? updated : v))
-      );
-    });
+  update(vehicle: Vehicle): Observable<Vehicle> {
+    return this.http.put<Vehicle>(`${this.api}/${vehicle.id}`, vehicle).pipe(
+      tap(updated => {
+        this.vehicles.update(list =>
+          list.map(v => (v.id === updated.id ? updated : v))
+        );
+      })
+    );
   }
 
   remove(id: number) {
@@ -51,12 +56,13 @@ export class VehicleStore {
     });
   }
 
-  createShareLink(carId: number): Observable<ShareLinkResponse> {
+  createShareLink(carId: number, includeAttachments = true): Observable<ShareLinkResponse> {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
     return this.http.post<ShareLinkResponse>(this.shareApi, {
       carId,
       expiresAt,
+      includeAttachments,
     });
   }
 

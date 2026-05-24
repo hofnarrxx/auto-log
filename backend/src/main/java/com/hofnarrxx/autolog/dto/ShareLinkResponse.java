@@ -9,7 +9,8 @@ public record ShareLinkResponse(
         Long createdBy,
         Instant createdAt,
         Instant expiresAt,
-        boolean revoked
+        boolean revoked,
+        boolean includeAttachments
 ) {
 }
 

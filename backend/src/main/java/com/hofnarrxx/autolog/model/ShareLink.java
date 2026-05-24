@@ -36,6 +36,9 @@ public class ShareLink {
     @Column(nullable = false)
     private boolean revoked;
 
+    @Column(nullable = false)
+    private boolean includeAttachments = true;
+
     @PrePersist
     public void onCreate() {
         if (this.createdAt == null) {
@@ -93,6 +96,14 @@ public class ShareLink {
 
     public void setRevoked(boolean revoked) {
         this.revoked = revoked;
+    }
+
+    public boolean isIncludeAttachments() {
+        return includeAttachments;
+    }
+
+    public void setIncludeAttachments(boolean includeAttachments) {
+        this.includeAttachments = includeAttachments;
     }
 }
 

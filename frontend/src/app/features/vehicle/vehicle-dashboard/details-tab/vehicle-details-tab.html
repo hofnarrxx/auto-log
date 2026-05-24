@@ -2,8 +2,8 @@
   <div class="content-grid">
     <div class="hero-grid">
       <div class="thumbnail-card">
-        @if (vehicle.image) {
-          <img [src]="vehicle.image" [alt]="vehicleThumbnailAlt()" />
+        @if (vehicle.imageUrl) {
+          <img [src]="vehicle.imageUrl" [alt]="vehicleThumbnailAlt()" />
         } @else {
           <div class="thumbnail-placeholder">
             <span>{{ 'dashboard.noImage' | translate }}</span>

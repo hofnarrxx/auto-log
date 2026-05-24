@@ -6,5 +6,6 @@ export interface Vehicle {
   fuelType: string | null;
   mileage: number | null;
   licensePlate?: string | null;
-  image?: string;
+  imageKey?: string | null;
+  imageUrl?: string | null;
 }

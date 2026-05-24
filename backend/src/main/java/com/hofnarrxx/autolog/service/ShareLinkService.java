@@ -33,7 +33,7 @@ public class ShareLinkService {
     }
 
     @Transactional
-    public ShareLink create(Long carId, Instant expiresAt) {
+    public ShareLink create(Long carId, Instant expiresAt, Boolean includeAttachments) {
         Long userId = authService.getCurrentUser().getId();
 
         vehicleRepository.findByIdAndUserId(carId, userId)
@@ -56,6 +56,7 @@ public class ShareLinkService {
         shareLink.setCreatedBy(userId);
         shareLink.setExpiresAt(expiresAt);
         shareLink.setRevoked(false);
+        shareLink.setIncludeAttachments(includeAttachments == null || includeAttachments);
 
         return shareLinkRepository.save(shareLink);
     }

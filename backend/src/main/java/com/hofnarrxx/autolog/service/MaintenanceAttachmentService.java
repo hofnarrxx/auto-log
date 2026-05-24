@@ -29,6 +29,7 @@ import java.util.UUID;
 @Service
 public class MaintenanceAttachmentService {
     private static final Duration PRESIGNED_URL_TTL = Duration.ofMinutes(10);
+    private static final long MAX_ATTACHMENT_BYTES = 5L * 1024 * 1024;
 
     private final MaintenanceRepository maintenanceRepository;
     private final MaintenanceAttachmentRepository attachmentRepository;
@@ -55,6 +56,10 @@ public class MaintenanceAttachmentService {
                                                         Long maintenanceId,
                                                         MaintenanceUploadUrlRequest request) {
         Maintenance maintenance = getOwnedMaintenance(vehicleId, maintenanceId);
+
+        if (request.sizeBytes() == null || request.sizeBytes() <= 0 || request.sizeBytes() > MAX_ATTACHMENT_BYTES) {
+            throw new IllegalArgumentException("Attachment exceeds maximum size");
+        }
 
         String contentType = normalize(request.contentType());
         if (!isAllowedContentType(contentType)) {
@@ -115,6 +120,10 @@ public class MaintenanceAttachmentService {
                                                         Long maintenanceId,
                                                         MaintenanceAttachmentRequest request) {
         Maintenance maintenance = getOwnedMaintenance(vehicleId, maintenanceId);
+
+        if (request.sizeBytes() == null || request.sizeBytes() <= 0 || request.sizeBytes() > MAX_ATTACHMENT_BYTES) {
+            throw new IllegalArgumentException("Attachment exceeds maximum size");
+        }
 
         String contentType = normalize(request.contentType());
         if (!isAllowedContentType(contentType)) {

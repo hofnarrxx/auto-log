@@ -138,6 +138,7 @@
 			"share": {
 				"title": "Link do udostępniania",
 				"description": "Sprawdź aktywne linki udostępniania dla tego pojazdu.",
+				"includeAttachments": "Udostępnij załączniki serwisowe",
 				"generatedLink": "Link do udostępnionego pojazdu",
 				"copy": "Kopiuj link",
 				"copySuccess": "Link został skopiowany.",

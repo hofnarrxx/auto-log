@@ -138,6 +138,7 @@
 			"share": {
 				"title": "Share link",
 				"description": "Review active share links for this vehicle.",
+				"includeAttachments": "Include service attachments",
 				"generatedLink": "Shared vehicle link",
 				"copy": "Copy link",
 				"copySuccess": "Link copied.",

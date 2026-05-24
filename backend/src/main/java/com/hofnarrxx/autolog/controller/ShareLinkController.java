@@ -27,7 +27,11 @@ public class ShareLinkController {
 
     @PostMapping
     public ShareLinkResponse create(@RequestBody ShareLinkCreateRequest request) {
-        ShareLink created = shareLinkService.create(request.carId(), request.expiresAt());
+        ShareLink created = shareLinkService.create(
+                request.carId(),
+                request.expiresAt(),
+                request.includeAttachments()
+        );
         return toResponse(created);
     }
 
@@ -52,7 +56,8 @@ public class ShareLinkController {
                 shareLink.getCreatedBy(),
                 shareLink.getCreatedAt(),
                 shareLink.getExpiresAt(),
-                shareLink.isRevoked()
+            shareLink.isRevoked(),
+            shareLink.isIncludeAttachments()
         );
     }
 }

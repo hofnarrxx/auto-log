@@ -41,9 +41,9 @@
 
   <input type="file" accept="image/*" (change)="onFileSelected($event)">
 
-  @if (selectedImageBase64) {
+  @if (selectedImagePreviewUrl) {
   <div>
-    <img [src]="selectedImageBase64" width="200">
+    <img [src]="selectedImagePreviewUrl" width="200">
   </div>
   }
 
