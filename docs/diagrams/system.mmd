@@ -1,0 +1,33 @@
+flowchart LR
+  subgraph Client[Przegladarka]
+    UI[Angular SPA]
+  end
+
+  subgraph Backend[Spring Boot API]
+    API[REST API /api]
+    Auth[Auth + JWT + Refresh]
+    OAuth[OAuth2 Google]
+    Share[Publiczne /share]
+    Files[Obsluga plikow + signed URLs]
+  end
+
+  subgraph Data[Warstwa danych]
+    DB[(PostgreSQL)]
+    R2[(Cloudflare R2)]
+  end
+
+  Google[Google OAuth]
+
+  UI -->|HTTP JSON| API
+  API --> Auth
+  API --> Share
+  API --> Files
+
+  Auth -->|JWT w cookies| UI
+  Auth --> OAuth
+  OAuth --> Google
+
+  API --> DB
+  Files -->|S3 API| R2
+  Share -->|odczyt danych| DB
+  Share -->|signed URL| R2

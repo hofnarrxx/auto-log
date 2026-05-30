@@ -1,0 +1,35 @@
+flowchart LR
+  subgraph Actors[Aktorzy]
+    direction TB
+    actorUser((Użytkownik))
+    actorGuest((Gość))
+  end
+
+  subgraph System[AutoLog]
+    UCRegister([Rejestracja])
+    UCLogin([Logowanie])
+    UCLoginGoogle([Logowanie Google])
+    UCManageAccount([Zarządzanie kontem])
+    UCSettings([Zmiana ustawień])
+    UCVehicles([Dodawanie/edycja pojazdu])
+    UCMaintenance([Dodawanie/edycja wpisu serwisowego])
+    UCFuel([Dodawanie/edycja wpisu tankowania])
+    UCSearch([Filtrowanie i wyszukiwanie historii])
+
+    UCShare([Generowanie linku udostepniania])
+    UCViewShare([Podglad historii przez link])
+  end
+
+  actorUser --> UCRegister
+  actorUser --> UCLogin
+  actorUser --> UCLoginGoogle
+  actorUser --> UCManageAccount
+  actorUser --> UCSettings
+  actorUser --> UCVehicles
+  actorUser --> UCMaintenance
+  actorUser --> UCFuel
+  actorUser --> UCSearch
+  actorUser --> UCShare
+
+  actorGuest --> UCViewShare
+  UCShare --> UCViewShare

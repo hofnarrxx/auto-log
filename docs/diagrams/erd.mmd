@@ -1,0 +1,90 @@
+erDiagram
+  direction LR
+  USERS {
+    BIGINT id PK
+    VARCHAR email "unique, not null"
+    VARCHAR password
+  }
+
+  VEHICLE {
+    BIGINT id PK
+    VARCHAR brand
+    VARCHAR model
+    VARCHAR fuel_type
+    DOUBLE mileage
+    INT year
+    TEXT image
+    VARCHAR license_plate
+    BIGINT user_id FK
+  }
+
+  MAINTENANCE {
+    BIGINT id PK
+    DATE service_date
+    VARCHAR title
+    INT mileage
+    VARCHAR category
+    TEXT description
+    DECIMAL cost
+    VARCHAR currency
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+    BIGINT vehicle_id FK
+  }
+
+  MAINTENANCE_ATTACHMENTS {
+    BIGINT id PK
+    VARCHAR object_key
+    VARCHAR file_name
+    VARCHAR content_type
+    BIGINT size_bytes
+    VARCHAR url
+    TIMESTAMP created_at
+    BIGINT maintenance_id FK
+  }
+
+  FUEL {
+    BIGINT id PK
+    DATE date
+    INT mileage
+    DECIMAL cost
+    DECIMAL amount
+    VARCHAR gas_station
+    VARCHAR currency
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+    BIGINT vehicle_id FK
+  }
+
+  REFRESH_TOKENS {
+    BIGINT id PK
+    VARCHAR token "unique"
+    TIMESTAMP expires_at
+    BOOLEAN revoked
+    BIGINT user_id FK
+  }
+
+  AUTH_PROVIDERS {
+    BIGINT id PK
+    VARCHAR provider_type
+    VARCHAR provider_id
+    BIGINT user_id FK
+  }
+
+  SHARE_LINKS {
+    BIGINT id PK
+    VARCHAR token "unique"
+    BIGINT car_id
+    BIGINT created_by
+    TIMESTAMP created_at
+    TIMESTAMP expires_at
+    BOOLEAN revoked
+    BOOLEAN include_attachments
+  }
+
+  USERS ||--o{ VEHICLE : owns
+  VEHICLE ||--o{ MAINTENANCE : has
+  VEHICLE ||--o{ FUEL : has
+  MAINTENANCE ||--o{ MAINTENANCE_ATTACHMENTS : includes
+  USERS ||--o{ REFRESH_TOKENS : issues
+  USERS ||--o{ AUTH_PROVIDERS : links
