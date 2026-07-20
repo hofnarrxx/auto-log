@@ -1,13 +1,14 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, concatMap, finalize, from, map, of, switchMap, toArray, throwError } from 'rxjs';
+import { catchError, finalize, map, of, switchMap, throwError } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   LucideAngularModule,
 } from 'lucide-angular';
 import { CurrencyService } from '../../../../shared/services/currency.service';
+import { AttachmentService } from '../../services/attachment.service';
 
 interface MaintenanceAttachment {
   id: number;
@@ -33,11 +34,6 @@ interface ServiceRecord {
   updatedAt: string;
 }
 
-interface UploadUrlResponse {
-  uploadUrl: string;
-  objectKey: string;
-}
-
 interface DownloadUrlResponse {
   downloadUrl: string;
 }
@@ -57,13 +53,11 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
   styleUrl: './vehicle-maintenance-tab.css',
 })
 export class VehicleMaintenanceTab {
-  private static readonly MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
-  private static readonly MAX_IMAGE_DIMENSION = 1600;
-  private static readonly IMAGE_QUALITY = 0.75;
   protected readonly allCurrenciesOption = 'All';
 
   private readonly http = inject(HttpClient);
   private readonly currencyService = inject(CurrencyService);
+  private readonly attachmentService = inject(AttachmentService);
   private readonly vehicleApi = 'http://localhost:8080/vehicles';
   private readonly metadataApi = 'http://localhost:8080/metadata/maintenance/categories';
 
@@ -598,7 +592,7 @@ export class VehicleMaintenanceTab {
     }
 
     const selected = Array.from(input.files);
-    const valid = selected.filter(file => this.isAllowedAttachment(file));
+    const valid = selected.filter(file => this.attachmentService.isAllowedAttachment(file));
     if (valid.length !== selected.length) {
       this.actionError.set('vehicle.maintenanceTab.errors.invalidAttachmentType');
     } else if (valid.length) {
@@ -606,7 +600,7 @@ export class VehicleMaintenanceTab {
     }
 
     const existing = this.pendingAttachments();
-    const withinLimit = valid.filter(file => file.size <= VehicleMaintenanceTab.MAX_ATTACHMENT_BYTES);
+    const withinLimit = valid.filter(file => file.size <= this.attachmentService.maxAttachmentBytes);
     if (withinLimit.length !== valid.length) {
       this.actionError.set('vehicle.maintenanceTab.errors.attachmentTooLarge');
     }
@@ -627,24 +621,9 @@ export class VehicleMaintenanceTab {
       return of(undefined);
     }
 
-    return from(files).pipe(
-      concatMap(file =>
-        from(this.prepareAttachment(file)).pipe(
-          switchMap(prepared =>
-            this.requestUploadUrl(maintenanceId, prepared).pipe(
-              switchMap(response =>
-                this.uploadToR2(response.uploadUrl, prepared).pipe(
-                  switchMap(() =>
-                    this.saveAttachmentMetadata(maintenanceId, prepared, response.objectKey)
-                  )
-                )
-              )
-            )
-          )
-        )
-      ),
-      toArray(),
-      map(() => undefined),
+    return this.attachmentService
+      .uploadAttachments(this.currentVehicleId, maintenanceId, files)
+      .pipe(
       catchError(err => {
         if (err instanceof Error && err.message === 'Attachment too large') {
           this.actionError.set('vehicle.maintenanceTab.errors.attachmentTooLarge');
@@ -655,79 +634,6 @@ export class VehicleMaintenanceTab {
         return throwError(() => err);
       })
     );
-  }
-
-  private async prepareAttachment(file: File): Promise<File> {
-    if (!file.type.startsWith('image/')) {
-      return file;
-    }
-
-    const maxSize = VehicleMaintenanceTab.MAX_IMAGE_DIMENSION;
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
-    const width = Math.max(1, Math.round(bitmap.width * scale));
-    const height = Math.max(1, Math.round(bitmap.height * scale));
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return file;
-    }
-
-    ctx.drawImage(bitmap, 0, 0, width, height);
-
-    const blob = await new Promise<Blob | null>(resolve =>
-      canvas.toBlob(resolve, 'image/jpeg', VehicleMaintenanceTab.IMAGE_QUALITY)
-    );
-
-    if (!blob) {
-      return file;
-    }
-
-    const name = file.name.replace(/\.[^.]+$/, '.jpg');
-    const compressed = new File([blob], name, { type: 'image/jpeg' });
-
-    if (compressed.size > VehicleMaintenanceTab.MAX_ATTACHMENT_BYTES) {
-      throw new Error('Attachment too large');
-    }
-
-    return compressed;
-  }
-
-  private requestUploadUrl(maintenanceId: number, file: File) {
-    return this.http.post<UploadUrlResponse>(
-      `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${maintenanceId}/attachments/upload-url`,
-      {
-        fileName: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-      }
-    );
-  }
-
-  private uploadToR2(uploadUrl: string, file: File) {
-    return this.http.put(uploadUrl, file, {
-      headers: new HttpHeaders({ 'Content-Type': file.type }),
-      responseType: 'text',
-    });
-  }
-
-  private saveAttachmentMetadata(maintenanceId: number, file: File, objectKey: string) {
-    return this.http.post<MaintenanceAttachment>(
-      `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${maintenanceId}/attachments`,
-      {
-        objectKey,
-        fileName: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-      }
-    );
-  }
-
-  private isAllowedAttachment(file: File): boolean {
-    return file.type === 'application/pdf' || file.type.startsWith('image/');
   }
 
   protected openAttachment(attachment: MaintenanceAttachment) {
