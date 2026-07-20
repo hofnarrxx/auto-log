@@ -1,20 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, concatMap, from, map, switchMap, toArray } from 'rxjs';
-
-interface UploadUrlResponse {
-  uploadUrl: string;
-  objectKey: string;
-}
-
-interface MaintenanceAttachment {
-  id: number;
-  fileName: string;
-  contentType: string | null;
-  sizeBytes: number | null;
-  url: string | null;
-  createdAt: string;
-}
+import { MaintenanceApiService } from './maintenance-api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,9 +11,8 @@ export class AttachmentService {
   private static readonly MAX_IMAGE_DIMENSION = 1600;
   private static readonly IMAGE_QUALITY = 0.75;
 
-  private readonly vehicleApi = 'http://localhost:8080/vehicles';
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly maintenanceApiService = inject(MaintenanceApiService);
 
   isAllowedAttachment(file: File): boolean {
     return file.type === 'application/pdf' || file.type.startsWith('image/');
@@ -93,14 +79,7 @@ export class AttachmentService {
   }
 
   private requestUploadUrl(vehicleId: number, maintenanceId: number, file: File) {
-    return this.http.post<UploadUrlResponse>(
-      `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}/attachments/upload-url`,
-      {
-        fileName: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-      }
-    );
+    return this.maintenanceApiService.getAttachmentUploadUrl(vehicleId, maintenanceId, file);
   }
 
   private uploadToR2(uploadUrl: string, file: File) {
@@ -111,14 +90,6 @@ export class AttachmentService {
   }
 
   private saveAttachmentMetadata(vehicleId: number, maintenanceId: number, file: File, objectKey: string) {
-    return this.http.post<MaintenanceAttachment>(
-      `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}/attachments`,
-      {
-        objectKey,
-        fileName: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-      }
-    );
+    return this.maintenanceApiService.saveAttachmentMetadata(vehicleId, maintenanceId, file, objectKey);
   }
 }

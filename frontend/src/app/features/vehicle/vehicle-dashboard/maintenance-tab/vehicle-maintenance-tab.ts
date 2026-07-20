@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,34 +8,13 @@ import {
 } from 'lucide-angular';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { AttachmentService } from '../../services/attachment.service';
-
-interface MaintenanceAttachment {
-  id: number;
-  fileName: string;
-  contentType: string | null;
-  sizeBytes: number | null;
-  url: string | null;
-  createdAt: string;
-}
-
-interface ServiceRecord {
-  id: number;
-  vehicleId: number;
-  serviceDate: string;
-  title: string | null;
-  mileage: number | null;
-  category: string;
-  description: string;
-  cost: number | null;
-  currency?: string;
-  attachments?: MaintenanceAttachment[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface DownloadUrlResponse {
-  downloadUrl: string;
-}
+import {
+  MaintenanceApiService,
+  MaintenanceAttachment,
+  MaintenanceAttachmentDownloadUrlResponse,
+  MaintenanceRecord as ServiceRecord,
+  MaintenanceRecordPayload,
+} from '../../services/maintenance-api.service';
 
 type ModalMode = 'closed' | 'create' | 'view' | 'edit';
 type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
@@ -55,11 +33,9 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 export class VehicleMaintenanceTab {
   protected readonly allCurrenciesOption = 'All';
 
-  private readonly http = inject(HttpClient);
   private readonly currencyService = inject(CurrencyService);
   private readonly attachmentService = inject(AttachmentService);
-  private readonly vehicleApi = 'http://localhost:8080/vehicles';
-  private readonly metadataApi = 'http://localhost:8080/metadata/maintenance/categories';
+  private readonly maintenanceApiService = inject(MaintenanceApiService);
 
   readonly form = new FormGroup({
     serviceDate: new FormControl('', Validators.required),
@@ -387,13 +363,14 @@ export class VehicleMaintenanceTab {
     this.actionError.set(null);
 
     const request$ = isEdit
-      ? this.http.put<ServiceRecord>(
-          `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${selected.id}`,
-          payload
+      ? this.maintenanceApiService.updateMaintenance(
+          this.currentVehicleId,
+          selected.id,
+          payload as MaintenanceRecordPayload
         )
-      : this.http.post<ServiceRecord>(
-          `${this.vehicleApi}/${this.currentVehicleId}/maintenance`,
-          payload
+      : this.maintenanceApiService.createMaintenance(
+          this.currentVehicleId,
+          payload as MaintenanceRecordPayload
         );
 
     request$
@@ -425,8 +402,8 @@ export class VehicleMaintenanceTab {
     this.isDeleting.set(true);
     this.actionError.set(null);
 
-    this.http
-      .delete<void>(`${this.vehicleApi}/${this.currentVehicleId}/maintenance/${selected.id}`)
+    this.maintenanceApiService
+      .deleteMaintenance(this.currentVehicleId, selected.id)
       .pipe(finalize(() => this.isDeleting.set(false)))
       .subscribe({
         next: () => {
@@ -476,7 +453,7 @@ export class VehicleMaintenanceTab {
   }
 
   private loadCategories() {
-    this.http.get<string[]>(this.metadataApi).subscribe({
+    this.maintenanceApiService.getCategories().subscribe({
       next: categories => {
         this.categories.set(categories);
         this.ensureFilterDefaults();
@@ -505,8 +482,8 @@ export class VehicleMaintenanceTab {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.http
-      .get<ServiceRecord[]>(`${this.vehicleApi}/${this.currentVehicleId}/maintenance`)
+    this.maintenanceApiService
+      .getMaintenance(this.currentVehicleId)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: data => {
@@ -643,10 +620,8 @@ export class VehicleMaintenanceTab {
 
     this.actionError.set(null);
 
-    this.http
-      .get<DownloadUrlResponse>(
-        `${this.vehicleApi}/${this.currentVehicleId}/maintenance/${this.selectedRecord()!.id}/attachments/${attachment.id}/download-url`
-      )
+    this.maintenanceApiService
+      .getAttachmentDownloadUrl(this.currentVehicleId, this.selectedRecord()!.id, attachment.id)
       .subscribe({
         next: response => {
           if (response.downloadUrl) {
