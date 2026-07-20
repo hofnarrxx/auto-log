@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant U as Użytkownik
+    participant FE as Frontend (Angular)
+    participant BE as Backend (Spring Boot)
+    participant G as Google OAuth
+
+    U->>FE: Logowanie (email, hasło)
+    FE->>BE: POST /api/auth/login
+    BE-->>FE: Set-Cookie access_token + refresh_token
+    FE-->>U: Dostęp do panelu
+
+    U->>FE: Logowanie przez Google
+    FE->>BE: OAuth2 login (redirect)
+    BE->>G: Weryfikacja użytkownika
+    G-->>BE: Token Google + profil
+    BE-->>FE: Set-Cookie access_token + refresh_token
+    FE-->>U: Dostęp do panelu
+
+    Note over FE,BE: Po czasie access_token wygasa
+
+    FE->>BE: Żądanie do API z wygasłym access_token
+    BE-->>FE: 401 Unauthorized
+
+    FE->>BE: POST /api/auth/refresh (refresh_token)
+    BE-->>FE: Set-Cookie nowe access_token + refresh_token
+    FE-->>U: Kontynuacja sesji
