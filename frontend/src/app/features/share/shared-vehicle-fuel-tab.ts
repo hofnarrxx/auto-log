@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../shared/services/currency.service';
+import { FuelListComponent } from '../../shared/ui/fuel-list/fuel-list.component';
 import type { SharedFuelEntry } from './shared-vehicle-model';
 
 type SortOption =
@@ -15,7 +16,7 @@ type SortOption =
 @Component({
   selector: 'app-shared-vehicle-fuel-tab',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, FuelListComponent],
   templateUrl: './shared-vehicle-fuel-tab.html',
   styleUrl: './shared-vehicle-fuel-tab.css',
 })

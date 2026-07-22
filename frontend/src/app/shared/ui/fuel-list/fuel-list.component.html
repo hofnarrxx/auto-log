@@ -1,0 +1,74 @@
+<div class="fuel-list">
+  <div class="tab-header">
+    <div class="header-main">
+      <h3>{{ getTitleTranslationKey('title') | translate }}</h3>
+      <p class="header-summary">
+        {{ 'common.records' | translate }}: {{ totalRecordsValue() }} | {{ 'common.totalCost' | translate }}: {{ totalCostTextValue() || '-' }}
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <label class="search-control">
+        <span>{{ 'common.search' | translate }}</span>
+        <input
+          type="text"
+          [placeholder]="getTitleTranslationKey('placeholders.search') | translate"
+          [value]="gasStationSearch()"
+          (input)="onGasStationSearchChange($any($event.target).value)">
+      </label>
+
+      <label class="sort-control">
+        <span>{{ 'common.sortBy' | translate }}</span>
+        <select [value]="selectedSort()" (change)="onSortChange($any($event.target).value)">
+          <option value="newest">{{ 'common.sort.newest' | translate }}</option>
+          <option value="oldest">{{ 'common.sort.oldest' | translate }}</option>
+          <option value="price-low-high">{{ 'common.sort.priceLowHigh' | translate }}</option>
+          <option value="price-high-low">{{ 'common.sort.priceHighLow' | translate }}</option>
+          <option value="price-per-unit-low-high">{{ 'common.sort.pricePerUnitLowHigh' | translate }}</option>
+          <option value="price-per-unit-high-low">{{ 'common.sort.pricePerUnitHighLow' | translate }}</option>
+        </select>
+      </label>
+
+      @if (showAddButtonValue()) {
+        <button type="button" class="add-record-btn" (click)="requestAdd()">
+          {{ getTitleTranslationKey('addRecord') | translate }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (!filteredFuelRecords().length) {
+    <p class="status-message">
+      {{ hasAnyRecords() ? (getTitleTranslationKey('empty.filtered') | translate) : (getTitleTranslationKey('empty.none') | translate) }}
+    </p>
+  } @else {
+    <div class="timeline">
+      @for (entry of visibleFuelRecords(); track entry.id) {
+        <button type="button" class="timeline-item" (click)="openRecordDetails(entry)">
+          <div class="entry-date">{{ formatDate(entry.date) }}</div>
+
+          <div class="entry-point" aria-hidden="true">
+            <span>⛽</span>
+          </div>
+
+          <div class="entry-content">
+            <p class="entry-amount">{{ 'common.fuel' | translate }}: {{ formatFuelAmount(entry.amount) }}</p>
+            <p class="entry-price">{{ 'common.price' | translate }}: {{ formatMoney(entry.cost, entry.currency) }}, {{ formatPricePerLitre(entry.cost, entry.amount, entry.currency) }}</p>
+            @if (entry.gasStation) {
+              <p class="entry-station">{{ 'common.station' | translate }}: {{ entry.gasStation }}</p>
+            }
+          </div>
+
+          @if (hasMileageWarning(entry)) {
+            <span
+              class="entry-warning-side"
+              [attr.title]="'common.mileageWarning' | translate"
+              [attr.aria-label]="'common.mileageAnomaly' | translate">
+              ▲ {{ 'common.checkMileage' | translate }}
+            </span>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

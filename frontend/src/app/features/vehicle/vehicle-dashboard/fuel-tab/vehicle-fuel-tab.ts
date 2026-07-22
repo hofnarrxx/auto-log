@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { FuelListComponent } from '../../../../shared/ui/fuel-list/fuel-list.component';
 
 interface FuelRecord {
   id: number;
@@ -30,7 +31,7 @@ type SortOption =
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LucideAngularModule, FuelListComponent],
   templateUrl: './vehicle-fuel-tab.html',
   styleUrl: './vehicle-fuel-tab.css',
 })
