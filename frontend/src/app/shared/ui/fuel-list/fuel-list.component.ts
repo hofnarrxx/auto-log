@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { LucideAngularModule } from 'lucide-angular';
+import { DateFormatPipe, MoneyPipe } from '../../pipes';
 import { CurrencyService } from '../../services/currency.service';
 import {
   type FuelListRecord,
@@ -13,7 +15,7 @@ import {
 @Component({
   selector: 'app-fuel-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, LucideAngularModule, DateFormatPipe, MoneyPipe],
   templateUrl: './fuel-list.component.html',
   styleUrl: './fuel-list.component.css',
 })
@@ -71,28 +73,6 @@ export class FuelListComponent {
     return `${this.titleKeyPrefixValue()}.${postfix}`;
   }
 
-  protected formatDate(date: string | null | undefined): string {
-    if (!date) {
-      return '-';
-    }
-
-    const [year, month, day] = date.split('-');
-    if (!year || !month || !day) {
-      return date;
-    }
-
-    return `${day}.${month}.${year}`;
-  }
-
-  protected formatMoney(value: number | null | undefined, currency?: string): string {
-    if (value === null || value === undefined) {
-      return '-';
-    }
-
-    const currencyCode = currency || this.currencyService.selectedCurrency();
-    return this.currencyService.formatCurrency(value, currencyCode);
-  }
-
   protected formatFuelAmount(amount: number | null | undefined): string {
     if (amount === null || amount === undefined) {
       return '-';
@@ -111,7 +91,7 @@ export class FuelListComponent {
     }
 
     const pricePerLitre = cost / amount;
-    return `${this.formatMoney(pricePerLitre, currency)} / L`;
+    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
   }
 
   protected hasMileageWarning(record: FuelListRecord): boolean {

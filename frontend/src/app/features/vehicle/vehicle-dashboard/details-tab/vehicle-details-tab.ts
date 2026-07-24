@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, computed, inject, signal } from
 import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
+import { formatAppDate } from '../../../../shared/utils/date-format.utils';
 import { Vehicle } from '../../vehicle-model';
 
 interface FuelRecord {
@@ -100,20 +101,7 @@ export class VehicleDetailsTab {
     }
 
     const date = (latest as FuelRecord).date ?? (latest as MaintenanceRecord).serviceDate;
-    return this.formatDate(date);
-  }
-
-  protected formatDate(date: string | null | undefined): string {
-    if (!date) {
-      return '-';
-    }
-
-    const [year, month, day] = date.split('-');
-    if (!year || !month || !day) {
-      return date;
-    }
-
-    return `${day}.${month}.${year}`;
+    return formatAppDate(date);
   }
 
   protected vehicleInfoTitle(): string {

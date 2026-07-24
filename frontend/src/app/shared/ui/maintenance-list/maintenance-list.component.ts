@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
+import { CategoryIconPipe, CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../pipes';
 import { CurrencyService } from '../../services/currency.service';
 import {
-  getMaintenanceCategoryIcon,
-  getMaintenanceCategoryLabel,
   getMaintenanceTimelineEntries,
   getMaintenanceWarningRecordIds,
-  formatMaintenanceDate,
   type MaintenanceFilterState,
   type MaintenanceListRecord,
   type MaintenanceSortOption,
@@ -17,7 +15,15 @@ import {
 @Component({
   selector: 'app-maintenance-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule, LucideAngularModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    LucideAngularModule,
+    CategoryIconPipe,
+    CategoryLabelPipe,
+    DateFormatPipe,
+    MoneyPipe,
+  ],
   templateUrl: './maintenance-list.component.html',
   styleUrl: './maintenance-list.component.css',
 })
@@ -125,7 +131,7 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
 
     return Array.from(totals.entries())
       .sort(([left], [right]) => left.localeCompare(right))
-      .map(([currency, total]) => this.formatMoney(total, currency))
+      .map(([currency, total]) => this.currencyService.formatCurrency(total, currency))
       .join(' | ');
   });
 
@@ -226,27 +232,6 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
 
   protected onTitleSearchChange(rawValue: string) {
     this.titleSearch.set(rawValue.trimStart());
-  }
-
-  protected categoryLabel(category: string): string {
-    return getMaintenanceCategoryLabel(category);
-  }
-
-  protected iconForCategory(category: string): string {
-    return getMaintenanceCategoryIcon(category);
-  }
-
-  protected formatDate(serviceDate: string): string {
-    return formatMaintenanceDate(serviceDate);
-  }
-
-  protected formatMoney(value: number | null, currency?: string): string {
-    if (value === null || value === undefined) {
-      return '-';
-    }
-
-    const currencyCode = currency || this.currencyService.selectedCurrency();
-    return this.currencyService.formatCurrency(value, currencyCode);
   }
 
   protected hasMileageWarning(record: T): boolean {

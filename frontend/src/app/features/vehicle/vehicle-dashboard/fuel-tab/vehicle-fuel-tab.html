@@ -96,7 +96,7 @@
       <div class="record-details">
         <div class="detail-row">
           <span class="label">{{ 'common.date' | translate }}</span>
-          <span>{{ formatDate(record.date) }}</span>
+          <span>{{ record.date | dateFormat }}</span>
         </div>
         <div class="detail-row">
           <span class="label">{{ 'common.amount' | translate }}</span>
@@ -104,7 +104,7 @@
         </div>
         <div class="detail-row">
           <span class="label">{{ 'common.cost' | translate }}</span>
-          <span>{{ formatMoney(record.cost, record.currency) }}</span>
+          <span>{{ record.cost | money:record.currency }}</span>
         </div>
         <div class="detail-row">
           <span class="label">{{ 'common.pricePerLitre' | translate }}</span>
@@ -125,11 +125,11 @@
         </div>
         <div class="detail-row">
           <span class="label">{{ 'common.created' | translate }}</span>
-          <span>{{ formatDateTime(record.createdAt) }}</span>
+          <span>{{ record.createdAt | dateFormat:'datetime' }}</span>
         </div>
         <div class="detail-row">
           <span class="label">{{ 'common.updated' | translate }}</span>
-          <span>{{ formatDateTime(record.updatedAt) }}</span>
+          <span>{{ record.updatedAt | dateFormat:'datetime' }}</span>
         </div>
       </div>
 

@@ -163,6 +163,13 @@
   font-size: 15px;
 }
 
+.entry-point lucide-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
 .entry-content {
   border: 1px solid var(--border);
   border-radius: 10px;

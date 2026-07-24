@@ -45,7 +45,7 @@
                       <select formControlName="category">
                         <option value="" disabled>{{ 'common.selectCategory' | translate }}</option>
                         @for (category of categories(); track category) {
-                          <option [value]="category">{{ categoryLabel(category) | translate }}</option>
+                          <option [value]="category">{{ category | categoryLabel | translate }}</option>
                         }
                       </select>
                     </label>
@@ -143,11 +143,11 @@
                     </div>
                     <div class="detail-row">
                       <span class="label">{{ 'common.date' | translate }}</span>
-                      <span>{{ formatDate(record.serviceDate) }}</span>
+                      <span>{{ record.serviceDate | dateFormat }}</span>
                     </div>
                     <div class="detail-row">
                       <span class="label">{{ 'common.category' | translate }}</span>
-                      <span>{{ categoryLabel(record.category) | translate }}</span>
+                      <span>{{ record.category | categoryLabel | translate }}</span>
                     </div>
                     <div class="detail-row">
                       <span class="label">{{ 'common.mileage' | translate }}</span>
@@ -160,7 +160,7 @@
                     </div>
                     <div class="detail-row">
                       <span class="label">{{ 'common.cost' | translate }}</span>
-                      <span>{{ formatMoney(record.cost, record.currency) }}</span>
+                      <span>{{ record.cost | money:record.currency }}</span>
                     </div>
                     <div class="detail-row description">
                       <span class="label">{{ 'common.description' | translate }}</span>
@@ -183,11 +183,11 @@
                     }
                     <div class="detail-row">
                       <span class="label">{{ 'common.created' | translate }}</span>
-                      <span>{{ formatDateTime(record.createdAt) }}</span>
+                      <span>{{ record.createdAt | dateFormat:'datetime' }}</span>
                     </div>
                     <div class="detail-row">
                       <span class="label">{{ 'common.updated' | translate }}</span>
-                      <span>{{ formatDateTime(record.updatedAt) }}</span>
+                      <span>{{ record.updatedAt | dateFormat:'datetime' }}</span>
                     </div>
                   </div>
 

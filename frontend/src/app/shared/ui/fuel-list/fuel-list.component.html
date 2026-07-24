@@ -45,15 +45,19 @@
     <div class="timeline">
       @for (entry of visibleFuelRecords(); track entry.id) {
         <button type="button" class="timeline-item" (click)="openRecordDetails(entry)">
-          <div class="entry-date">{{ formatDate(entry.date) }}</div>
+          <div class="entry-date">{{ entry.date | dateFormat }}</div>
 
-          <div class="entry-point" aria-hidden="true">
-            <span>⛽</span>
+          <div class="entry-point" [attr.aria-label]="'common.fuel' | translate">
+            <lucide-icon
+              name="fuel"
+              size="16"
+              strokeWidth="2"
+              aria-hidden="true"></lucide-icon>
           </div>
 
           <div class="entry-content">
             <p class="entry-amount">{{ 'common.fuel' | translate }}: {{ formatFuelAmount(entry.amount) }}</p>
-            <p class="entry-price">{{ 'common.price' | translate }}: {{ formatMoney(entry.cost, entry.currency) }}, {{ formatPricePerLitre(entry.cost, entry.amount, entry.currency) }}</p>
+            <p class="entry-price">{{ 'common.price' | translate }}: {{ entry.cost | money:entry.currency }}, {{ formatPricePerLitre(entry.cost, entry.amount, entry.currency) }}</p>
             @if (entry.gasStation) {
               <p class="entry-station">{{ 'common.station' | translate }}: {{ entry.gasStation }}</p>
             }

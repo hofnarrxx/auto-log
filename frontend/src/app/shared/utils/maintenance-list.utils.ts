@@ -55,15 +55,6 @@ export function getMaintenanceCategoryIcon(category: string): string {
   return iconMap[normalizedCategory] ?? 'tool-case';
 }
 
-export function formatMaintenanceDate(serviceDate: string): string {
-  const [year, month, day] = serviceDate.split('-');
-  if (!year || !month || !day) {
-    return serviceDate;
-  }
-
-  return `${day}.${month}.${year}`;
-}
-
 export function getMaintenanceTimestamp(serviceDate: string): number {
   const timestamp = new Date(`${serviceDate}T00:00:00`).getTime();
   return Number.isNaN(timestamp) ? 0 : timestamp;

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { DateFormatPipe, MoneyPipe } from '../../shared/pipes';
 import { CurrencyService } from '../../shared/services/currency.service';
 import { FuelListComponent } from '../../shared/ui/fuel-list/fuel-list.component';
 import type { SharedFuelEntry } from './shared-vehicle-model';
@@ -16,7 +17,7 @@ type SortOption =
 @Component({
   selector: 'app-shared-vehicle-fuel-tab',
   standalone: true,
-  imports: [CommonModule, TranslateModule, FuelListComponent],
+  imports: [CommonModule, TranslateModule, FuelListComponent, DateFormatPipe, MoneyPipe],
   templateUrl: './shared-vehicle-fuel-tab.html',
   styleUrl: './shared-vehicle-fuel-tab.css',
 })
@@ -49,7 +50,7 @@ export class SharedVehicleFuelTab {
 
     return Array.from(totals.entries())
       .sort(([left], [right]) => left.localeCompare(right))
-      .map(([currency, total]) => this.formatMoney(total, currency))
+      .map(([currency, total]) => this.currencyService.formatCurrency(total, currency))
       .join(' | ');
   });
   protected readonly filteredFuelRecords = computed(() =>
@@ -61,27 +62,6 @@ export class SharedVehicleFuelTab {
   protected readonly mileageWarningRecordIds = computed(() =>
     this.findMileageWarningRecordIds(this.fuelRecords(), record => record.date)
   );
-
-  protected formatDate(date: string | null | undefined): string {
-    if (!date) {
-      return '-';
-    }
-
-    const [year, month, day] = date.split('-');
-    if (!year || !month || !day) {
-      return date;
-    }
-    return `${day}.${month}.${year}`;
-  }
-
-  protected formatMoney(value: number | null | undefined, currency?: string): string {
-    if (value === null || value === undefined) {
-      return '-';
-    }
-
-    const currencyCode = currency || this.currencyService.selectedCurrency();
-    return this.currencyService.formatCurrency(value, currencyCode);
-  }
 
   protected formatFuelAmount(amount: number | null | undefined): string {
     if (amount === null || amount === undefined) {
@@ -107,7 +87,7 @@ export class SharedVehicleFuelTab {
     }
 
     const pricePerLitre = cost / amount;
-    return `${this.formatMoney(pricePerLitre, currency)} / L`;
+    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
   }
 
   protected hasMileageWarning(record: SharedFuelEntry): boolean {
@@ -141,25 +121,6 @@ export class SharedVehicleFuelTab {
   protected closeModal() {
     this.isModalOpen.set(false);
     this.selectedRecord.set(null);
-  }
-
-  protected formatDateTime(isoString: string | null | undefined): string {
-    if (!isoString) {
-      return '-';
-    }
-
-    const date = new Date(isoString);
-    if (Number.isNaN(date.getTime())) {
-      return '-';
-    }
-
-    return date.toLocaleString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   }
 
   private matchesGasStationFilter(record: SharedFuelEntry): boolean {

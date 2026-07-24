@@ -48,11 +48,11 @@
     <div class="timeline">
       @for (entry of timelineEntries(); track entry.id) {
         <button type="button" class="timeline-item" (click)="openRecordDetails(entry)">
-          <div class="entry-date">{{ formatDate(entry.serviceDate) }}</div>
+          <div class="entry-date">{{ entry.serviceDate | dateFormat }}</div>
 
-          <div class="entry-point" [attr.aria-label]="categoryLabel(entry.category) | translate">
+          <div class="entry-point" [attr.aria-label]="entry.category | categoryLabel | translate">
             <lucide-icon
-              [name]="iconForCategory(entry.category)"
+              [name]="entry.category | categoryIcon"
               size="16"
               strokeWidth="2"
               aria-hidden="true"></lucide-icon>
@@ -62,7 +62,7 @@
             <p class="entry-title">
               {{ entry.title || (getTitleTranslationKey('untitled') | translate) }}
             </p>
-            <span class="entry-cost">{{ formatMoney(entry.cost, entry.currency) }}</span>
+            <span class="entry-cost">{{ entry.cost | money:entry.currency }}</span>
           </div>
 
           @if (hasMileageWarning(entry)) {
@@ -93,7 +93,7 @@
           @for (category of availableFilterCategories(); track category) {
             <label class="filter-option">
               <input type="checkbox" [checked]="isCategorySelected(category)" (change)="toggleCategory(category, $any($event.target).checked)">
-              <span>{{ categoryLabel(category) | translate }}</span>
+              <span>{{ category | categoryLabel | translate }}</span>
             </label>
           }
         </div>

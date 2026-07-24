@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   LucideAngularModule,
 } from 'lucide-angular';
+import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { MaintenanceListComponent } from '../../../../shared/ui/maintenance-list/maintenance-list.component';
 import { AttachmentService } from '../../services/attachment.service';
@@ -29,6 +30,9 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
     TranslateModule,
     LucideAngularModule,
     MaintenanceListComponent,
+    CategoryLabelPipe,
+    DateFormatPipe,
+    MoneyPipe,
   ],
   templateUrl: './vehicle-maintenance-tab.html',
   styleUrl: './vehicle-maintenance-tab.css',
@@ -101,27 +105,6 @@ export class VehicleMaintenanceTab {
     this.selectedRecord.set(record);
     this.actionError.set(null);
     this.modalMode.set('view');
-  }
-
-  protected categoryLabel(category: string): string {
-    switch (category.trim().toLowerCase()) {
-      case 'inspection':
-        return 'vehicle.maintenanceTab.categories.inspection';
-      case 'oil change':
-        return 'vehicle.maintenanceTab.categories.oilChange';
-      case 'repair':
-        return 'vehicle.maintenanceTab.categories.repair';
-      case 'part replacement':
-        return 'vehicle.maintenanceTab.categories.partReplacement';
-      case 'fluid refill':
-        return 'vehicle.maintenanceTab.categories.fluidRefill';
-      case 'tires & wheels':
-        return 'vehicle.maintenanceTab.categories.tiresAndWheels';
-      case 'cosmetic':
-        return 'vehicle.maintenanceTab.categories.cosmetic';
-      default:
-        return category;
-    }
   }
 
   protected startEditSelectedRecord() {
@@ -229,29 +212,6 @@ export class VehicleMaintenanceTab {
       : 'vehicle.maintenanceTab.modalTitle.add';
   }
 
-  protected formatMoney(value: number | null, currency?: string): string {
-    if (value === null || value === undefined) {
-      return '-';
-    }
-    const currencyCode = currency || this.currencyService.selectedCurrency();
-    return this.currencyService.formatCurrency(value, currencyCode);
-  }
-
-  protected formatDateTime(isoString: string): string {
-    const date = new Date(isoString);
-    if (Number.isNaN(date.getTime())) {
-      return isoString;
-    }
-
-    const day = `${date.getDate()}`.padStart(2, '0');
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const year = `${date.getFullYear()}`;
-    const hour = `${date.getHours()}`.padStart(2, '0');
-    const minute = `${date.getMinutes()}`.padStart(2, '0');
-
-    return `${day}.${month}.${year} ${hour}:${minute}`;
-  }
-
   private loadCategories() {
     this.maintenanceApiService.getCategories().subscribe({
       next: categories => {
@@ -330,29 +290,6 @@ export class VehicleMaintenanceTab {
       cost,
       currency: currencyValue,
     };
-  }
-
-  protected formatDate(serviceDate: string): string {
-    const [year, month, day] = serviceDate.split('-');
-    if (!year || !month || !day) {
-      return serviceDate;
-    }
-    return `${day}.${month}.${year}`;
-  }
-
-  protected iconForCategory(category: string): string {
-    const normalizedCategory = category.trim().toLowerCase();
-    const iconMap: Record<string, string> = {
-      inspection: 'search',
-      'oil change': 'droplet',
-      repair: 'wrench',
-      'part replacement': 'cog',
-      'fluid refill': 'droplets',
-      'tires & wheels': 'disc',
-      cosmetic: 'sparkles',
-    };
-
-    return iconMap[normalizedCategory] ?? 'tool-case';
   }
 
   protected hasMileageWarning(record: ServiceRecord): boolean {

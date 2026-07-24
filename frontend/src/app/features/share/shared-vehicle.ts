@@ -4,6 +4,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { formatAppDate } from '../../shared/utils/date-format.utils';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
 import type { SharedFuelEntry, SharedMaintenanceEntry, SharedVehicleResponse } from './shared-vehicle-model';
@@ -80,23 +81,6 @@ export class SharedVehicle {
     });
   }
 
-  formatDate(date: string | null | undefined): string {
-    if (!date) {
-      return '-';
-    }
-
-    const parsed = new Date(date);
-    if (Number.isNaN(parsed.getTime())) {
-      return '-';
-    }
-
-    return parsed.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-  }
-
   lastOdometerReading(): string {
     const mileage = this.getLatestOdometerMileage();
 
@@ -115,7 +99,7 @@ export class SharedVehicle {
     }
 
     const date = (latest as SharedFuelEntry).date ?? (latest as SharedMaintenanceEntry).serviceDate;
-    return this.formatDate(date);
+    return formatAppDate(date);
   }
 
   setTab(tab: SharedTab) {
