@@ -2,7 +2,7 @@ import { Component, inject, Output, EventEmitter, Input, OnInit } from '@angular
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
-import { Vehicle as VehicleModel } from '../vehicle-model';
+import { Vehicle as VehicleModel } from '../models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { of, switchMap, map } from 'rxjs';
 

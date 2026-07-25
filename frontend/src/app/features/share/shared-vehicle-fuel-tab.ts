@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DateFormatPipe, MoneyPipe } from '../../shared/pipes';
 import { CurrencyService } from '../../shared/services/currency.service';
 import { FuelListComponent } from '../../shared/ui/fuel-list/fuel-list.component';
-import type { SharedFuelEntry } from './shared-vehicle-model';
+import type { FuelRecord } from '../vehicle/models';
 
 type SortOption =
   | 'newest'
@@ -25,14 +25,14 @@ export class SharedVehicleFuelTab {
   private readonly currencyService = inject(CurrencyService);
 
   @Input({ required: true })
-  set records(value: SharedFuelEntry[]) {
+  set records(value: FuelRecord[]) {
     this.fuelRecords.set(value ?? []);
   }
 
   protected readonly error = signal<string | null>(null);
   protected readonly isModalOpen = signal(false);
-  protected readonly selectedRecord = signal<SharedFuelEntry | null>(null);
-  protected readonly fuelRecords = signal<SharedFuelEntry[]>([]);
+  protected readonly selectedRecord = signal<FuelRecord | null>(null);
+  protected readonly fuelRecords = signal<FuelRecord[]>([]);
   protected readonly gasStationSearch = signal('');
   protected readonly selectedSort = signal<SortOption>('newest');
   protected readonly hasAnyRecords = computed(() => this.fuelRecords().length > 0);
@@ -90,7 +90,7 @@ export class SharedVehicleFuelTab {
     return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
   }
 
-  protected hasMileageWarning(record: SharedFuelEntry): boolean {
+  protected hasMileageWarning(record: FuelRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
   }
 
@@ -113,7 +113,7 @@ export class SharedVehicleFuelTab {
     this.selectedSort.set(rawValue);
   }
 
-  protected openRecordDetails(record: SharedFuelEntry) {
+  protected openRecordDetails(record: FuelRecord) {
     this.selectedRecord.set(record);
     this.isModalOpen.set(true);
   }
@@ -123,7 +123,7 @@ export class SharedVehicleFuelTab {
     this.selectedRecord.set(null);
   }
 
-  private matchesGasStationFilter(record: SharedFuelEntry): boolean {
+  private matchesGasStationFilter(record: FuelRecord): boolean {
     const query = this.gasStationSearch().trim().toLowerCase();
     if (!query) {
       return true;
@@ -133,7 +133,7 @@ export class SharedVehicleFuelTab {
     return station.includes(query);
   }
 
-  private compareRecords(left: SharedFuelEntry, right: SharedFuelEntry): number {
+  private compareRecords(left: FuelRecord, right: FuelRecord): number {
     const sort = this.selectedSort();
 
     if (sort === 'oldest') {
@@ -189,7 +189,7 @@ export class SharedVehicleFuelTab {
     return direction === 'asc' ? left - right : right - left;
   }
 
-  private pricePerUnit(record: SharedFuelEntry): number | null {
+  private pricePerUnit(record: FuelRecord): number | null {
     if (record.cost === null || record.amount === null || record.amount <= 0) {
       return null;
     }
@@ -197,7 +197,7 @@ export class SharedVehicleFuelTab {
     return record.cost / record.amount;
   }
 
-  private getRecordCurrency(record: SharedFuelEntry): string {
+  private getRecordCurrency(record: FuelRecord): string {
     const fallbackCurrency = this.currencyService.selectedCurrency();
     return (record.currency || fallbackCurrency).trim().toUpperCase();
   }

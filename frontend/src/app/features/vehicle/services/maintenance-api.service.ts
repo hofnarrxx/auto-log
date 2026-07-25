@@ -2,49 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import type {
+  MaintenanceAttachment,
+  MaintenanceAttachmentDownloadUrlResponse,
+  MaintenanceAttachmentUploadUrlResponse,
+  MaintenanceRecord,
+  MaintenanceRecordPayload,
+} from '../models';
 
-export interface MaintenanceAttachment {
-  id: number;
-  fileName: string;
-  contentType: string | null;
-  sizeBytes: number | null;
-  url: string | null;
-  createdAt: string;
-}
-
-export interface MaintenanceRecord {
-  id: number;
-  vehicleId: number;
-  serviceDate: string;
-  title: string | null;
-  mileage: number | null;
-  category: string;
-  description: string;
-  cost: number | null;
-  currency?: string;
-  attachments?: MaintenanceAttachment[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface MaintenanceRecordPayload {
-  serviceDate: string;
-  title: string;
-  mileage: number | null;
-  category: string;
-  description: string;
-  cost: number | null;
-  currency: string;
-}
-
-export interface MaintenanceAttachmentUploadUrlResponse {
-  uploadUrl: string;
-  objectKey: string;
-}
-
-export interface MaintenanceAttachmentDownloadUrlResponse {
-  downloadUrl: string;
-}
+export type {
+  MaintenanceAttachment,
+  MaintenanceAttachmentDownloadUrlResponse,
+  MaintenanceAttachmentUploadUrlResponse,
+  MaintenanceRecord,
+  MaintenanceRecordPayload,
+} from '../models';
 
 @Injectable({
   providedIn: 'root',

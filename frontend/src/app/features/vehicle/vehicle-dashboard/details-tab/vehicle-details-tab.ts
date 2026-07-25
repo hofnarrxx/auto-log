@@ -3,18 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { formatAppDate } from '../../../../shared/utils/date-format.utils';
-import { Vehicle } from '../../vehicle-model';
-
-interface FuelRecord {
-  date: string;
-  mileage: number | null;
-  amount: number | null;
-}
-
-interface MaintenanceRecord {
-  serviceDate: string;
-  mileage: number | null;
-}
+import type { FuelRecord, MaintenanceRecord, Vehicle } from '../../models';
 
 @Component({
   selector: 'app-vehicle-details-tab',

@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../shared/pipes';
 import { MaintenanceListComponent } from '../../shared/ui/maintenance-list/maintenance-list.component';
 import { getMaintenanceWarningRecordIds } from '../../shared/utils/maintenance-list.utils';
-import type { SharedMaintenanceEntry } from './shared-vehicle-model';
+import type { MaintenanceRecord } from '../vehicle/models';
 
 @Component({
   selector: 'app-shared-vehicle-maintenance-tab',
@@ -22,21 +22,21 @@ import type { SharedMaintenanceEntry } from './shared-vehicle-model';
 })
 export class SharedVehicleMaintenanceTab {
   @Input({ required: true })
-  set records(value: SharedMaintenanceEntry[]) {
+  set records(value: MaintenanceRecord[]) {
     this.serviceRecords.set(value ?? []);
   }
 
   protected readonly error = signal<string | null>(null);
   protected readonly isModalOpen = signal(false);
-  protected readonly selectedRecord = signal<SharedMaintenanceEntry | null>(null);
+  protected readonly selectedRecord = signal<MaintenanceRecord | null>(null);
 
-  protected readonly serviceRecords = signal<SharedMaintenanceEntry[]>([]);
+  protected readonly serviceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly mileageWarningRecordIds = computed(() =>
     getMaintenanceWarningRecordIds(this.serviceRecords(), record => record.serviceDate)
   );
 
-  protected openRecordDetails(record: SharedMaintenanceEntry) {
+  protected openRecordDetails(record: MaintenanceRecord) {
     this.selectedRecord.set(record);
     this.isModalOpen.set(true);
   }
@@ -46,7 +46,7 @@ export class SharedVehicleMaintenanceTab {
     this.selectedRecord.set(null);
   }
 
-  protected hasMileageWarning(record: SharedMaintenanceEntry): boolean {
+  protected hasMileageWarning(record: MaintenanceRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
   }
 }

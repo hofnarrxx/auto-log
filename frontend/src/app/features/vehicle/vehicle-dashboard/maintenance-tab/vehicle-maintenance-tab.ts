@@ -9,15 +9,15 @@ import {
 import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { MaintenanceListComponent } from '../../../../shared/ui/maintenance-list/maintenance-list.component';
-import { AttachmentService } from '../../services/attachment.service';
-import {
-  MaintenanceApiService,
+import { getMaintenanceWarningRecordIds } from '../../../../shared/utils/maintenance-list.utils';
+import type {
   MaintenanceAttachment,
   MaintenanceAttachmentDownloadUrlResponse,
-  MaintenanceRecord as ServiceRecord,
+  MaintenanceRecord,
   MaintenanceRecordPayload,
-} from '../../services/maintenance-api.service';
-import { getMaintenanceWarningRecordIds } from '../../../../shared/utils/maintenance-list.utils';
+} from '../../models';
+import { AttachmentService } from '../../services/attachment.service';
+import { MaintenanceApiService } from '../../services/maintenance-api.service';
 
 type ModalMode = 'closed' | 'create' | 'view' | 'edit';
 type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
@@ -67,10 +67,10 @@ export class VehicleMaintenanceTab {
   protected readonly isSaving = signal(false);
   protected readonly isDeleting = signal(false);
   protected readonly modalMode = signal<ModalMode>('closed');
-  protected readonly selectedRecord = signal<ServiceRecord | null>(null);
+  protected readonly selectedRecord = signal<MaintenanceRecord | null>(null);
   protected readonly pendingAttachments = signal<File[]>([]);
 
-  protected readonly serviceRecords = signal<ServiceRecord[]>([]);
+  protected readonly serviceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly isModalOpen = computed(() => this.modalMode() !== 'closed');
   protected readonly isFormMode = computed(() => {
@@ -101,7 +101,7 @@ export class VehicleMaintenanceTab {
     this.modalMode.set('create');
   }
 
-  protected openRecordDetails(record: ServiceRecord) {
+  protected openRecordDetails(record: MaintenanceRecord) {
     this.selectedRecord.set(record);
     this.actionError.set(null);
     this.modalMode.set('view');
@@ -292,7 +292,7 @@ export class VehicleMaintenanceTab {
     };
   }
 
-  protected hasMileageWarning(record: ServiceRecord): boolean {
+  protected hasMileageWarning(record: MaintenanceRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
   }
 

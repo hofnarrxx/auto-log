@@ -8,19 +8,7 @@ import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { FuelListComponent } from '../../../../shared/ui/fuel-list/fuel-list.component';
-
-interface FuelRecord {
-  id: number;
-  vehicleId: number;
-  date: string;
-  mileage: number | null;
-  cost: number | null;
-  amount: number | null;
-  gasStation: string | null;
-  currency?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { FuelRecord } from '../../models';
 
 type SortOption =
   | 'newest'

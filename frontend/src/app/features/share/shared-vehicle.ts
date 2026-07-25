@@ -5,9 +5,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatAppDate } from '../../shared/utils/date-format.utils';
+import type { FuelRecord, MaintenanceRecord } from '../vehicle/models';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
-import type { SharedFuelEntry, SharedMaintenanceEntry, SharedVehicleResponse } from './shared-vehicle-model';
+import type { SharedVehicleResponse } from './shared-vehicle-model';
 
 type SharedTab = 'details' | 'maintenance' | 'fuel';
 
@@ -98,7 +99,7 @@ export class SharedVehicle {
       return '-';
     }
 
-    const date = (latest as SharedFuelEntry).date ?? (latest as SharedMaintenanceEntry).serviceDate;
+    const date = (latest as FuelRecord).date ?? (latest as MaintenanceRecord).serviceDate;
     return formatAppDate(date);
   }
 
@@ -106,7 +107,7 @@ export class SharedVehicle {
     this.activeTab.set(tab);
   }
 
-  private getLatestOdometerRecord(): SharedFuelEntry | SharedMaintenanceEntry | null {
+  private getLatestOdometerRecord(): FuelRecord | MaintenanceRecord | null {
     const response = this.data();
     if (!response) {
       return null;
@@ -114,15 +115,15 @@ export class SharedVehicle {
 
     const fuelRecords = (response.fuelEntries ?? []).filter(record => record.mileage !== null);
     const maintenanceRecords = (response.maintenanceEntries ?? []).filter(record => record.mileage !== null);
-    const allRecords = [...fuelRecords, ...maintenanceRecords] as (SharedFuelEntry | SharedMaintenanceEntry)[];
+    const allRecords = [...fuelRecords, ...maintenanceRecords] as (FuelRecord | MaintenanceRecord)[];
 
     if (!allRecords.length) {
       return null;
     }
 
     return [...allRecords].sort((left, right) => {
-      const leftDate = (left as SharedFuelEntry).date ?? (left as SharedMaintenanceEntry).serviceDate;
-      const rightDate = (right as SharedFuelEntry).date ?? (right as SharedMaintenanceEntry).serviceDate;
+      const leftDate = (left as FuelRecord).date ?? (left as MaintenanceRecord).serviceDate;
+      const rightDate = (right as FuelRecord).date ?? (right as MaintenanceRecord).serviceDate;
       return this.toTimestamp(rightDate) - this.toTimestamp(leftDate);
     })[0];
   }
