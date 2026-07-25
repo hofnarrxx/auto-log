@@ -1,12 +1,14 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthApi {
   isAuthenticated = signal<boolean>(false);
+  private readonly authApi = `${environment.apiBaseUrl}/api/auth`;
 
   constructor(private http: HttpClient) {
     if (window.location.pathname.startsWith('/share/')) {
@@ -21,7 +23,7 @@ export class AuthApi {
 
   login(email: string, password: string) {
     return this.http.post(
-      'http://localhost:8080/api/auth/login',
+      `${this.authApi}/login`,
       { email, password }
     ).pipe(
       tap(() => this.isAuthenticated.set(true))
@@ -30,7 +32,7 @@ export class AuthApi {
 
   register(email: string, password: string) {
     return this.http.post(
-      'http://localhost:8080/api/auth/register',
+      `${this.authApi}/register`,
       { email, password }
     ).pipe(
       tap(() => this.isAuthenticated.set(true))
@@ -39,7 +41,7 @@ export class AuthApi {
 
   refreshSession() {
     return this.http.post<void>(
-      'http://localhost:8080/api/auth/refresh',
+      `${this.authApi}/refresh`,
       {}
     ).pipe(
       tap(() => this.isAuthenticated.set(true))
@@ -48,7 +50,7 @@ export class AuthApi {
 
   logout() {
     return this.http.post(
-      'http://localhost:8080/api/auth/logout',
+      `${this.authApi}/logout`,
       {}
     ).pipe(
       tap(() => this.isAuthenticated.set(false))
@@ -57,7 +59,7 @@ export class AuthApi {
 
   checkAuth() {
     return this.http.get(
-      'http://localhost:8080/api/auth/me'
+      `${this.authApi}/me`
     );
   }
 }

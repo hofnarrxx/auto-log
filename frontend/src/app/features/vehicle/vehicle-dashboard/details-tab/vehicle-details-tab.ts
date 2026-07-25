@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { formatAppDate } from '../../../../shared/utils/date-format.utils';
 import type { FuelRecord, MaintenanceRecord, Vehicle } from '../../models';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-vehicle-details-tab',
@@ -14,7 +15,7 @@ import type { FuelRecord, MaintenanceRecord, Vehicle } from '../../models';
 export class VehicleDetailsTab {
   private translate = inject(TranslateService);
   private http = inject(HttpClient);
-  private vehicleApi = 'http://localhost:8080/vehicles';
+  private vehicleApi = `${environment.apiBaseUrl}/vehicles`;
 
   @Input({ required: true }) vehicle!: Vehicle;
   @Output() editRequested = new EventEmitter<void>();

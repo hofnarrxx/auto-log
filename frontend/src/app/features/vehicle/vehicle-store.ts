@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import type { ShareLinkResponse, Vehicle } from './models';
 
 export type { ShareLinkResponse } from './models';
@@ -10,8 +11,8 @@ export type { ShareLinkResponse } from './models';
 })
 export class VehicleStore {
   private http = inject(HttpClient);
-  private api = 'http://localhost:8080/vehicles';
-  private shareApi = 'http://localhost:8080/api/share-links';
+  private api = `${environment.apiBaseUrl}/vehicles`;
+  private shareApi = `${environment.apiBaseUrl}/api/share-links`;
 
   vehicles = signal<Vehicle[]>([]);
 

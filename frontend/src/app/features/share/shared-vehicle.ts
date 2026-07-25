@@ -9,6 +9,7 @@ import type { FuelRecord, MaintenanceRecord } from '../vehicle/models';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
 import type { SharedVehicleResponse } from './shared-vehicle-model';
+import { environment } from '../../../environments/environment';
 
 type SharedTab = 'details' | 'maintenance' | 'fuel';
 
@@ -69,7 +70,7 @@ export class SharedVehicle {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.http.get<SharedVehicleResponse>(`http://localhost:8080/share/${token}`).subscribe({
+    this.http.get<SharedVehicleResponse>(`${environment.apiBaseUrl}/share/${token}`).subscribe({
       next: response => {
         this.data.set(response);
         this.activeTab.set('details');

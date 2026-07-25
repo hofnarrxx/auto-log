@@ -2,13 +2,15 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { API_BASE_URL } from '../config/api-base-url.token';
 import { AuthApi } from './auth-api';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const authApi = inject(AuthApi);
+  const apiBaseUrl = inject(API_BASE_URL);
 
-  const isApiRequest = req.url.startsWith('http://localhost:8080');
+  const isApiRequest = req.url.startsWith(apiBaseUrl);
 
   if (!isApiRequest) {
     return next(req);

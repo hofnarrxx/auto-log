@@ -9,6 +9,7 @@ import { CurrencyService } from '../../../../shared/services/currency.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { FuelListComponent } from '../../../../shared/ui/fuel-list/fuel-list.component';
 import type { FuelRecord } from '../../models';
+import { environment } from '../../../../../environments/environment';
 
 type SortOption =
   | 'newest'
@@ -35,7 +36,7 @@ type SortOption =
 export class VehicleFuelTab {
   private readonly http = inject(HttpClient);
   private readonly currencyService = inject(CurrencyService);
-  private readonly vehicleApi = 'http://localhost:8080/vehicles';
+  private readonly vehicleApi = `${environment.apiBaseUrl}/vehicles`;
 
   readonly form = new FormGroup({
     date: new FormControl('', Validators.required),

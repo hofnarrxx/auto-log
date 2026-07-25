@@ -46,7 +46,7 @@ export function getMaintenanceCategoryIcon(category: string): string {
     inspection: 'search',
     'oil change': 'droplet',
     repair: 'wrench',
-    'part replacement': 'toolbox',
+    'part replacement': 'cog',
     'fluid refill': 'droplets',
     'tires & wheels': 'disc',
     cosmetic: 'sparkles',

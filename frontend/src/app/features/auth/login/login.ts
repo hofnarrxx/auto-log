@@ -3,6 +3,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthApi } from '../../../core/auth/auth-api';
+import { environment } from '../../../../environments/environment';
 
 
 @Component({
@@ -35,6 +36,6 @@ export class Login {
 
   googleLogin() {
     window.location.href =
-      'http://localhost:8080/oauth2/authorization/google';
+      `${environment.apiBaseUrl}/oauth2/authorization/google`;
   }
 }

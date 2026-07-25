@@ -5,6 +5,7 @@ import { VehicleStore } from '../vehicle-store';
 import { Vehicle as VehicleModel } from '../models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { of, switchMap, map } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -15,7 +16,7 @@ import { of, switchMap, map } from 'rxjs';
 export class VehicleForm {
   private vehicleStore = inject(VehicleStore);
   private http = inject(HttpClient);
-  private readonly vehicleApi = 'http://localhost:8080/vehicles';
+  private readonly vehicleApi = `${environment.apiBaseUrl}/vehicles`;
   private static readonly MAX_IMAGE_BYTES = 5 * 1024 * 1024;
   private static readonly MAX_IMAGE_DIMENSION = 1600;
   private static readonly IMAGE_QUALITY = 0.75;
