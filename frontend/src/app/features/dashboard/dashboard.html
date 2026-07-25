@@ -1,27 +1,21 @@
 <div class="vehicle-grid">
-
   @for (v of vehicles(); track v.id) {
-  <div class="vehicle-card clickable" [routerLink]="['/vehicles', v.id]">
-
-    <div class="image-wrapper">
-      @if (v.imageUrl) {
-      <img [src]="v.imageUrl" alt="Vehicle image">
-      } @else {
-      <div class="no-image">
-        {{ 'dashboard.noImage' | translate }}
+    <div class="vehicle-card clickable" [routerLink]="['/vehicles', v.id]">
+      <div class="image-wrapper">
+        @if (v.imageUrl) {
+          <img [src]="v.imageUrl" alt="Vehicle image" />
+        } @else {
+          <div class="no-image">
+            {{ 'dashboard.noImage' | translate }}
+          </div>
+        }
       </div>
-      }
-    </div>
 
-    <div class="vehicle-info">
-      {{ v.brand }} {{ v.model }} ({{ v.year }})
+      <div class="vehicle-info">{{ v.brand }} {{ v.model }} ({{ v.year }})</div>
     </div>
-
-  </div>
   }
 
   <div class="vehicle-card add-card" (click)="openModal()">
-
     <div class="image-wrapper add-image">
       <span class="plus">+</span>
     </div>
@@ -29,13 +23,11 @@
     <div class="vehicle-info">
       {{ 'dashboard.addVehicle' | translate }}
     </div>
-
   </div>
 
   @if (showModal()) {
-  <app-modal (closed)="closeModal()">
-    <app-vehicle-form (closed)="closeModal()"></app-vehicle-form>
-  </app-modal>
+    <app-modal (closed)="closeModal()">
+      <app-vehicle-form (closed)="closeModal()"></app-vehicle-form>
+    </app-modal>
   }
-
 </div>

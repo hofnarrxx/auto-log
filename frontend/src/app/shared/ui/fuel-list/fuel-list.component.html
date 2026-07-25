@@ -3,7 +3,8 @@
     <div class="header-main">
       <h3>{{ getTitleTranslationKey('title') | translate }}</h3>
       <p class="header-summary">
-        {{ 'common.records' | translate }}: {{ totalRecordsValue() }} | {{ 'common.totalCost' | translate }}: {{ totalCostTextValue() || '-' }}
+        {{ 'common.records' | translate }}: {{ totalRecordsValue() }} |
+        {{ 'common.totalCost' | translate }}: {{ totalCostTextValue() || '-' }}
       </p>
     </div>
 
@@ -14,7 +15,8 @@
           type="text"
           [placeholder]="getTitleTranslationKey('placeholders.search') | translate"
           [value]="gasStationSearch()"
-          (input)="onGasStationSearchChange($any($event.target).value)">
+          (input)="onGasStationSearchChange($any($event.target).value)"
+        />
       </label>
 
       <label class="sort-control">
@@ -24,8 +26,12 @@
           <option value="oldest">{{ 'common.sort.oldest' | translate }}</option>
           <option value="price-low-high">{{ 'common.sort.priceLowHigh' | translate }}</option>
           <option value="price-high-low">{{ 'common.sort.priceHighLow' | translate }}</option>
-          <option value="price-per-unit-low-high">{{ 'common.sort.pricePerUnitLowHigh' | translate }}</option>
-          <option value="price-per-unit-high-low">{{ 'common.sort.pricePerUnitHighLow' | translate }}</option>
+          <option value="price-per-unit-low-high">
+            {{ 'common.sort.pricePerUnitLowHigh' | translate }}
+          </option>
+          <option value="price-per-unit-high-low">
+            {{ 'common.sort.pricePerUnitHighLow' | translate }}
+          </option>
         </select>
       </label>
 
@@ -39,7 +45,11 @@
 
   @if (!filteredFuelRecords().length) {
     <p class="status-message">
-      {{ hasAnyRecords() ? (getTitleTranslationKey('empty.filtered') | translate) : (getTitleTranslationKey('empty.none') | translate) }}
+      {{
+        hasAnyRecords()
+          ? (getTitleTranslationKey('empty.filtered') | translate)
+          : (getTitleTranslationKey('empty.none') | translate)
+      }}
     </p>
   } @else {
     <div class="timeline">
@@ -48,18 +58,21 @@
           <div class="entry-date">{{ entry.date | dateFormat }}</div>
 
           <div class="entry-point" [attr.aria-label]="'common.fuel' | translate">
-            <lucide-icon
-              name="fuel"
-              size="16"
-              strokeWidth="2"
-              aria-hidden="true"></lucide-icon>
+            <lucide-icon name="fuel" size="16" strokeWidth="2" aria-hidden="true"></lucide-icon>
           </div>
 
           <div class="entry-content">
-            <p class="entry-amount">{{ 'common.fuel' | translate }}: {{ formatFuelAmount(entry.amount) }}</p>
-            <p class="entry-price">{{ 'common.price' | translate }}: {{ entry.cost | money:entry.currency }}, {{ formatPricePerLitre(entry.cost, entry.amount, entry.currency) }}</p>
+            <p class="entry-amount">
+              {{ 'common.fuel' | translate }}: {{ formatFuelAmount(entry.amount) }}
+            </p>
+            <p class="entry-price">
+              {{ 'common.price' | translate }}: {{ entry.cost | money: entry.currency }},
+              {{ formatPricePerLitre(entry.cost, entry.amount, entry.currency) }}
+            </p>
             @if (entry.gasStation) {
-              <p class="entry-station">{{ 'common.station' | translate }}: {{ entry.gasStation }}</p>
+              <p class="entry-station">
+                {{ 'common.station' | translate }}: {{ entry.gasStation }}
+              </p>
             }
           </div>
 
@@ -67,7 +80,8 @@
             <span
               class="entry-warning-side"
               [attr.title]="'common.mileageWarning' | translate"
-              [attr.aria-label]="'common.mileageAnomaly' | translate">
+              [attr.aria-label]="'common.mileageAnomaly' | translate"
+            >
               ▲ {{ 'common.checkMileage' | translate }}
             </span>
           }

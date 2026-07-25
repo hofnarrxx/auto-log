@@ -71,7 +71,7 @@ export class SharedVehicle {
     this.error.set(null);
 
     this.http.get<SharedVehicleResponse>(`${environment.apiBaseUrl}/share/${token}`).subscribe({
-      next: response => {
+      next: (response) => {
         this.data.set(response);
         this.activeTab.set('details');
         this.isLoading.set(false);
@@ -79,7 +79,7 @@ export class SharedVehicle {
       error: () => {
         this.error.set('sharedVehicle.errors.expiredOrInvalid');
         this.isLoading.set(false);
-      }
+      },
     });
   }
 
@@ -114,9 +114,13 @@ export class SharedVehicle {
       return null;
     }
 
-    const fuelRecords = (response.fuelEntries ?? []).filter(record => record.mileage !== null);
-    const maintenanceRecords = (response.maintenanceEntries ?? []).filter(record => record.mileage !== null);
-    const allRecords = [...fuelRecords, ...maintenanceRecords] as (FuelRecord | MaintenanceRecord)[];
+    const fuelRecords = (response.fuelEntries ?? []).filter((record) => record.mileage !== null);
+    const maintenanceRecords = (response.maintenanceEntries ?? []).filter(
+      (record) => record.mileage !== null
+    );
+    const allRecords = [...fuelRecords, ...maintenanceRecords] as (
+      FuelRecord | MaintenanceRecord
+    )[];
 
     if (!allRecords.length) {
       return null;
@@ -137,7 +141,9 @@ export class SharedVehicle {
     }
 
     const fallbackMileage = this.data()?.mileage;
-    return fallbackMileage === null || fallbackMileage === undefined ? null : Math.trunc(fallbackMileage);
+    return fallbackMileage === null || fallbackMileage === undefined
+      ? null
+      : Math.trunc(fallbackMileage);
   }
 
   private toTimestamp(date: string): number {

@@ -39,7 +39,7 @@ export class SharedVehicleFuelTab {
   protected readonly totalFuelCostByCurrency = computed(() => {
     const totals = new Map<string, number>();
 
-    this.fuelRecords().forEach(record => {
+    this.fuelRecords().forEach((record) => {
       if (record.cost === null) {
         return;
       }
@@ -54,13 +54,13 @@ export class SharedVehicleFuelTab {
       .join(' | ');
   });
   protected readonly filteredFuelRecords = computed(() =>
-    this.fuelRecords().filter(record => this.matchesGasStationFilter(record))
+    this.fuelRecords().filter((record) => this.matchesGasStationFilter(record))
   );
   protected readonly visibleFuelRecords = computed(() =>
     [...this.filteredFuelRecords()].sort((left, right) => this.compareRecords(left, right))
   );
   protected readonly mileageWarningRecordIds = computed(() =>
-    this.findMileageWarningRecordIds(this.fuelRecords(), record => record.date)
+    this.findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
   );
 
   protected formatFuelAmount(amount: number | null | undefined): string {
@@ -141,29 +141,31 @@ export class SharedVehicleFuelTab {
     }
 
     if (sort === 'price-low-high') {
-      return this.compareNullableNumbers(left.cost, right.cost, 'asc') ||
-        (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(left.cost, right.cost, 'asc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     if (sort === 'price-high-low') {
-      return this.compareNullableNumbers(left.cost, right.cost, 'desc') ||
-        (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(left.cost, right.cost, 'desc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     if (sort === 'price-per-unit-low-high') {
-      return this.compareNullableNumbers(
-        this.pricePerUnit(left),
-        this.pricePerUnit(right),
-        'asc'
-      ) || (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(this.pricePerUnit(left), this.pricePerUnit(right), 'asc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     if (sort === 'price-per-unit-high-low') {
-      return this.compareNullableNumbers(
-        this.pricePerUnit(left),
-        this.pricePerUnit(right),
-        'desc'
-      ) || (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(this.pricePerUnit(left), this.pricePerUnit(right), 'desc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     return this.toTimestamp(right.date) - this.toTimestamp(left.date);
@@ -213,7 +215,7 @@ export class SharedVehicleFuelTab {
     const warnings = new Set<number>();
     let maxMileageSeen: number | null = null;
 
-    sorted.forEach(record => {
+    sorted.forEach((record) => {
       const mileage = record.mileage;
       if (mileage === null) {
         return;

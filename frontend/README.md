@@ -1,59 +1,76 @@
-# Frontend
+# Auto Log frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.3.
+Angular 21 standalone application for the Auto Log vehicle log.
 
-## Development server
+## Setup
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Install the locked dependency tree:
 
 ```bash
-ng generate component component-name
+npm ci
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Start the development server:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Open `http://localhost:4200`. Development and production environment files currently point to an API at `http://localhost:8080`.
 
-To build the project run:
+## Commands
+
+- `npm start` — start the development server.
+- `npm run build` — create the default production build.
+- `npm run build:prod` — create an explicit production build.
+- `npm test` — run Karma in watch mode.
+- `npm run test:ci` — run headless tests once and generate coverage.
+- `npm run typecheck` — run Angular and TypeScript compilation without emitting files.
+- `npm run lint` — lint TypeScript and Angular templates.
+- `npm run format` — format supported project files.
+- `npm run format:check` — check formatting without modifying files.
+- `npm run i18n:check` — verify that English and Polish translation keys match.
+
+There is no end-to-end test runner configured yet.
+
+## Source structure
+
+```text
+src/app/
+  core/       App-wide infrastructure: authentication, configuration, layout
+  features/   Route-level product features
+  shared/     Reusable UI, pipes, services, and pure utilities
+```
+
+Current dependency rules:
+
+- Feature code may depend on `core` and `shared`.
+- `core` and `shared` must not import feature internals.
+- Components should delegate HTTP transport to focused API services.
+- Stores/facades own server-backed feature state; pure calculations belong in utilities.
+- Generic UI belongs in `shared/ui`; vehicle-specific reusable UI remains in the vehicle feature.
+- Tests are colocated with source as `*.spec.ts`.
+
+## Internationalization
+
+Runtime translations live in:
+
+- `public/i18n/en.json`
+- `public/i18n/pl.json`
+
+When adding a key, update both files and run `npm run i18n:check`.
+
+## Quality workflow
+
+Before opening a pull request, run:
 
 ```bash
-ng build
+npm run format:check
+npm run lint
+npm run typecheck
+npm run i18n:check
+npm run test:ci
+npm run build:prod
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Build artifacts, Angular cache files, coverage, and dependencies are ignored by `frontend/.gitignore`.

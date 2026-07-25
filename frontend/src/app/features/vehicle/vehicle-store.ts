@@ -18,18 +18,16 @@ export class VehicleStore {
 
   add(vehicle: Vehicle): Observable<Vehicle> {
     return this.http.post<Vehicle>(this.api, vehicle).pipe(
-      tap(newVehicle => {
-        this.vehicles.update(v => [...v, newVehicle]);
+      tap((newVehicle) => {
+        this.vehicles.update((v) => [...v, newVehicle]);
       })
     );
   }
 
   update(vehicle: Vehicle): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.api}/${vehicle.id}`, vehicle).pipe(
-      tap(updated => {
-        this.vehicles.update(list =>
-          list.map(v => (v.id === updated.id ? updated : v))
-        );
+      tap((updated) => {
+        this.vehicles.update((list) => list.map((v) => (v.id === updated.id ? updated : v)));
       })
     );
   }
@@ -37,13 +35,13 @@ export class VehicleStore {
   remove(id: number) {
     return this.http.delete<void>(`${this.api}/${id}`).pipe(
       tap(() => {
-        this.vehicles.update(v => v.filter(vehicle => vehicle.id !== id));
+        this.vehicles.update((v) => v.filter((vehicle) => vehicle.id !== id));
       })
     );
   }
 
   load() {
-    this.http.get<Vehicle[]>(this.api).subscribe(data => {
+    this.http.get<Vehicle[]>(this.api).subscribe((data) => {
       this.vehicles.set(data);
     });
   }

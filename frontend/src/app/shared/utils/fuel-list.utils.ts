@@ -22,7 +22,9 @@ export function filterFuelRecords<T extends FuelListRecord>(records: T[], query:
     return records;
   }
 
-  return records.filter(record => (record.gasStation ?? '').toLowerCase().includes(normalizedQuery));
+  return records.filter((record) =>
+    (record.gasStation ?? '').toLowerCase().includes(normalizedQuery)
+  );
 }
 
 export function sortFuelRecords<T extends FuelListRecord>(records: T[], sort: FuelSortOption): T[] {
@@ -32,24 +34,28 @@ export function sortFuelRecords<T extends FuelListRecord>(records: T[], sort: Fu
     case 'oldest':
       return sorted.sort((left, right) => toTimestamp(left.date) - toTimestamp(right.date));
     case 'price-low-high':
-      return sorted.sort((left, right) =>
-        compareNullableNumbers(left.cost, right.cost, 'asc') ||
-        (toTimestamp(right.date) - toTimestamp(left.date))
+      return sorted.sort(
+        (left, right) =>
+          compareNullableNumbers(left.cost, right.cost, 'asc') ||
+          toTimestamp(right.date) - toTimestamp(left.date)
       );
     case 'price-high-low':
-      return sorted.sort((left, right) =>
-        compareNullableNumbers(left.cost, right.cost, 'desc') ||
-        (toTimestamp(right.date) - toTimestamp(left.date))
+      return sorted.sort(
+        (left, right) =>
+          compareNullableNumbers(left.cost, right.cost, 'desc') ||
+          toTimestamp(right.date) - toTimestamp(left.date)
       );
     case 'price-per-unit-low-high':
-      return sorted.sort((left, right) =>
-        compareNullableNumbers(pricePerUnit(left), pricePerUnit(right), 'asc') ||
-        (toTimestamp(right.date) - toTimestamp(left.date))
+      return sorted.sort(
+        (left, right) =>
+          compareNullableNumbers(pricePerUnit(left), pricePerUnit(right), 'asc') ||
+          toTimestamp(right.date) - toTimestamp(left.date)
       );
     case 'price-per-unit-high-low':
-      return sorted.sort((left, right) =>
-        compareNullableNumbers(pricePerUnit(left), pricePerUnit(right), 'desc') ||
-        (toTimestamp(right.date) - toTimestamp(left.date))
+      return sorted.sort(
+        (left, right) =>
+          compareNullableNumbers(pricePerUnit(left), pricePerUnit(right), 'desc') ||
+          toTimestamp(right.date) - toTimestamp(left.date)
       );
     case 'newest':
     default:
@@ -68,7 +74,7 @@ export function findMileageWarningRecordIds<T extends { id: number; mileage: num
   const warnings = new Set<number>();
   let maxMileageSeen: number | null = null;
 
-  sorted.forEach(record => {
+  sorted.forEach((record) => {
     const mileage = record.mileage;
     if (mileage === null) {
       return;

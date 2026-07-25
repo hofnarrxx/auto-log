@@ -3,7 +3,8 @@
     <div class="header-main">
       <h3>{{ getTitleTranslationKey('title') | translate }}</h3>
       <p class="header-summary">
-        {{ 'common.records' | translate }}: {{ totalRecords() }} | {{ 'common.totalCost' | translate }}: {{ totalServiceCostByCurrency() || '-' }}
+        {{ 'common.records' | translate }}: {{ totalRecords() }} |
+        {{ 'common.totalCost' | translate }}: {{ totalServiceCostByCurrency() || '-' }}
       </p>
     </div>
     <div class="header-actions">
@@ -13,7 +14,8 @@
           type="text"
           [placeholder]="getTitleTranslationKey('placeholders.search') | translate"
           [value]="titleSearch()"
-          (input)="onTitleSearchChange($any($event.target).value)">
+          (input)="onTitleSearchChange($any($event.target).value)"
+        />
       </label>
 
       <label class="sort-control">
@@ -42,7 +44,11 @@
     <p class="status-message">{{ getTitleTranslationKey('empty.none') | translate }}</p>
   } @else if (!timelineEntries().length) {
     <p class="status-message">
-      {{ hasAnyRecords() ? (getTitleTranslationKey('empty.filtered') | translate) : (getTitleTranslationKey('empty.none') | translate) }}
+      {{
+        hasAnyRecords()
+          ? (getTitleTranslationKey('empty.filtered') | translate)
+          : (getTitleTranslationKey('empty.none') | translate)
+      }}
     </p>
   } @else {
     <div class="timeline">
@@ -55,18 +61,23 @@
               [name]="entry.category | categoryIcon"
               size="16"
               strokeWidth="2"
-              aria-hidden="true"></lucide-icon>
+              aria-hidden="true"
+            ></lucide-icon>
           </div>
 
           <div class="entry-content">
             <p class="entry-title">
               {{ entry.title || (getTitleTranslationKey('untitled') | translate) }}
             </p>
-            <span class="entry-cost">{{ entry.cost | money:entry.currency }}</span>
+            <span class="entry-cost">{{ entry.cost | money: entry.currency }}</span>
           </div>
 
           @if (hasMileageWarning(entry)) {
-            <span class="entry-warning-side" [attr.title]="'common.mileageWarning' | translate" [attr.aria-label]="'common.mileageAnomaly' | translate">
+            <span
+              class="entry-warning-side"
+              [attr.title]="'common.mileageWarning' | translate"
+              [attr.aria-label]="'common.mileageAnomaly' | translate"
+            >
               ▲ {{ 'common.checkMileage' | translate }}
             </span>
           }
@@ -85,14 +96,22 @@
         <h4>{{ getTitleTranslationKey('filter.categories') | translate }}</h4>
 
         <label class="filter-option all-option">
-          <input type="checkbox" [checked]="allCategoriesChecked()" (change)="toggleAllCategories($any($event.target).checked)">
+          <input
+            type="checkbox"
+            [checked]="allCategoriesChecked()"
+            (change)="toggleAllCategories($any($event.target).checked)"
+          />
           <span>{{ getTitleTranslationKey('filter.allCategories') | translate }}</span>
         </label>
 
         <div class="category-options">
           @for (category of availableFilterCategories(); track category) {
             <label class="filter-option">
-              <input type="checkbox" [checked]="isCategorySelected(category)" (change)="toggleCategory(category, $any($event.target).checked)">
+              <input
+                type="checkbox"
+                [checked]="isCategorySelected(category)"
+                (change)="toggleCategory(category, $any($event.target).checked)"
+              />
               <span>{{ category | categoryLabel | translate }}</span>
             </label>
           }
@@ -111,8 +130,26 @@
 
         <div class="dual-range-slider-container">
           <div class="dual-range-slider">
-            <input type="range" class="slider-min" [min]="0" [max]="maxAvailablePrice()" [value]="minPriceLimit()" [step]="1" [disabled]="maxAvailablePrice() === 0" (input)="onMinPriceLimitChange($any($event.target).value)">
-            <input type="range" class="slider-max" [min]="0" [max]="maxAvailablePrice()" [value]="maxPriceLimit()" [step]="1" [disabled]="maxAvailablePrice() === 0" (input)="onMaxPriceLimitChange($any($event.target).value)">
+            <input
+              type="range"
+              class="slider-min"
+              [min]="0"
+              [max]="maxAvailablePrice()"
+              [value]="minPriceLimit()"
+              [step]="1"
+              [disabled]="maxAvailablePrice() === 0"
+              (input)="onMinPriceLimitChange($any($event.target).value)"
+            />
+            <input
+              type="range"
+              class="slider-max"
+              [min]="0"
+              [max]="maxAvailablePrice()"
+              [value]="maxPriceLimit()"
+              [step]="1"
+              [disabled]="maxAvailablePrice() === 0"
+              (input)="onMaxPriceLimitChange($any($event.target).value)"
+            />
             <div class="slider-track" [ngStyle]="sliderTrackStyle()"></div>
           </div>
         </div>
@@ -123,17 +160,28 @@
 
         <label class="filter-currency-control">
           <select (change)="onCurrencyFilterChange($any($event.target).value)">
-            <option [value]="allCurrenciesOption" [selected]="selectedCurrencyFilter() === allCurrenciesOption">{{ 'common.all' | translate }}</option>
+            <option
+              [value]="allCurrenciesOption"
+              [selected]="selectedCurrencyFilter() === allCurrenciesOption"
+            >
+              {{ 'common.all' | translate }}
+            </option>
             @for (currency of availableFilterCurrencies(); track currency) {
-              <option [value]="currency" [selected]="selectedCurrencyFilter() === currency">{{ currency }}</option>
+              <option [value]="currency" [selected]="selectedCurrencyFilter() === currency">
+                {{ currency }}
+              </option>
             }
           </select>
         </label>
       </section>
 
       <div class="modal-actions">
-        <button type="button" class="secondary-btn" (click)="resetFilters()">{{ 'common.reset' | translate }}</button>
-        <button type="button" class="primary-btn" (click)="closeFilterModal()">{{ 'common.done' | translate }}</button>
+        <button type="button" class="secondary-btn" (click)="resetFilters()">
+          {{ 'common.reset' | translate }}
+        </button>
+        <button type="button" class="primary-btn" (click)="closeFilterModal()">
+          {{ 'common.done' | translate }}
+        </button>
       </div>
     </div>
   }

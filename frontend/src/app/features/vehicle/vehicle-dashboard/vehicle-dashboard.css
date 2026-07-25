@@ -11,7 +11,8 @@
 .vehicle-header {
   position: relative;
   height: 350px;
-  background: radial-gradient(600px 320px at 20% 0%, rgba(34, 211, 238, 0.35), transparent 70%),
+  background:
+    radial-gradient(600px 320px at 20% 0%, rgba(34, 211, 238, 0.35), transparent 70%),
     linear-gradient(135deg, #0b1324 0%, #1b243a 100%);
   display: flex;
   align-items: flex-end;
@@ -145,7 +146,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .icon-btn svg {

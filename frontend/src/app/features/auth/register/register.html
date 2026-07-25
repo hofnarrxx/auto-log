@@ -1,11 +1,8 @@
 <div class="auth-page">
-
   <div class="auth-card">
-
     <h1 class="logo">{{ 'common.appName' | translate }}</h1>
 
     <form [formGroup]="form" (ngSubmit)="register()" class="auth-form">
-
       <div class="form-field">
         <label>{{ 'auth.register.emailLabel' | translate }}</label>
 
@@ -13,22 +10,18 @@
           type="email"
           [placeholder]="'auth.register.emailPlaceholder' | translate"
           formControlName="email"
-        >
+        />
 
-        @if(form.controls.email.touched && form.controls.email.invalid) {
-
+        @if (form.controls.email.touched && form.controls.email.invalid) {
           <div class="error">
-
-            @if(form.controls.email.errors?.['required']) {
+            @if (form.controls.email.errors?.['required']) {
               <span>{{ 'auth.register.errors.emailRequired' | translate }}</span>
             }
 
-            @if(form.controls.email.errors?.['email']) {
+            @if (form.controls.email.errors?.['email']) {
               <span>{{ 'auth.register.errors.emailInvalid' | translate }}</span>
             }
-
           </div>
-
         }
       </div>
 
@@ -39,22 +32,18 @@
           type="password"
           [placeholder]="'auth.register.passwordPlaceholder' | translate"
           formControlName="password"
-        >
+        />
 
-        @if(form.controls.password.touched && form.controls.password.invalid) {
-
+        @if (form.controls.password.touched && form.controls.password.invalid) {
           <div class="error">
-
-            @if(form.controls.password.errors?.['required']) {
+            @if (form.controls.password.errors?.['required']) {
               <span>{{ 'auth.register.errors.passwordRequired' | translate }}</span>
             }
 
-            @if(form.controls.password.errors?.['minlength']) {
+            @if (form.controls.password.errors?.['minlength']) {
               <span>{{ 'auth.register.errors.passwordMinLength' | translate }}</span>
             }
-
           </div>
-
         }
       </div>
 
@@ -65,41 +54,32 @@
           type="password"
           [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate"
           formControlName="confirmPassword"
-        >
+        />
 
-        @if(form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
-
+        @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
           <div class="error">
             <span>{{ 'auth.register.errors.confirmPasswordRequired' | translate }}</span>
           </div>
-
         }
 
-        @if(form.value.password !== form.value.confirmPassword && form.controls.confirmPassword.touched) {
-
+        @if (
+          form.value.password !== form.value.confirmPassword &&
+          form.controls.confirmPassword.touched
+        ) {
           <div class="error">
             <span>{{ 'auth.register.errors.passwordMismatch' | translate }}</span>
           </div>
-
         }
-
       </div>
 
-      <button
-        class="auth-button"
-        type="submit"
-        [disabled]="form.invalid"
-      >
+      <button class="auth-button" type="submit" [disabled]="form.invalid">
         {{ 'auth.register.submit' | translate }}
       </button>
-
     </form>
 
     <p class="auth-switch">
       {{ 'auth.register.switchPrompt' | translate }}
       <a routerLink="/login">{{ 'auth.register.switchLink' | translate }}</a>
     </p>
-
   </div>
-
 </div>

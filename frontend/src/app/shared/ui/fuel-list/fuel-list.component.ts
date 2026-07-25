@@ -66,7 +66,7 @@ export class FuelListComponent {
     sortFuelRecords([...this.filteredFuelRecords()], this.selectedSort())
   );
   protected readonly mileageWarningRecordIds = computed(() =>
-    findMileageWarningRecordIds(this.fuelRecords(), record => record.date)
+    findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
   );
 
   protected getTitleTranslationKey(postfix: string): string {
@@ -86,7 +86,13 @@ export class FuelListComponent {
     amount: number | null | undefined,
     currency?: string
   ): string {
-    if (cost === null || cost === undefined || amount === null || amount === undefined || amount <= 0) {
+    if (
+      cost === null ||
+      cost === undefined ||
+      amount === null ||
+      amount === undefined ||
+      amount <= 0
+    ) {
       return '-';
     }
 

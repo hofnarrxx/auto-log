@@ -38,7 +38,7 @@ export class MaintenanceStore {
       .getMaintenance(vehicleId)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: data => {
+        next: (data) => {
           this.records.set(data);
         },
         error: () => {
@@ -55,7 +55,7 @@ export class MaintenanceStore {
 
   loadCategories(): void {
     this.maintenanceApi.getCategories().subscribe({
-      next: categories => {
+      next: (categories) => {
         this.categories.set(categories);
       },
       error: () => {
@@ -83,7 +83,7 @@ export class MaintenanceStore {
 
     return this.maintenanceApi.deleteMaintenance(vehicleId, recordId).pipe(
       tap(() => {
-        this.records.update(records => records.filter(record => record.id !== recordId));
+        this.records.update((records) => records.filter((record) => record.id !== recordId));
       }),
       finalize(() => this.isDeleting.set(false))
     );

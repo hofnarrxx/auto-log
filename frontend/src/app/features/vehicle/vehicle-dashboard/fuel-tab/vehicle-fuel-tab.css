@@ -183,33 +183,33 @@
   }
 }
 
-  .sort-control select {
-    width: 100%;
-  }
+.sort-control select {
+  width: 100%;
+}
 
-  .add-record-btn {
-    width: 100%;
-  }
+.add-record-btn {
+  width: 100%;
+}
 
-  .timeline::before {
-    left: 97px;
-  }
+.timeline::before {
+  left: 97px;
+}
 
-  .timeline-item {
-    grid-template-columns: 72px 40px auto auto;
-    column-gap: 10px;
-  }
+.timeline-item {
+  grid-template-columns: 72px 40px auto auto;
+  column-gap: 10px;
+}
 
-  .entry-date {
-    font-size: 12px;
-  }
+.entry-date {
+  font-size: 12px;
+}
 
-  .entry-point {
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
-  }
+.entry-point {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
 
-  .entry-content {
-    width: 100%;
-  }
+.entry-content {
+  width: 100%;
+}

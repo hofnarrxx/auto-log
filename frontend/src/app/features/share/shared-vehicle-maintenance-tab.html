@@ -6,7 +6,8 @@
       [records]="serviceRecords()"
       titleKeyPrefix="sharedVehicle.maintenanceTab"
       [showAddButton]="false"
-      (recordSelected)="openRecordDetails($event)">
+      (recordSelected)="openRecordDetails($event)"
+    >
     </app-maintenance-list>
   }
 
@@ -15,65 +16,69 @@
 
     <div class="service-modal" (click)="$event.stopPropagation()">
       <div class="record-modal-content">
-      @if (selectedRecord(); as record) {
-        <h2>{{ 'sharedVehicle.maintenanceTab.detailsTitle' | translate }}</h2>
+        @if (selectedRecord(); as record) {
+          <h2>{{ 'sharedVehicle.maintenanceTab.detailsTitle' | translate }}</h2>
 
-        <div class="record-details">
-          <div class="detail-row">
-            <span class="label">{{ 'common.title' | translate }}</span>
-            <span>{{ record.title || '-' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.date' | translate }}</span>
-            <span>{{ record.serviceDate | dateFormat }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.category' | translate }}</span>
-            <span>{{ record.category | categoryLabel | translate }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.mileage' | translate }}</span>
-            <span>
-              {{ record.mileage ?? '-' }}
-              @if (hasMileageWarning(record)) {
-                <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate">▲</span>
-              }
-            </span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.cost' | translate }}</span>
-            <span>{{ record.cost | money:record.currency }}</span>
-          </div>
-          <div class="detail-row description">
-            <span class="label">{{ 'common.description' | translate }}</span>
-            <p>{{ record.description }}</p>
-          </div>
-          @if (record.attachments?.length) {
+          <div class="record-details">
             <div class="detail-row">
-              <span class="label">{{ 'common.attachments' | translate }}</span>
-              <ul class="attachments-list">
-                @for (attachment of record.attachments; track attachment.id) {
-                  <li>
-                    <span>{{ attachment.fileName }}</span>
-                  </li>
-                }
-              </ul>
+              <span class="label">{{ 'common.title' | translate }}</span>
+              <span>{{ record.title || '-' }}</span>
             </div>
-          }
-          <div class="detail-row">
-            <span class="label">{{ 'common.created' | translate }}</span>
-            <span>{{ record.createdAt | dateFormat:'datetime' }}</span>
+            <div class="detail-row">
+              <span class="label">{{ 'common.date' | translate }}</span>
+              <span>{{ record.serviceDate | dateFormat }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">{{ 'common.category' | translate }}</span>
+              <span>{{ record.category | categoryLabel | translate }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">{{ 'common.mileage' | translate }}</span>
+              <span>
+                {{ record.mileage ?? '-' }}
+                @if (hasMileageWarning(record)) {
+                  <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate"
+                    >▲</span
+                  >
+                }
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="label">{{ 'common.cost' | translate }}</span>
+              <span>{{ record.cost | money: record.currency }}</span>
+            </div>
+            <div class="detail-row description">
+              <span class="label">{{ 'common.description' | translate }}</span>
+              <p>{{ record.description }}</p>
+            </div>
+            @if (record.attachments?.length) {
+              <div class="detail-row">
+                <span class="label">{{ 'common.attachments' | translate }}</span>
+                <ul class="attachments-list">
+                  @for (attachment of record.attachments; track attachment.id) {
+                    <li>
+                      <span>{{ attachment.fileName }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+            <div class="detail-row">
+              <span class="label">{{ 'common.created' | translate }}</span>
+              <span>{{ record.createdAt | dateFormat: 'datetime' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">{{ 'common.updated' | translate }}</span>
+              <span>{{ record.updatedAt | dateFormat: 'datetime' }}</span>
+            </div>
           </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.updated' | translate }}</span>
-            <span>{{ record.updatedAt | dateFormat:'datetime' }}</span>
-          </div>
-        </div>
 
-        <div class="modal-actions">
-          <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.close' | translate }}</button>
-        </div>
-      }
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn" (click)="closeModal()">
+              {{ 'common.close' | translate }}
+            </button>
+          </div>
+        }
       </div>
     </div>
   }

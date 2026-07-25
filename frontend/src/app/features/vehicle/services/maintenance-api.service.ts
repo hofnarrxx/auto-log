@@ -35,8 +35,14 @@ export class MaintenanceApiService {
     return this.http.get<MaintenanceRecord[]>(`${this.vehicleApi}/${vehicleId}/maintenance`);
   }
 
-  createMaintenance(vehicleId: number, payload: MaintenanceRecordPayload): Observable<MaintenanceRecord> {
-    return this.http.post<MaintenanceRecord>(`${this.vehicleApi}/${vehicleId}/maintenance`, payload);
+  createMaintenance(
+    vehicleId: number,
+    payload: MaintenanceRecordPayload
+  ): Observable<MaintenanceRecord> {
+    return this.http.post<MaintenanceRecord>(
+      `${this.vehicleApi}/${vehicleId}/maintenance`,
+      payload
+    );
   }
 
   updateMaintenance(

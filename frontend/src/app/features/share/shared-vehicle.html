@@ -9,16 +9,24 @@
     } @else if (data()) {
       <header class="vehicle-header">
         <h1>{{ data()!.brand }} {{ data()!.model }}</h1>
-        <p>{{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} • {{ lastOdometerReading() }}</p>
+        <p>
+          {{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} •
+          {{ lastOdometerReading() }}
+        </p>
       </header>
 
-      <div class="shared-tabs" role="tablist" [attr.aria-label]="'sharedVehicle.tabs.ariaLabel' | translate">
+      <div
+        class="shared-tabs"
+        role="tablist"
+        [attr.aria-label]="'sharedVehicle.tabs.ariaLabel' | translate"
+      >
         <button
           type="button"
           role="tab"
           [attr.aria-selected]="activeTab() === 'details'"
           [class.active]="activeTab() === 'details'"
-          (click)="setTab('details')">
+          (click)="setTab('details')"
+        >
           {{ 'sharedVehicle.tabs.details' | translate }}
         </button>
         <button
@@ -26,7 +34,8 @@
           role="tab"
           [attr.aria-selected]="activeTab() === 'maintenance'"
           [class.active]="activeTab() === 'maintenance'"
-          (click)="setTab('maintenance')">
+          (click)="setTab('maintenance')"
+        >
           {{ 'sharedVehicle.tabs.maintenance' | translate }}
         </button>
         <button
@@ -34,7 +43,8 @@
           role="tab"
           [attr.aria-selected]="activeTab() === 'fuel'"
           [class.active]="activeTab() === 'fuel'"
-          (click)="setTab('fuel')">
+          (click)="setTab('fuel')"
+        >
           {{ 'sharedVehicle.tabs.fuel' | translate }}
         </button>
       </div>
@@ -70,16 +80,14 @@
 
       @if (activeTab() === 'maintenance') {
         <section class="section" role="tabpanel">
-          <app-shared-vehicle-maintenance-tab
-            [records]="data()!.maintenanceEntries">
+          <app-shared-vehicle-maintenance-tab [records]="data()!.maintenanceEntries">
           </app-shared-vehicle-maintenance-tab>
         </section>
       }
 
       @if (activeTab() === 'fuel') {
         <section class="section" role="tabpanel">
-          <app-shared-vehicle-fuel-tab
-            [records]="data()!.fuelEntries">
+          <app-shared-vehicle-fuel-tab [records]="data()!.fuelEntries">
           </app-shared-vehicle-fuel-tab>
         </section>
       }

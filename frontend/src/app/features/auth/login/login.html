@@ -1,56 +1,52 @@
 <div class="auth-page">
-
   <div class="auth-card">
-
     <h1 class="logo">{{ 'common.appName' | translate }}</h1>
 
     <form [formGroup]="form" (ngSubmit)="login()" class="auth-form">
-
       <div class="form-field">
         <label>{{ 'auth.login.emailLabel' | translate }}</label>
-        <input type="email" [placeholder]="'auth.login.emailPlaceholder' | translate" formControlName="email">
-        @if(form.controls.email.touched && form.controls.email.invalid) {
+        <input
+          type="email"
+          [placeholder]="'auth.login.emailPlaceholder' | translate"
+          formControlName="email"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <div class="error">
+            @if (form.controls.email.errors?.['required']) {
+              <span>{{ 'auth.login.errors.emailRequired' | translate }}</span>
+            }
 
-        <div class="error">
-
-          @if(form.controls.email.errors?.['required']) {
-          <span>{{ 'auth.login.errors.emailRequired' | translate }}</span>
-          }
-
-          @if(form.controls.email.errors?.['email']) {
-          <span>{{ 'auth.login.errors.emailInvalid' | translate }}</span>
-          }
-
-        </div>
-
+            @if (form.controls.email.errors?.['email']) {
+              <span>{{ 'auth.login.errors.emailInvalid' | translate }}</span>
+            }
+          </div>
         }
       </div>
 
       <div class="form-field">
         <label>{{ 'auth.login.passwordLabel' | translate }}</label>
-        <input type="password" [placeholder]="'auth.login.passwordPlaceholder' | translate" formControlName="password">
+        <input
+          type="password"
+          [placeholder]="'auth.login.passwordPlaceholder' | translate"
+          formControlName="password"
+        />
 
-        @if(form.controls.password.touched && form.controls.password.invalid) {
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <div class="error">
+            @if (form.controls.password.errors?.['required']) {
+              <span>{{ 'auth.login.errors.passwordRequired' | translate }}</span>
+            }
 
-        <div class="error">
-
-          @if(form.controls.password.errors?.['required']) {
-          <span>{{ 'auth.login.errors.passwordRequired' | translate }}</span>
-          }
-
-          @if(form.controls.password.errors?.['minlength']) {
-          <span>{{ 'auth.login.errors.passwordMinLength' | translate }}</span>
-          }
-
-        </div>
-
+            @if (form.controls.password.errors?.['minlength']) {
+              <span>{{ 'auth.login.errors.passwordMinLength' | translate }}</span>
+            }
+          </div>
         }
       </div>
 
       <button class="auth-button" type="submit" [disabled]="form.invalid">
         {{ 'auth.login.submit' | translate }}
       </button>
-
     </form>
 
     <button class="google-btn" (click)="googleLogin()">
@@ -61,7 +57,5 @@
       {{ 'auth.login.switchPrompt' | translate }}
       <a routerLink="/register">{{ 'auth.login.switchLink' | translate }}</a>
     </p>
-
   </div>
-
 </div>

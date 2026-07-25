@@ -1,309 +1,309 @@
 {
-	"common": {
-		"appName": "AutoLog",
-		"all": "All",
-		"amount": "Amount",
-		"attachments": "Attachments",
-		"brand": "Brand",
-		"cancel": "Cancel",
-		"category": "Category",
-		"checkMileage": "Check Mileage",
-		"close": "Close",
-		"cost": "Cost",
-		"created": "Created",
-		"currency": "Currency",
-		"date": "Date",
-		"delete": "Delete",
-		"deleting": "Deleting...",
-		"description": "Description",
-		"done": "Done",
-		"edit": "Edit",
-		"filter": "Filter",
-		"fuel": "Fuel",
-		"fuelType": "Fuel Type",
-		"gasStation": "Gas station",
-		"loading": "Loading...",
-		"mileage": "Mileage",
+  "common": {
+    "appName": "AutoLog",
+    "all": "All",
+    "amount": "Amount",
+    "attachments": "Attachments",
+    "brand": "Brand",
+    "cancel": "Cancel",
+    "category": "Category",
+    "checkMileage": "Check Mileage",
+    "close": "Close",
+    "cost": "Cost",
+    "created": "Created",
+    "currency": "Currency",
+    "date": "Date",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "description": "Description",
+    "done": "Done",
+    "edit": "Edit",
+    "filter": "Filter",
+    "fuel": "Fuel",
+    "fuelType": "Fuel Type",
+    "gasStation": "Gas station",
+    "loading": "Loading...",
+    "mileage": "Mileage",
+    "licensePlate": "License plate",
+    "mileageAnomaly": "Mileage anomaly",
+    "mileageWarning": "Mileage is lower than an older record",
+    "model": "Model",
+    "optional": "optional",
+    "open": "Open",
+    "price": "Price",
+    "pricePerLitre": "Price per litre",
+    "priceRange": "Price range",
+    "records": "Records",
+    "remove": "Remove",
+    "reset": "Reset",
+    "save": "Save",
+    "saving": "Saving...",
+    "search": "Search",
+    "selectCategory": "Select category",
+    "selectCurrency": "Select currency",
+    "sortBy": "Sort by",
+    "station": "Station",
+    "title": "Title",
+    "totalCost": "Total cost",
+    "update": "Update",
+    "updated": "Updated",
+    "updating": "Updating...",
+    "vehicleNotFound": "Vehicle not found.",
+    "year": "Year",
+    "sort": {
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low",
+      "pricePerUnitLowHigh": "Price per litre: Low to High",
+      "pricePerUnitHighLow": "Price per litre: High to Low"
+    }
+  },
+  "nav": {
+    "details": "Details",
+    "fuel": "Fuel",
+    "logout": "Log Out",
+    "maintenance": "Maintenance",
+    "myCars": "My Cars",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "addVehicle": "Add Vehicle",
+    "noImage": "No Image"
+  },
+  "settings": {
+    "title": "Settings",
+    "selectCurrency": "Select currency",
+    "selectLanguage": "Select language",
+    "languages": {
+      "en": "English",
+      "pl": "Polish"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Log In",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Log In",
+      "google": "Continue with Google",
+      "switchPrompt": "Don't have an account?",
+      "switchLink": "Register",
+      "errors": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password must be at least 6 characters.",
+        "invalidCredentials": "Invalid credentials."
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "submit": "Register",
+      "switchPrompt": "Already have an account?",
+      "switchLink": "Log In",
+      "errors": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password must be at least 6 characters.",
+        "confirmPasswordRequired": "Please confirm your password.",
+        "passwordMismatch": "Passwords do not match.",
+        "emailExists": "This email is already registered.",
+        "registrationFailed": "Registration failed."
+      }
+    }
+  },
+  "vehicle": {
+    "details": {
+      "title": "Vehicle details",
+      "shareVehicle": "Share vehicle",
+      "editVehicle": "Edit vehicle",
+      "deleteVehicle": "Delete vehicle",
+      "thumbnailAlt": "Vehicle thumbnail",
+      "avgEfficiency": "Average fuel efficiency",
+      "lastOdometerReading": "Last odometer reading",
+      "lastOdometerDate": "Recorded on"
+    },
+    "dashboard": {
+      "share": {
+        "title": "Share link",
+        "description": "Review active share links for this vehicle.",
+        "includeAttachments": "Include service attachments",
+        "generatedLink": "Shared vehicle link",
+        "copy": "Copy link",
+        "copySuccess": "Link copied.",
+        "create": "Create link",
+        "delete": "Delete link",
+        "remainingTime": "Remaining time",
+        "loadingLinks": "Loading share links...",
+        "noActiveLinks": "No active share links yet.",
+        "errors": {
+          "generate": "Could not generate a share link.",
+          "delete": "Could not delete the share link.",
+          "load": "Could not load share links."
+        }
+      }
+    },
+    "form": {
+      "title": {
+        "add": "Add Vehicle",
+        "edit": "Edit Vehicle"
+      },
+      "placeholders": {
+        "brand": "Brand",
+        "model": "Model",
+        "year": "Year",
+        "mileage": "Mileage",
         "licensePlate": "License plate",
-		"mileageAnomaly": "Mileage anomaly",
-		"mileageWarning": "Mileage is lower than an older record",
-		"model": "Model",
-		"optional": "optional",
-		"open": "Open",
-		"price": "Price",
-		"pricePerLitre": "Price per litre",
-		"priceRange": "Price range",
-		"records": "Records",
-		"remove": "Remove",
-		"reset": "Reset",
-		"save": "Save",
-		"saving": "Saving...",
-		"search": "Search",
-		"selectCategory": "Select category",
-		"selectCurrency": "Select currency",
-		"sortBy": "Sort by",
-		"station": "Station",
-		"title": "Title",
-		"totalCost": "Total cost",
-		"update": "Update",
-		"updated": "Updated",
-		"updating": "Updating...",
-		"vehicleNotFound": "Vehicle not found.",
-		"year": "Year",
-		"sort": {
-			"newest": "Newest",
-			"oldest": "Oldest",
-			"priceLowHigh": "Price: Low to High",
-			"priceHighLow": "Price: High to Low",
-			"pricePerUnitLowHigh": "Price per litre: Low to High",
-			"pricePerUnitHighLow": "Price per litre: High to Low"
-		}
-	},
-	"nav": {
-		"details": "Details",
-		"fuel": "Fuel",
-		"logout": "Log Out",
-		"maintenance": "Maintenance",
-		"myCars": "My Cars",
-		"profile": "Profile",
-		"settings": "Settings"
-	},
-	"dashboard": {
-		"addVehicle": "Add Vehicle",
-		"noImage": "No Image"
-	},
-	"settings": {
-		"title": "Settings",
-		"selectCurrency": "Select currency",
-		"selectLanguage": "Select language",
-		"languages": {
-			"en": "English",
-			"pl": "Polish"
-		}
-	},
-	"auth": {
-		"login": {
-			"title": "Log In",
-			"emailLabel": "Email",
-			"emailPlaceholder": "Enter your email",
-			"passwordLabel": "Password",
-			"passwordPlaceholder": "Enter your password",
-			"submit": "Log In",
-			"google": "Continue with Google",
-			"switchPrompt": "Don't have an account?",
-			"switchLink": "Register",
-			"errors": {
-				"emailRequired": "Email is required.",
-				"emailInvalid": "Enter a valid email address.",
-				"passwordRequired": "Password is required.",
-				"passwordMinLength": "Password must be at least 6 characters.",
-				"invalidCredentials": "Invalid credentials."
-			}
-		},
-		"register": {
-			"title": "Create Account",
-			"emailLabel": "Email",
-			"emailPlaceholder": "Enter your email",
-			"passwordLabel": "Password",
-			"passwordPlaceholder": "Create a password",
-			"confirmPasswordLabel": "Confirm password",
-			"confirmPasswordPlaceholder": "Repeat your password",
-			"submit": "Register",
-			"switchPrompt": "Already have an account?",
-			"switchLink": "Log In",
-			"errors": {
-				"emailRequired": "Email is required.",
-				"emailInvalid": "Enter a valid email address.",
-				"passwordRequired": "Password is required.",
-				"passwordMinLength": "Password must be at least 6 characters.",
-				"confirmPasswordRequired": "Please confirm your password.",
-				"passwordMismatch": "Passwords do not match.",
-				"emailExists": "This email is already registered.",
-				"registrationFailed": "Registration failed."
-			}
-		}
-	},
-	"vehicle": {
-		"details": {
-			"title": "Vehicle details",
-			"shareVehicle": "Share vehicle",
-			"editVehicle": "Edit vehicle",
-			"deleteVehicle": "Delete vehicle",
-			"thumbnailAlt": "Vehicle thumbnail",
-			"avgEfficiency": "Average fuel efficiency",
-			"lastOdometerReading": "Last odometer reading",
-			"lastOdometerDate": "Recorded on"
-		},
-		"dashboard": {
-			"share": {
-				"title": "Share link",
-				"description": "Review active share links for this vehicle.",
-				"includeAttachments": "Include service attachments",
-				"generatedLink": "Shared vehicle link",
-				"copy": "Copy link",
-				"copySuccess": "Link copied.",
-				"create": "Create link",
-				"delete": "Delete link",
-				"remainingTime": "Remaining time",
-				"loadingLinks": "Loading share links...",
-				"noActiveLinks": "No active share links yet.",
-				"errors": {
-					"generate": "Could not generate a share link.",
-					"delete": "Could not delete the share link.",
-					"load": "Could not load share links."
-				}
-			}
-		},
-		"form": {
-			"title": {
-				"add": "Add Vehicle",
-				"edit": "Edit Vehicle"
-			},
-			"placeholders": {
-				"brand": "Brand",
-				"model": "Model",
-				"year": "Year",
-				"mileage": "Mileage",
-				"licensePlate": "License plate",
-				"selectFuelType": "Select fuel type"
-			},
-			"errors": {
-				"brandRequired": "Brand is required.",
-				"modelRequired": "Model is required.",
-				"fuelTypeRequired": "Fuel type is required.",
-				"yearInteger": "Year must be a whole number.",
-				"yearRange": "Year must be between 1886 and {{ currentYear }}.",
-				"mileageNonNegative": "Mileage cannot be negative."
-			},
-			"fuelTypes": {
-				"petrol": "Petrol",
-				"diesel": "Diesel",
-				"hybrid": "Hybrid",
-				"electric": "Electric",
-				"lpg": "LPG",
-				"cng": "CNG"
-			}
-		},
-		"fuelTab": {
-			"title": "Fuel Records",
-			"placeholders": {
-				"search": "Search by station",
-				"gasStation": "Gas station"
-			},
-			"addRecord": "Add Fuel Record",
-			"loading": "Loading fuel records...",
-			"empty": {
-				"filtered": "No fuel records match the current filters.",
-				"none": "No fuel records yet."
-			},
-			"modalTitle": {
-				"add": "Add Fuel Record",
-				"edit": "Edit Fuel Record",
-				"details": "Fuel Record Details"
-			},
-			"errors": {
-				"dateRequired": "Date is required.",
-				"amountPositive": "Fuel amount must be greater than 0.",
-				"costRequired": "Cost is required.",
-				"currencyRequired": "Currency is required.",
-				"mileageRequired": "Mileage is required.",
-				"gasStationMaxLength": "Gas station name cannot exceed 50 characters.",
-				"invalidData": "Please enter valid data before saving.",
-				"saveFailed": "Unable to save fuel record.",
-				"deleteFailed": "Unable to delete fuel record.",
-				"loadFailed": "Failed to load fuel records."
-			}
-		},
-		"maintenanceTab": {
-			"title": "Service Records",
-			"untitled": "Untitled Service",
-			"placeholders": {
-				"search": "Search by title",
-				"title": "Service title"
-			},
-			"addRecord": "Add Service Record",
-			"loading": "Loading service records...",
-			"empty": {
-				"filtered": "No service records match the current filters.",
-				"none": "No service records yet."
-			},
-			"detailsTitle": "Service Record Details",
-			"modalTitle": {
-				"add": "Add Service Record",
-				"edit": "Edit Service Record"
-			},
-			"filter": {
-				"title": "Filter records",
-				"categories": "Categories",
-				"allCategories": "All categories"
-			},
-			"errors": {
-				"titleRequired": "Title is required.",
-				"serviceDateRequired": "Service date is required.",
-				"categoryRequired": "Category is required.",
-				"costRequired": "Cost is required.",
-				"currencyRequired": "Currency is required.",
-				"mileageRequired": "Mileage is required.",
-				"descriptionMaxLength": "Description cannot exceed 200 characters.",
-				"invalidData": "Please enter valid data before saving.",
-				"invalidAttachmentType": "Only PDF or image files are allowed.",
-				"downloadFailed": "Unable to get a download link for the attachment.",
-				"saveFailed": "Unable to save service record.",
-				"uploadFailed": "Unable to upload attachments.",
-				"deleteFailed": "Unable to delete service record.",
-				"loadFailed": "Unable to load service records right now."
-			},
-			"categories": {
-				"inspection": "Inspection",
-				"oilChange": "Oil change",
-				"repair": "Repair",
-				"partReplacement": "Part replacement",
-				"fluidRefill": "Fluid refill",
-				"tiresAndWheels": "Tires and wheels",
-				"cosmetic": "Cosmetic work"
-			}
-		}
-	},
-	"sharedVehicle": {
-		"title": "Shared vehicle",
-		"loading": "Loading shared vehicle...",
-		"tabs": {
-			"ariaLabel": "Shared vehicle sections",
-			"details": "Details",
-			"maintenance": "Maintenance",
-			"fuel": "Fuel"
-		},
-		"errors": {
-			"invalidLink": "Invalid share link.",
-			"expiredOrInvalid": "This share link is expired or invalid."
-		},
-		"fuelTab": {
-			"title": "Fuel Records",
-			"placeholders": {
-				"search": "Search by station"
-			},
-			"empty": {
-				"filtered": "No fuel records match the current filters.",
-				"none": "No fuel records yet."
-			},
-			"detailsTitle": "Fuel Record Details"
-		},
-		"maintenanceTab": {
-			"title": "Service Records",
-			"placeholders": {
-				"search": "Search by title"
-			},
-			"empty": {
-				"filtered": "No service records match the current filters.",
-				"none": "No service records yet."
-			},
-			"detailsTitle": "Service Record Details",
-			"untitled": "Untitled Service",
-			"filter": {
-				"title": "Filter records",
-				"categories": "Categories",
-				"allCategories": "All categories"
-			}
-		}
-	}
+        "selectFuelType": "Select fuel type"
+      },
+      "errors": {
+        "brandRequired": "Brand is required.",
+        "modelRequired": "Model is required.",
+        "fuelTypeRequired": "Fuel type is required.",
+        "yearInteger": "Year must be a whole number.",
+        "yearRange": "Year must be between 1886 and {{ currentYear }}.",
+        "mileageNonNegative": "Mileage cannot be negative."
+      },
+      "fuelTypes": {
+        "petrol": "Petrol",
+        "diesel": "Diesel",
+        "hybrid": "Hybrid",
+        "electric": "Electric",
+        "lpg": "LPG",
+        "cng": "CNG"
+      }
+    },
+    "fuelTab": {
+      "title": "Fuel Records",
+      "placeholders": {
+        "search": "Search by station",
+        "gasStation": "Gas station"
+      },
+      "addRecord": "Add Fuel Record",
+      "loading": "Loading fuel records...",
+      "empty": {
+        "filtered": "No fuel records match the current filters.",
+        "none": "No fuel records yet."
+      },
+      "modalTitle": {
+        "add": "Add Fuel Record",
+        "edit": "Edit Fuel Record",
+        "details": "Fuel Record Details"
+      },
+      "errors": {
+        "dateRequired": "Date is required.",
+        "amountPositive": "Fuel amount must be greater than 0.",
+        "costRequired": "Cost is required.",
+        "currencyRequired": "Currency is required.",
+        "mileageRequired": "Mileage is required.",
+        "gasStationMaxLength": "Gas station name cannot exceed 50 characters.",
+        "invalidData": "Please enter valid data before saving.",
+        "saveFailed": "Unable to save fuel record.",
+        "deleteFailed": "Unable to delete fuel record.",
+        "loadFailed": "Failed to load fuel records."
+      }
+    },
+    "maintenanceTab": {
+      "title": "Service Records",
+      "untitled": "Untitled Service",
+      "placeholders": {
+        "search": "Search by title",
+        "title": "Service title"
+      },
+      "addRecord": "Add Service Record",
+      "loading": "Loading service records...",
+      "empty": {
+        "filtered": "No service records match the current filters.",
+        "none": "No service records yet."
+      },
+      "detailsTitle": "Service Record Details",
+      "modalTitle": {
+        "add": "Add Service Record",
+        "edit": "Edit Service Record"
+      },
+      "filter": {
+        "title": "Filter records",
+        "categories": "Categories",
+        "allCategories": "All categories"
+      },
+      "errors": {
+        "titleRequired": "Title is required.",
+        "serviceDateRequired": "Service date is required.",
+        "categoryRequired": "Category is required.",
+        "costRequired": "Cost is required.",
+        "currencyRequired": "Currency is required.",
+        "mileageRequired": "Mileage is required.",
+        "descriptionMaxLength": "Description cannot exceed 200 characters.",
+        "invalidData": "Please enter valid data before saving.",
+        "invalidAttachmentType": "Only PDF or image files are allowed.",
+        "downloadFailed": "Unable to get a download link for the attachment.",
+        "saveFailed": "Unable to save service record.",
+        "uploadFailed": "Unable to upload attachments.",
+        "deleteFailed": "Unable to delete service record.",
+        "loadFailed": "Unable to load service records right now."
+      },
+      "categories": {
+        "inspection": "Inspection",
+        "oilChange": "Oil change",
+        "repair": "Repair",
+        "partReplacement": "Part replacement",
+        "fluidRefill": "Fluid refill",
+        "tiresAndWheels": "Tires and wheels",
+        "cosmetic": "Cosmetic work"
+      }
+    }
+  },
+  "sharedVehicle": {
+    "title": "Shared vehicle",
+    "loading": "Loading shared vehicle...",
+    "tabs": {
+      "ariaLabel": "Shared vehicle sections",
+      "details": "Details",
+      "maintenance": "Maintenance",
+      "fuel": "Fuel"
+    },
+    "errors": {
+      "invalidLink": "Invalid share link.",
+      "expiredOrInvalid": "This share link is expired or invalid."
+    },
+    "fuelTab": {
+      "title": "Fuel Records",
+      "placeholders": {
+        "search": "Search by station"
+      },
+      "empty": {
+        "filtered": "No fuel records match the current filters.",
+        "none": "No fuel records yet."
+      },
+      "detailsTitle": "Fuel Record Details"
+    },
+    "maintenanceTab": {
+      "title": "Service Records",
+      "placeholders": {
+        "search": "Search by title"
+      },
+      "empty": {
+        "filtered": "No service records match the current filters.",
+        "none": "No service records yet."
+      },
+      "detailsTitle": "Service Record Details",
+      "untitled": "Untitled Service",
+      "filter": {
+        "title": "Filter records",
+        "categories": "Categories",
+        "allCategories": "All categories"
+      }
+    }
+  }
 }

@@ -28,7 +28,7 @@ export class VehicleDetailsTab {
 
   protected readonly avgFuelEfficiency = computed(() => {
     const records = [...this.fuelRecords()]
-      .filter(record => record.mileage !== null && record.amount !== null && record.amount > 0)
+      .filter((record) => record.mileage !== null && record.amount !== null && record.amount > 0)
       .sort((left, right) => this.toTimestamp(left.date) - this.toTimestamp(right.date));
 
     if (records.length < 2) {
@@ -161,7 +161,7 @@ export class VehicleDetailsTab {
       .get<FuelRecord[]>(`${this.vehicleApi}/${this.vehicle.id}/fuel`)
       .pipe(finalize(() => this.isLoadingStats.set(false)))
       .subscribe({
-        next: records => this.fuelRecords.set(records ?? []),
+        next: (records) => this.fuelRecords.set(records ?? []),
         error: () => this.fuelRecords.set([]),
       });
   }
@@ -174,25 +174,31 @@ export class VehicleDetailsTab {
     this.http
       .get<MaintenanceRecord[]>(`${this.vehicleApi}/${this.vehicle.id}/maintenance`)
       .subscribe({
-        next: records => this.maintenanceRecords.set(records ?? []),
+        next: (records) => this.maintenanceRecords.set(records ?? []),
         error: () => this.maintenanceRecords.set([]),
       });
   }
 
   private getLatestFuelRecord(): FuelRecord | null {
-    const records = this.fuelRecords().filter(record => record.mileage !== null);
+    const records = this.fuelRecords().filter((record) => record.mileage !== null);
 
     if (!records.length) {
       return null;
     }
 
-    return [...records].sort((left, right) => this.toTimestamp(right.date) - this.toTimestamp(left.date))[0];
+    return [...records].sort(
+      (left, right) => this.toTimestamp(right.date) - this.toTimestamp(left.date)
+    )[0];
   }
 
   private getLatestOdometerRecord(): FuelRecord | MaintenanceRecord | null {
-    const fuelRecords = this.fuelRecords().filter(record => record.mileage !== null);
-    const maintenanceRecords = this.maintenanceRecords().filter(record => record.mileage !== null);
-    const allRecords = [...fuelRecords, ...maintenanceRecords] as (FuelRecord | MaintenanceRecord)[];
+    const fuelRecords = this.fuelRecords().filter((record) => record.mileage !== null);
+    const maintenanceRecords = this.maintenanceRecords().filter(
+      (record) => record.mileage !== null
+    );
+    const allRecords = [...fuelRecords, ...maintenanceRecords] as (
+      FuelRecord | MaintenanceRecord
+    )[];
 
     if (!allRecords.length) {
       return null;

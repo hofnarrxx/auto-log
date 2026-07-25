@@ -20,14 +20,19 @@ export class AttachmentService {
 
   uploadAttachments(vehicleId: number, maintenanceId: number, files: File[]): Observable<void> {
     return from(files).pipe(
-      concatMap(file =>
+      concatMap((file) =>
         from(this.prepareAttachment(file)).pipe(
-          switchMap(prepared =>
+          switchMap((prepared) =>
             this.requestUploadUrl(vehicleId, maintenanceId, prepared).pipe(
-              switchMap(response =>
+              switchMap((response) =>
                 this.uploadToR2(response.uploadUrl, prepared).pipe(
                   switchMap(() =>
-                    this.saveAttachmentMetadata(vehicleId, maintenanceId, prepared, response.objectKey)
+                    this.saveAttachmentMetadata(
+                      vehicleId,
+                      maintenanceId,
+                      prepared,
+                      response.objectKey
+                    )
                   )
                 )
               )
@@ -46,7 +51,10 @@ export class AttachmentService {
     }
 
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, AttachmentService.MAX_IMAGE_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const scale = Math.min(
+      1,
+      AttachmentService.MAX_IMAGE_DIMENSION / Math.max(bitmap.width, bitmap.height)
+    );
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));
 
@@ -60,7 +68,7 @@ export class AttachmentService {
 
     ctx.drawImage(bitmap, 0, 0, width, height);
 
-    const blob = await new Promise<Blob | null>(resolve =>
+    const blob = await new Promise<Blob | null>((resolve) =>
       canvas.toBlob(resolve, 'image/jpeg', AttachmentService.IMAGE_QUALITY)
     );
 
@@ -89,7 +97,17 @@ export class AttachmentService {
     });
   }
 
-  private saveAttachmentMetadata(vehicleId: number, maintenanceId: number, file: File, objectKey: string) {
-    return this.maintenanceApiService.saveAttachmentMetadata(vehicleId, maintenanceId, file, objectKey);
+  private saveAttachmentMetadata(
+    vehicleId: number,
+    maintenanceId: number,
+    file: File,
+    objectKey: string
+  ) {
+    return this.maintenanceApiService.saveAttachmentMetadata(
+      vehicleId,
+      maintenanceId,
+      file,
+      objectKey
+    );
   }
 }

@@ -46,7 +46,7 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
   @Output() addRequested = new EventEmitter<void>();
 
   protected readonly availableFilterCategories = computed(() => {
-    const unique = new Set<string>(this.serviceRecords().map(record => record.category));
+    const unique = new Set<string>(this.serviceRecords().map((record) => record.category));
     return Array.from(unique);
   });
 
@@ -68,7 +68,7 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     }
 
     const selected = new Set(this.selectedCategories());
-    return categories.every(category => selected.has(category));
+    return categories.every((category) => selected.has(category));
   });
 
   protected readonly hasAnyRecords = computed(() => this.serviceRecords().length > 0);
@@ -83,16 +83,18 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
       titleSearch: this.titleSearch(),
     };
 
-    return getMaintenanceTimelineEntries(this.serviceRecords(), filters, record => this.getRecordCurrency(record));
+    return getMaintenanceTimelineEntries(this.serviceRecords(), filters, (record) =>
+      this.getRecordCurrency(record)
+    );
   });
 
   protected readonly mileageWarningRecordIds = computed(() =>
-    getMaintenanceWarningRecordIds(this.serviceRecords(), record => record.serviceDate)
+    getMaintenanceWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
   );
 
   protected readonly maxAvailablePrice = computed(() => {
     const costs = this.getRecordsForSelectedCurrencyFilter()
-      .map(record => record.cost)
+      .map((record) => record.cost)
       .filter((cost): cost is number => cost !== null);
 
     if (!costs.length) {
@@ -105,8 +107,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
   protected readonly availableFilterCurrencies = computed(() => {
     const unique = new Set<string>(
       this.serviceRecords()
-        .map(record => this.getRecordCurrency(record))
-        .filter(currency => !!currency)
+        .map((record) => this.getRecordCurrency(record))
+        .filter((currency) => !!currency)
     );
 
     const selected = this.selectedCurrencyFilter();
@@ -120,7 +122,7 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
   protected readonly totalServiceCostByCurrency = computed(() => {
     const totals = new Map<string, number>();
 
-    this.serviceRecords().forEach(record => {
+    this.serviceRecords().forEach((record) => {
       if (record.cost === null) {
         return;
       }
@@ -183,7 +185,9 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
       return;
     }
 
-    this.selectedCategories.set(this.selectedCategories().filter(selectedCategory => selectedCategory !== category));
+    this.selectedCategories.set(
+      this.selectedCategories().filter((selectedCategory) => selectedCategory !== category)
+    );
   }
 
   protected onMinPriceLimitChange(rawValue: string) {
@@ -208,7 +212,10 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
 
   protected onCurrencyFilterChange(rawValue: string) {
     const available = this.availableFilterCurrencies();
-    const selected = rawValue === this.allCurrenciesOption || available.includes(rawValue) ? rawValue : this.allCurrenciesOption;
+    const selected =
+      rawValue === this.allCurrenciesOption || available.includes(rawValue)
+        ? rawValue
+        : this.allCurrenciesOption;
 
     this.selectedCurrencyFilter.set(selected);
     this.minPriceLimit.set(0);
@@ -223,7 +230,12 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
   }
 
   protected onSortChange(rawValue: string) {
-    if (rawValue !== 'newest' && rawValue !== 'oldest' && rawValue !== 'price-low-high' && rawValue !== 'price-high-low') {
+    if (
+      rawValue !== 'newest' &&
+      rawValue !== 'oldest' &&
+      rawValue !== 'price-low-high' &&
+      rawValue !== 'price-high-low'
+    ) {
       return;
     }
 
@@ -258,7 +270,9 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
       return;
     }
 
-    const selected = this.selectedCategories().filter(category => availableCategories.includes(category));
+    const selected = this.selectedCategories().filter((category) =>
+      availableCategories.includes(category)
+    );
     this.selectedCategories.set(selected);
 
     if (this.minPriceLimit() === 0 && this.maxPriceLimit() === 0 && maxPrice > 0) {
@@ -284,7 +298,9 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
       return this.serviceRecords();
     }
 
-    return this.serviceRecords().filter(record => this.getRecordCurrency(record) === selectedCurrency);
+    return this.serviceRecords().filter(
+      (record) => this.getRecordCurrency(record) === selectedCurrency
+    );
   }
 
   private getRecordCurrency(record: T): string {

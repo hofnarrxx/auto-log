@@ -14,7 +14,14 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-vehicle-dashboard',
-  imports: [VehicleForm, Modal, VehicleDetailsTab, VehicleMaintenanceTab, VehicleFuelTab, TranslateModule],
+  imports: [
+    VehicleForm,
+    Modal,
+    VehicleDetailsTab,
+    VehicleMaintenanceTab,
+    VehicleFuelTab,
+    TranslateModule,
+  ],
   templateUrl: './vehicle-dashboard.html',
   styleUrl: './vehicle-dashboard.css',
 })
@@ -55,7 +62,7 @@ export class VehicleDashboard {
 
   vehicle = computed(() => {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    return this.vehicleStore.vehicles().find(v => v.id === id);
+    return this.vehicleStore.vehicles().find((v) => v.id === id);
   });
 
   openEdit() {
@@ -74,18 +81,19 @@ export class VehicleDashboard {
     this.shareLinks.set([]);
     this.shareAttachments.set(true);
 
-    this.vehicleStore.listShareLinks(vehicle.id).pipe(
-      finalize(() => this.isLoadingShareLinks.set(false))
-    ).subscribe({
-      next: response => {
-        this.shareLinks.set(this.filterActiveLinks(response));
-        this.showShareModal.set(true);
-      },
-      error: () => {
-        this.notifications.notifyError('vehicle.dashboard.share.errors.load');
-        this.showShareModal.set(true);
-      }
-    });
+    this.vehicleStore
+      .listShareLinks(vehicle.id)
+      .pipe(finalize(() => this.isLoadingShareLinks.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.shareLinks.set(this.filterActiveLinks(response));
+          this.showShareModal.set(true);
+        },
+        error: () => {
+          this.notifications.notifyError('vehicle.dashboard.share.errors.load');
+          this.showShareModal.set(true);
+        },
+      });
   }
 
   closeShareModal() {
@@ -128,16 +136,17 @@ export class VehicleDashboard {
 
     this.deletingShareLinkId.set(linkId);
 
-    this.vehicleStore.revokeShareLink(linkId).pipe(
-      finalize(() => this.deletingShareLinkId.set(null))
-    ).subscribe({
-      next: () => {
-        this.shareLinks.update(links => links.filter(link => link.id !== linkId));
-      },
-      error: () => {
-        this.notifications.notifyError('vehicle.dashboard.share.errors.delete');
-      }
-    });
+    this.vehicleStore
+      .revokeShareLink(linkId)
+      .pipe(finalize(() => this.deletingShareLinkId.set(null)))
+      .subscribe({
+        next: () => {
+          this.shareLinks.update((links) => links.filter((link) => link.id !== linkId));
+        },
+        error: () => {
+          this.notifications.notifyError('vehicle.dashboard.share.errors.delete');
+        },
+      });
   }
 
   createShareLink() {
@@ -148,16 +157,19 @@ export class VehicleDashboard {
 
     this.isCreatingShareLink.set(true);
 
-    this.vehicleStore.createShareLink(vehicle.id, this.shareAttachments()).pipe(
-      finalize(() => this.isCreatingShareLink.set(false))
-    ).subscribe({
-      next: response => {
-        this.shareLinks.update(links => [response, ...links].slice(0, this.maxActiveShareLinks));
-      },
-      error: () => {
-        this.notifications.notifyError('vehicle.dashboard.share.errors.generate');
-      }
-    });
+    this.vehicleStore
+      .createShareLink(vehicle.id, this.shareAttachments())
+      .pipe(finalize(() => this.isCreatingShareLink.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.shareLinks.update((links) =>
+            [response, ...links].slice(0, this.maxActiveShareLinks)
+          );
+        },
+        error: () => {
+          this.notifications.notifyError('vehicle.dashboard.share.errors.generate');
+        },
+      });
   }
 
   remainingTime(expiresAt: string | null): string {
@@ -181,7 +193,7 @@ export class VehicleDashboard {
 
   private filterActiveLinks(links: ShareLinkResponse[]): ShareLinkResponse[] {
     const now = Date.now();
-    return links.filter(link => {
+    return links.filter((link) => {
       if (link.revoked) {
         return false;
       }
@@ -214,7 +226,7 @@ export class VehicleDashboard {
     if (!vehicle) return;
 
     this.vehicleStore.remove(vehicle.id).subscribe({
-      next: () => this.router.navigate(['/dashboard'], { replaceUrl: true })
+      next: () => this.router.navigate(['/dashboard'], { replaceUrl: true }),
     });
   }
 }

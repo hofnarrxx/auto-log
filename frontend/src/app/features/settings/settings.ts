@@ -9,12 +9,12 @@ import { CurrencyService } from '../../shared/services/currency.service';
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './settings.html',
-  styleUrl: './settings.css'
+  styleUrl: './settings.css',
 })
 export class Settings {
   private currencyService = inject(CurrencyService);
   private translate = inject(TranslateService);
-  
+
   selectedCurrency = this.currencyService.selectedCurrency;
   selectedLanguage = this.translate.currentLang || this.translate.defaultLang || 'en';
   currencies = ['EUR', 'USD', 'PLN'];

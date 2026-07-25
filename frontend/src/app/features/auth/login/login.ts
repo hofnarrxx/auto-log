@@ -20,7 +20,7 @@ export class Login {
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   login() {
@@ -30,12 +30,11 @@ export class Login {
 
     this.authApi.login(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => this.notifications.notifyError('auth.login.errors.invalidCredentials')
+      error: () => this.notifications.notifyError('auth.login.errors.invalidCredentials'),
     });
   }
 
   googleLogin() {
-    window.location.href =
-      `${environment.apiBaseUrl}/oauth2/authorization/google`;
+    window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/google`;
   }
 }

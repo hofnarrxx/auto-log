@@ -49,11 +49,11 @@ export class NotificationService {
 
   dismiss(id: number): void {
     this.clearTimer(id);
-    this.items.update(list => list.filter(item => item.id !== id));
+    this.items.update((list) => list.filter((item) => item.id !== id));
   }
 
   clear(): void {
-    this.dismissTimers.forEach(timer => clearTimeout(timer));
+    this.dismissTimers.forEach((timer) => clearTimeout(timer));
     this.dismissTimers.clear();
     this.items.set([]);
   }
@@ -65,7 +65,7 @@ export class NotificationService {
       messageKey,
     };
 
-    this.items.update(list => [...list, notification]);
+    this.items.update((list) => [...list, notification]);
     this.scheduleDismiss(notification.id);
   }
 

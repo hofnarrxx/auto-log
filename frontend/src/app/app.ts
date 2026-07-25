@@ -8,7 +8,7 @@ import { ToastHost } from './shared/ui/toast/toast-host';
   selector: 'app-root',
   imports: [RouterOutlet, RouterModule, ToastHost],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected title = 'AutoLog';
@@ -33,7 +33,7 @@ export class App {
 
     this.authApi.checkAuth().subscribe({
       next: () => this.authApi.isAuthenticated.set(true),
-      error: () => this.authApi.isAuthenticated.set(false)
+      error: () => this.authApi.isAuthenticated.set(false),
     });
   }
 }

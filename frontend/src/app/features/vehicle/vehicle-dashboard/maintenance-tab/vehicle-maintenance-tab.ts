@@ -75,7 +75,7 @@ export class VehicleMaintenanceTab {
     return mode === 'create' || mode === 'edit';
   });
   protected readonly mileageWarningRecordIds = computed(() =>
-    getMaintenanceWarningRecordIds(this.serviceRecords(), record => record.serviceDate)
+    getMaintenanceWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
   );
 
   constructor() {
@@ -142,16 +142,16 @@ export class VehicleMaintenanceTab {
         payload as MaintenanceRecordPayload,
         isEdit ? selected.id : undefined
       )
-      .pipe(
-        switchMap(saved => this.uploadAttachmentsIfNeeded(saved.id).pipe(map(() => saved)))
-      )
+      .pipe(switchMap((saved) => this.uploadAttachmentsIfNeeded(saved.id).pipe(map(() => saved))))
       .subscribe({
         next: () => {
           this.closeModal();
           this.maintenanceStore.load(this.currentVehicleId!);
         },
-        error: err => {
-          this.notifications.notifyError(this.resolveErrorKey(err, 'vehicle.maintenanceTab.errors.saveFailed'));
+        error: (err) => {
+          this.notifications.notifyError(
+            this.resolveErrorKey(err, 'vehicle.maintenanceTab.errors.saveFailed')
+          );
         },
       });
   }
@@ -233,13 +233,15 @@ export class VehicleMaintenanceTab {
     }
 
     const selected = Array.from(input.files);
-    const valid = selected.filter(file => this.attachmentService.isAllowedAttachment(file));
+    const valid = selected.filter((file) => this.attachmentService.isAllowedAttachment(file));
     if (valid.length !== selected.length) {
       this.notifications.notifyError('vehicle.maintenanceTab.errors.invalidAttachmentType');
     }
 
     const existing = this.pendingAttachments();
-    const withinLimit = valid.filter(file => file.size <= this.attachmentService.maxAttachmentBytes);
+    const withinLimit = valid.filter(
+      (file) => file.size <= this.attachmentService.maxAttachmentBytes
+    );
     if (withinLimit.length !== valid.length) {
       this.notifications.notifyError('vehicle.maintenanceTab.errors.attachmentTooLarge');
     }
@@ -260,15 +262,19 @@ export class VehicleMaintenanceTab {
       return of(undefined);
     }
 
-    return this.attachmentService.uploadAttachments(this.currentVehicleId, maintenanceId, files).pipe(
-      catchError(err => {
-        if (err instanceof Error && err.message === 'Attachment too large') {
-          return throwError(() => ({ messageKey: 'vehicle.maintenanceTab.errors.attachmentTooLarge' }));
-        }
+    return this.attachmentService
+      .uploadAttachments(this.currentVehicleId, maintenanceId, files)
+      .pipe(
+        catchError((err) => {
+          if (err instanceof Error && err.message === 'Attachment too large') {
+            return throwError(() => ({
+              messageKey: 'vehicle.maintenanceTab.errors.attachmentTooLarge',
+            }));
+          }
 
-        return throwError(() => ({ messageKey: 'vehicle.maintenanceTab.errors.uploadFailed' }));
-      })
-    );
+          return throwError(() => ({ messageKey: 'vehicle.maintenanceTab.errors.uploadFailed' }));
+        })
+      );
   }
 
   protected openAttachment(attachment: MaintenanceAttachment) {
@@ -279,7 +285,7 @@ export class VehicleMaintenanceTab {
     this.maintenanceStore
       .getAttachmentDownloadUrl(this.currentVehicleId, this.selectedRecord()!.id, attachment.id)
       .subscribe({
-        next: response => {
+        next: (response) => {
           if (response.downloadUrl) {
             window.open(response.downloadUrl, '_blank', 'noopener');
           }

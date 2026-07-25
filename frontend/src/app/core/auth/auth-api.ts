@@ -17,49 +17,35 @@ export class AuthApi {
 
     this.checkAuth().subscribe({
       next: () => this.isAuthenticated.set(true),
-      error: () => this.isAuthenticated.set(false)
+      error: () => this.isAuthenticated.set(false),
     });
   }
 
   login(email: string, password: string) {
-    return this.http.post(
-      `${this.authApi}/login`,
-      { email, password }
-    ).pipe(
-      tap(() => this.isAuthenticated.set(true))
-    );
+    return this.http
+      .post(`${this.authApi}/login`, { email, password })
+      .pipe(tap(() => this.isAuthenticated.set(true)));
   }
 
   register(email: string, password: string) {
-    return this.http.post(
-      `${this.authApi}/register`,
-      { email, password }
-    ).pipe(
-      tap(() => this.isAuthenticated.set(true))
-    );
+    return this.http
+      .post(`${this.authApi}/register`, { email, password })
+      .pipe(tap(() => this.isAuthenticated.set(true)));
   }
 
   refreshSession() {
-    return this.http.post<void>(
-      `${this.authApi}/refresh`,
-      {}
-    ).pipe(
-      tap(() => this.isAuthenticated.set(true))
-    );
+    return this.http
+      .post<void>(`${this.authApi}/refresh`, {})
+      .pipe(tap(() => this.isAuthenticated.set(true)));
   }
 
   logout() {
-    return this.http.post(
-      `${this.authApi}/logout`,
-      {}
-    ).pipe(
-      tap(() => this.isAuthenticated.set(false))
-    );
+    return this.http
+      .post(`${this.authApi}/logout`, {})
+      .pipe(tap(() => this.isAuthenticated.set(false)));
   }
 
   checkAuth() {
-    return this.http.get(
-      `${this.authApi}/me`
-    );
+    return this.http.get(`${this.authApi}/me`);
   }
 }

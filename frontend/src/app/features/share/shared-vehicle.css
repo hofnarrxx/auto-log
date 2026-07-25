@@ -1,6 +1,7 @@
 .shared-page {
   min-height: 100vh;
-  background: radial-gradient(900px 700px at 12% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
+  background:
+    radial-gradient(900px 700px at 12% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
     linear-gradient(165deg, var(--bg-deep), var(--bg));
   padding: 24px;
 }

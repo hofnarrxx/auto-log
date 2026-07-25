@@ -33,7 +33,7 @@ export class SharedVehicleMaintenanceTab {
   protected readonly serviceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly mileageWarningRecordIds = computed(() =>
-    getMaintenanceWarningRecordIds(this.serviceRecords(), record => record.serviceDate)
+    getMaintenanceWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
   );
 
   protected openRecordDetails(record: MaintenanceRecord) {

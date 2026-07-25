@@ -38,7 +38,7 @@ export class AppLayout {
 
   toggleMenu(event: Event) {
     event.stopPropagation();
-    this.menuOpen.update(v => !v);
+    this.menuOpen.update((v) => !v);
   }
 
   closeMenu() {
@@ -57,7 +57,7 @@ export class AppLayout {
       },
       error: () => {
         this.router.navigate(['/login'], { replaceUrl: true });
-      }
+      },
     });
   }
 }

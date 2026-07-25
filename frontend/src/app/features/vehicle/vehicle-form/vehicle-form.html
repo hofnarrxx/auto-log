@@ -1,54 +1,75 @@
 <h2>{{ (vehicle ? 'vehicle.form.title.edit' : 'vehicle.form.title.add') | translate }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="save()">
-
-  <input [placeholder]="'vehicle.form.placeholders.brand' | translate" formControlName="brand">
+  <input [placeholder]="'vehicle.form.placeholders.brand' | translate" formControlName="brand" />
   @if (form.controls.brand.invalid && form.controls.brand.touched) {
-  <div class="error">{{ 'vehicle.form.errors.brandRequired' | translate }}</div>
+    <div class="error">{{ 'vehicle.form.errors.brandRequired' | translate }}</div>
   }
 
-  <input [placeholder]="'vehicle.form.placeholders.model' | translate" formControlName="model">
+  <input [placeholder]="'vehicle.form.placeholders.model' | translate" formControlName="model" />
   @if (form.controls.model.invalid && form.controls.model.touched) {
-  <div class="error">{{ 'vehicle.form.errors.modelRequired' | translate }}</div>
+    <div class="error">{{ 'vehicle.form.errors.modelRequired' | translate }}</div>
   }
 
   <select formControlName="fuelType">
-    <option [ngValue]="null" disabled>{{ 'vehicle.form.placeholders.selectFuelType' | translate }}</option>
+    <option [ngValue]="null" disabled>
+      {{ 'vehicle.form.placeholders.selectFuelType' | translate }}
+    </option>
     @for (fuel of fuelTypes; track fuel) {
-    <option [value]="fuel">{{ fuelTypeLabel(fuel) | translate }}</option>
+      <option [value]="fuel">{{ fuelTypeLabel(fuel) | translate }}</option>
     }
   </select>
   @if (form.controls.fuelType.invalid && form.controls.fuelType.touched) {
-  <div class="error">{{ 'vehicle.form.errors.fuelTypeRequired' | translate }}</div>
+    <div class="error">{{ 'vehicle.form.errors.fuelTypeRequired' | translate }}</div>
   }
 
-  <input type="number" [placeholder]="'vehicle.form.placeholders.year' | translate" formControlName="year" min="1886" [max]="currentYear" step="1">
+  <input
+    type="number"
+    [placeholder]="'vehicle.form.placeholders.year' | translate"
+    formControlName="year"
+    min="1886"
+    [max]="currentYear"
+    step="1"
+  />
 
   @if (form.controls.year.hasError('integer') && form.controls.year.touched) {
-
-  <div class="error">{{ 'vehicle.form.errors.yearInteger' | translate }}</div> }
-  @else if (form.controls.year.invalid && form.controls.year.touched) {
-  <div class="error">{{ 'vehicle.form.errors.yearRange' | translate:{ currentYear: currentYear } }}</div>
+    <div class="error">{{ 'vehicle.form.errors.yearInteger' | translate }}</div>
+  } @else if (form.controls.year.invalid && form.controls.year.touched) {
+    <div class="error">
+      {{ 'vehicle.form.errors.yearRange' | translate: { currentYear: currentYear } }}
+    </div>
   }
 
-  <input type="number" [placeholder]="'vehicle.form.placeholders.mileage' | translate" formControlName="mileage" min="0" step="0.1">
-  
+  <input
+    type="number"
+    [placeholder]="'vehicle.form.placeholders.mileage' | translate"
+    formControlName="mileage"
+    min="0"
+    step="0.1"
+  />
+
   @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-  <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
+    <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
   }
 
-  <input type="text" [placeholder]="'vehicle.form.placeholders.licensePlate' | translate" formControlName="licensePlate">
+  <input
+    type="text"
+    [placeholder]="'vehicle.form.placeholders.licensePlate' | translate"
+    formControlName="licensePlate"
+  />
 
-  <input type="file" accept="image/*" (change)="onFileSelected($event)">
+  <input type="file" accept="image/*" (change)="onFileSelected($event)" />
 
   @if (selectedImagePreviewUrl) {
-  <div>
-    <img [src]="selectedImagePreviewUrl" width="200">
-  </div>
+    <div>
+      <img [src]="selectedImagePreviewUrl" width="200" />
+    </div>
   }
 
   <div class="buttons">
-    <button type="button" class="cancel" (click)="cancel()">{{ 'common.cancel' | translate }}</button>
+    <button type="button" class="cancel" (click)="cancel()">
+      {{ 'common.cancel' | translate }}
+    </button>
     <button type="submit" class="save">{{ 'common.save' | translate }}</button>
   </div>
 </form>

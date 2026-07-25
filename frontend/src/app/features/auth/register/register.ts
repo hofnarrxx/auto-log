@@ -20,7 +20,7 @@ export class Register {
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    confirmPassword: ['', Validators.required],
   });
 
   register() {
@@ -31,14 +31,14 @@ export class Register {
 
     this.authApi.register(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: err => {
+      error: (err) => {
         this.notifications.notifyHttpError(err, {
           fallback: 'auth.register.errors.registrationFailed',
           byStatus: {
             409: 'auth.register.errors.emailExists',
           },
         });
-      }
+      },
     });
   }
 }

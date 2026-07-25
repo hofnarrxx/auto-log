@@ -6,7 +6,8 @@
     <select
       id="language-select"
       [ngModel]="selectedLanguage"
-      (ngModelChange)="onLanguageChange($event)">
+      (ngModelChange)="onLanguageChange($event)"
+    >
       @for (language of languages; track language.code) {
         <option [value]="language.code">{{ language.labelKey | translate }}</option>
       }
@@ -18,7 +19,8 @@
     <select
       id="currency-select"
       [ngModel]="selectedCurrency()"
-      (ngModelChange)="onCurrencyChange($event)">
+      (ngModelChange)="onCurrencyChange($event)"
+    >
       @for (currency of currencies; track currency) {
         <option [value]="currency">{{ currency }}</option>
       }

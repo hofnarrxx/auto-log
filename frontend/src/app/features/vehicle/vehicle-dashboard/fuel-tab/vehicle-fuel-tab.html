@@ -11,7 +11,8 @@
       [totalRecords]="fuelRecords().length"
       [totalCostText]="totalFuelCostByCurrency()"
       (recordSelected)="openRecordDetails($event)"
-      (addRequested)="openCreateModal()">
+      (addRequested)="openCreateModal()"
+    >
     </app-fuel-list>
   }
 
@@ -22,124 +23,140 @@
       <h2>{{ modalTitle() | translate }}</h2>
 
       @if (isCreateMode()) {
-      <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
-        <label>
-          {{ 'common.date' | translate }}
-          <input type="date" formControlName="date">
-        </label>
-        @if (form.controls.date.invalid && form.controls.date.touched) {
-          <p class="error-text">{{ 'vehicle.fuelTab.errors.dateRequired' | translate }}</p>
-        }
+        <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
+          <label>
+            {{ 'common.date' | translate }}
+            <input type="date" formControlName="date" />
+          </label>
+          @if (form.controls.date.invalid && form.controls.date.touched) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.dateRequired' | translate }}</p>
+          }
 
-        <label>
-          {{ 'common.amount' | translate }} (L)
-          <input type="number" formControlName="amount" min="0.01" step="0.01">
-        </label>
-        @if (form.controls.amount.invalid && form.controls.amount.touched) {
-          <p class="error-text">{{ 'vehicle.fuelTab.errors.amountPositive' | translate }}</p>
-        }
+          <label>
+            {{ 'common.amount' | translate }} (L)
+            <input type="number" formControlName="amount" min="0.01" step="0.01" />
+          </label>
+          @if (form.controls.amount.invalid && form.controls.amount.touched) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.amountPositive' | translate }}</p>
+          }
 
-        <div class="cost-currency-row">
-          <div class="field-group">
-            <label>
-              {{ 'common.cost' | translate }}
-              <input type="number" formControlName="cost" min="0" step="0.01">
-            </label>
-            @if (form.controls.cost.invalid && form.controls.cost.touched) {
-              <p class="error-text">{{ 'vehicle.fuelTab.errors.costRequired' | translate }}</p>
-            }
+          <div class="cost-currency-row">
+            <div class="field-group">
+              <label>
+                {{ 'common.cost' | translate }}
+                <input type="number" formControlName="cost" min="0" step="0.01" />
+              </label>
+              @if (form.controls.cost.invalid && form.controls.cost.touched) {
+                <p class="error-text">{{ 'vehicle.fuelTab.errors.costRequired' | translate }}</p>
+              }
+            </div>
+
+            <div class="field-group">
+              <label>
+                {{ 'common.currency' | translate }}
+                <select formControlName="currency">
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="PLN">PLN</option>
+                </select>
+              </label>
+              @if (form.controls.currency.invalid && form.controls.currency.touched) {
+                <p class="error-text">
+                  {{ 'vehicle.fuelTab.errors.currencyRequired' | translate }}
+                </p>
+              }
+            </div>
           </div>
 
-          <div class="field-group">
-            <label>
-              {{ 'common.currency' | translate }}
-              <select formControlName="currency">
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
-                <option value="PLN">PLN</option>
-              </select>
-            </label>
-            @if (form.controls.currency.invalid && form.controls.currency.touched) {
-              <p class="error-text">{{ 'vehicle.fuelTab.errors.currencyRequired' | translate }}</p>
-            }
+          <label>
+            {{ 'common.mileage' | translate }} (km)
+            <input type="number" formControlName="mileage" min="0" step="1" />
+          </label>
+          @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.mileageRequired' | translate }}</p>
+          }
+
+          <label>
+            {{ 'common.gasStation' | translate }} ({{ 'common.optional' | translate }})
+            <input
+              type="text"
+              formControlName="gasStation"
+              maxlength="50"
+              [placeholder]="'vehicle.fuelTab.placeholders.gasStation' | translate"
+            />
+          </label>
+          @if (form.controls.gasStation.invalid && form.controls.gasStation.touched) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.gasStationMaxLength' | translate }}</p>
+          }
+
+          <div class="modal-actions">
+            <button type="button" class="secondary-btn" (click)="closeModal()">
+              {{ 'common.cancel' | translate }}
+            </button>
+            <button type="submit" class="primary-btn" [disabled]="isSaving()">
+              {{ saveButtonLabel() | translate }}
+            </button>
+          </div>
+        </form>
+      } @else if (selectedRecord(); as record) {
+        <div class="record-details">
+          <div class="detail-row">
+            <span class="label">{{ 'common.date' | translate }}</span>
+            <span>{{ record.date | dateFormat }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.amount' | translate }}</span>
+            <span>{{ formatFuelAmount(record.amount) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.cost' | translate }}</span>
+            <span>{{ record.cost | money: record.currency }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.pricePerLitre' | translate }}</span>
+            <span>{{ formatPricePerLitre(record.cost, record.amount, record.currency) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.mileage' | translate }}</span>
+            <span>
+              {{ record.mileage ?? '-' }} km
+              @if (hasMileageWarning(record)) {
+                <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate"
+                  >▲</span
+                >
+              }
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.gasStation' | translate }}</span>
+            <span>{{ record.gasStation || '-' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.created' | translate }}</span>
+            <span>{{ record.createdAt | dateFormat: 'datetime' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">{{ 'common.updated' | translate }}</span>
+            <span>{{ record.updatedAt | dateFormat: 'datetime' }}</span>
           </div>
         </div>
-
-        <label>
-          {{ 'common.mileage' | translate }} (km)
-          <input type="number" formControlName="mileage" min="0" step="1">
-        </label>
-        @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-          <p class="error-text">{{ 'vehicle.fuelTab.errors.mileageRequired' | translate }}</p>
-        }
-
-        <label>
-          {{ 'common.gasStation' | translate }} ({{ 'common.optional' | translate }})
-          <input type="text" formControlName="gasStation" maxlength="50" [placeholder]="'vehicle.fuelTab.placeholders.gasStation' | translate">
-        </label>
-        @if (form.controls.gasStation.invalid && form.controls.gasStation.touched) {
-          <p class="error-text">{{ 'vehicle.fuelTab.errors.gasStationMaxLength' | translate }}</p>
-        }
 
         <div class="modal-actions">
-          <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
-          <button type="submit" class="primary-btn" [disabled]="isSaving()">
-            {{ saveButtonLabel() | translate }}
+          <button type="button" class="secondary-btn" (click)="closeModal()">
+            {{ 'common.close' | translate }}
+          </button>
+          <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">
+            {{ 'common.edit' | translate }}
+          </button>
+          <button
+            type="button"
+            class="danger-btn"
+            [disabled]="isDeleting()"
+            (click)="deleteSelectedRecord()"
+          >
+            {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
           </button>
         </div>
-      </form>
-      } @else if (selectedRecord(); as record) {
-      <div class="record-details">
-        <div class="detail-row">
-          <span class="label">{{ 'common.date' | translate }}</span>
-          <span>{{ record.date | dateFormat }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.amount' | translate }}</span>
-          <span>{{ formatFuelAmount(record.amount) }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.cost' | translate }}</span>
-          <span>{{ record.cost | money:record.currency }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.pricePerLitre' | translate }}</span>
-          <span>{{ formatPricePerLitre(record.cost, record.amount, record.currency) }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.mileage' | translate }}</span>
-          <span>
-            {{ record.mileage ?? '-' }} km
-            @if (hasMileageWarning(record)) {
-              <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate">▲</span>
-            }
-          </span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.gasStation' | translate }}</span>
-          <span>{{ record.gasStation || '-' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.created' | translate }}</span>
-          <span>{{ record.createdAt | dateFormat:'datetime' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">{{ 'common.updated' | translate }}</span>
-          <span>{{ record.updatedAt | dateFormat:'datetime' }}</span>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.close' | translate }}</button>
-        <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">{{ 'common.edit' | translate }}</button>
-        <button
-          type="button"
-          class="danger-btn"
-          [disabled]="isDeleting()"
-          (click)="deleteSelectedRecord()">
-          {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
-        </button>
-      </div>
       }
     </div>
   }

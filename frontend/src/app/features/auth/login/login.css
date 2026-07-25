@@ -10,7 +10,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(700px 500px at 15% 10%, rgba(34, 211, 238, 0.12), transparent 60%),
+  background:
+    radial-gradient(700px 500px at 15% 10%, rgba(34, 211, 238, 0.12), transparent 60%),
     linear-gradient(165deg, var(--bg-deep), var(--bg));
 }
 
@@ -69,7 +70,9 @@ input {
   font-size: 14px;
   background: rgba(10, 18, 32, 0.6);
   color: var(--text);
-  transition: border 0.2s, box-shadow 0.2s;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
 }
 
 input:focus {
@@ -90,7 +93,10 @@ input:focus {
   font-size: 15px;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .auth-button:hover {
@@ -135,7 +141,9 @@ input:focus {
   background: rgba(10, 18, 32, 0.4);
   color: var(--text);
   cursor: pointer;
-  transition: border 0.2s ease, background 0.2s ease;
+  transition:
+    border 0.2s ease,
+    background 0.2s ease;
 }
 
 .google-btn:hover {

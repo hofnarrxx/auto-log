@@ -72,7 +72,7 @@ export class VehicleFuelTab {
   protected readonly totalFuelCostByCurrency = computed(() => {
     const totals = new Map<string, number>();
 
-    this.fuelRecords().forEach(record => {
+    this.fuelRecords().forEach((record) => {
       if (record.cost === null) {
         return;
       }
@@ -87,13 +87,13 @@ export class VehicleFuelTab {
       .join(' | ');
   });
   protected readonly filteredFuelRecords = computed(() =>
-    this.fuelRecords().filter(record => this.matchesGasStationFilter(record))
+    this.fuelRecords().filter((record) => this.matchesGasStationFilter(record))
   );
   protected readonly visibleFuelRecords = computed(() =>
     [...this.filteredFuelRecords()].sort((left, right) => this.compareRecords(left, right))
   );
   protected readonly mileageWarningRecordIds = computed(() =>
-    this.findMileageWarningRecordIds(this.fuelRecords(), record => record.date)
+    this.findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
   );
 
   protected formatFuelAmount(amount: number | null | undefined): string {
@@ -228,12 +228,13 @@ export class VehicleFuelTab {
     this.isSaving.set(true);
 
     const selected = this.selectedRecord();
-    const request$ = this.isEditMode() && selected
-      ? this.http.put<FuelRecord>(
-          `${this.vehicleApi}/${this.currentVehicleId}/fuel/${selected.id}`,
-          payload
-        )
-      : this.http.post<FuelRecord>(`${this.vehicleApi}/${this.currentVehicleId}/fuel`, payload);
+    const request$ =
+      this.isEditMode() && selected
+        ? this.http.put<FuelRecord>(
+            `${this.vehicleApi}/${this.currentVehicleId}/fuel/${selected.id}`,
+            payload
+          )
+        : this.http.post<FuelRecord>(`${this.vehicleApi}/${this.currentVehicleId}/fuel`, payload);
 
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: () => {
@@ -280,7 +281,7 @@ export class VehicleFuelTab {
       .get<FuelRecord[]>(`${this.vehicleApi}/${this.currentVehicleId}/fuel`)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: records => {
+        next: (records) => {
           const sorted = [...records].sort((a, b) => {
             const left = new Date(b.date).getTime();
             const right = new Date(a.date).getTime();
@@ -362,29 +363,31 @@ export class VehicleFuelTab {
     }
 
     if (sort === 'price-low-high') {
-      return this.compareNullableNumbers(left.cost, right.cost, 'asc') ||
-        (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(left.cost, right.cost, 'asc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     if (sort === 'price-high-low') {
-      return this.compareNullableNumbers(left.cost, right.cost, 'desc') ||
-        (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(left.cost, right.cost, 'desc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     if (sort === 'price-per-unit-low-high') {
-      return this.compareNullableNumbers(
-        this.pricePerUnit(left),
-        this.pricePerUnit(right),
-        'asc'
-      ) || (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(this.pricePerUnit(left), this.pricePerUnit(right), 'asc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     if (sort === 'price-per-unit-high-low') {
-      return this.compareNullableNumbers(
-        this.pricePerUnit(left),
-        this.pricePerUnit(right),
-        'desc'
-      ) || (this.toTimestamp(right.date) - this.toTimestamp(left.date));
+      return (
+        this.compareNullableNumbers(this.pricePerUnit(left), this.pricePerUnit(right), 'desc') ||
+        this.toTimestamp(right.date) - this.toTimestamp(left.date)
+      );
     }
 
     return this.toTimestamp(right.date) - this.toTimestamp(left.date);
@@ -434,7 +437,7 @@ export class VehicleFuelTab {
     const warnings = new Set<number>();
     let maxMileageSeen: number | null = null;
 
-    sorted.forEach(record => {
+    sorted.forEach((record) => {
       const mileage = record.mileage;
       if (mileage === null) {
         return;

@@ -17,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const authReq = req.clone({
-    withCredentials: true
+    withCredentials: true,
   });
 
   const isShareRequest = req.url.includes('/share/');
@@ -33,12 +33,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     !req.url.includes('/api/auth/refresh');
 
   return next(authReq).pipe(
-    catchError(err => {
+    catchError((err) => {
       if (err.status === 401 && shouldTryRefresh) {
         return authApi.refreshSession().pipe(
           switchMap(() => next(authReq)),
-          catchError(refreshErr => {
-
+          catchError((refreshErr) => {
             authApi.isAuthenticated.set(false);
             return throwError(() => refreshErr);
           })
@@ -46,7 +45,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       if (err.status === 401 && !isShareRequest && !isOnSharePage && !isAuthRequest) {
-    
         authApi.isAuthenticated.set(false);
       }
       return throwError(() => err);

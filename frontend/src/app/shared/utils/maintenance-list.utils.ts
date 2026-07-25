@@ -66,10 +66,12 @@ export function getMaintenanceTimelineEntries<T extends MaintenanceListRecord>(
   getRecordCurrency: (record: T) => string
 ): T[] {
   return [...records]
-    .filter(record => matchesMaintenanceCategoryFilter(record, filters.selectedCategories))
-    .filter(record => matchesMaintenancePriceFilter(record, filters, getRecordCurrency))
-    .filter(record => matchesMaintenanceTitleFilter(record, filters.titleSearch))
-    .sort((left, right) => compareMaintenanceRecords(left, right, filters.selectedSort, getRecordCurrency));
+    .filter((record) => matchesMaintenanceCategoryFilter(record, filters.selectedCategories))
+    .filter((record) => matchesMaintenancePriceFilter(record, filters, getRecordCurrency))
+    .filter((record) => matchesMaintenanceTitleFilter(record, filters.titleSearch))
+    .sort((left, right) =>
+      compareMaintenanceRecords(left, right, filters.selectedSort, getRecordCurrency)
+    );
 }
 
 export function getMaintenanceWarningRecordIds<T extends MaintenanceListRecord>(
@@ -77,13 +79,14 @@ export function getMaintenanceWarningRecordIds<T extends MaintenanceListRecord>(
   getDate: (record: T) => string
 ): Set<number> {
   const sorted = [...records].sort(
-    (left, right) => getMaintenanceTimestamp(getDate(left)) - getMaintenanceTimestamp(getDate(right))
+    (left, right) =>
+      getMaintenanceTimestamp(getDate(left)) - getMaintenanceTimestamp(getDate(right))
   );
 
   const warnings = new Set<number>();
   let maxMileageSeen: number | null = null;
 
-  sorted.forEach(record => {
+  sorted.forEach((record) => {
     const mileage = record.mileage;
     if (mileage === null) {
       return;

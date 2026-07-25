@@ -1,5 +1,12 @@
 import { Component, inject, Output, EventEmitter, Input, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
 import { Vehicle as VehicleModel } from '../models';
@@ -62,14 +69,11 @@ export class VehicleForm {
       Validators.required,
       Validators.min(1886),
       Validators.max(this.currentYear),
-      this.integerValidator.bind(this)
+      this.integerValidator.bind(this),
     ]),
-    mileage: new FormControl<number | null>(null, [
-      Validators.required,
-      Validators.min(0),
-    ]),
+    mileage: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
     fuelType: new FormControl<string | null>(null, Validators.required),
-    licensePlate: new FormControl<string | null>(null)
+    licensePlate: new FormControl<string | null>(null),
   });
 
   ngOnInit() {
@@ -103,7 +107,7 @@ export class VehicleForm {
     const file = input.files[0];
 
     this.prepareImage(file)
-      .then(prepared => {
+      .then((prepared) => {
         if (prepared.size > VehicleForm.MAX_IMAGE_BYTES) {
           return;
         }
@@ -126,13 +130,13 @@ export class VehicleForm {
     const vehicleId = this.vehicle!.id;
     const payload = {
       id: vehicleId,
-      ...this.form.value as any,
+      ...(this.form.value as any),
       imageKey: this.currentImageKey ?? null,
     } as VehicleModel;
 
     const update$ = this.selectedImageFile
       ? this.uploadSelectedImage(vehicleId, this.selectedImageFile).pipe(
-          switchMap(objectKey => {
+          switchMap((objectKey) => {
             this.currentImageKey = objectKey;
             return this.vehicleStore.update({
               ...payload,
@@ -149,20 +153,20 @@ export class VehicleForm {
 
   private saveNewVehicle() {
     const payload = {
-      ...this.form.value as any,
+      ...(this.form.value as any),
       imageKey: null,
     } as VehicleModel;
 
     this.vehicleStore
       .add(payload)
       .pipe(
-        switchMap(created => {
+        switchMap((created) => {
           if (!this.selectedImageFile) {
             return of(created);
           }
 
           return this.uploadSelectedImage(created.id, this.selectedImageFile).pipe(
-            switchMap(objectKey =>
+            switchMap((objectKey) =>
               this.vehicleStore.update({
                 ...payload,
                 id: created.id,
@@ -179,19 +183,14 @@ export class VehicleForm {
 
   private uploadSelectedImage(vehicleId: number, file: File) {
     return this.http
-      .post<VehicleImageUploadUrlResponse>(
-        `${this.vehicleApi}/${vehicleId}/image/upload-url`,
-        {
-          fileName: file.name,
-          contentType: file.type,
-          sizeBytes: file.size,
-        }
-      )
+      .post<VehicleImageUploadUrlResponse>(`${this.vehicleApi}/${vehicleId}/image/upload-url`, {
+        fileName: file.name,
+        contentType: file.type,
+        sizeBytes: file.size,
+      })
       .pipe(
-        switchMap(response =>
-          this.uploadToR2(response.uploadUrl, file).pipe(
-            map(() => response.objectKey)
-          )
+        switchMap((response) =>
+          this.uploadToR2(response.uploadUrl, file).pipe(map(() => response.objectKey))
         )
       );
   }
@@ -224,7 +223,7 @@ export class VehicleForm {
 
     ctx.drawImage(bitmap, 0, 0, width, height);
 
-    const blob = await new Promise<Blob | null>(resolve =>
+    const blob = await new Promise<Blob | null>((resolve) =>
       canvas.toBlob(resolve, 'image/jpeg', VehicleForm.IMAGE_QUALITY)
     );
 

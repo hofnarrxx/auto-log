@@ -1,74 +1,79 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-	--bg-deep: #0b1324;
-	--bg: #0f172a;
-	--panel: #111827;
-	--surface-1: #172135;
-	--surface-2: #1b243a;
-	--border: #27324a;
-	--text: #e6edf6;
-	--text-muted: #9aa6b2;
-	--accent: #22d3ee;
-	--accent-strong: #06b6d4;
-	--danger: #ef4444;
-	--warn: #f59e0b;
-	--success: #10b981;
-	--shadow-sm: 0 6px 16px rgba(3, 7, 18, 0.35);
-	--shadow-lg: 0 18px 40px rgba(3, 7, 18, 0.45);
-	--radius-sm: 10px;
-	--radius-md: 14px;
-	--radius-lg: 18px;
-	--space-1: 6px;
-	--space-2: 10px;
-	--space-3: 16px;
-	--space-4: 24px;
-	--space-5: 32px;
-	--font-body: "IBM Plex Sans", "Segoe UI", Tahoma, sans-serif;
-	--font-head: "Space Grotesk", "Segoe UI", Tahoma, sans-serif;
-	--font-mono: "IBM Plex Mono", "Consolas", "Courier New", monospace;
-	color-scheme: dark;
+  --bg-deep: #0b1324;
+  --bg: #0f172a;
+  --panel: #111827;
+  --surface-1: #172135;
+  --surface-2: #1b243a;
+  --border: #27324a;
+  --text: #e6edf6;
+  --text-muted: #9aa6b2;
+  --accent: #22d3ee;
+  --accent-strong: #06b6d4;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --success: #10b981;
+  --shadow-sm: 0 6px 16px rgba(3, 7, 18, 0.35);
+  --shadow-lg: 0 18px 40px rgba(3, 7, 18, 0.45);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', Tahoma, sans-serif;
+  --font-head: 'Space Grotesk', 'Segoe UI', Tahoma, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Consolas', 'Courier New', monospace;
+  color-scheme: dark;
 }
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-	margin: 0;
-	font-family: var(--font-body);
-	color: var(--text);
-	background: radial-gradient(900px 700px at 10% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
-		linear-gradient(165deg, var(--bg-deep), var(--bg));
-	min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background:
+    radial-gradient(900px 700px at 10% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
+    linear-gradient(165deg, var(--bg-deep), var(--bg));
+  min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5 {
-	font-family: var(--font-head);
-	font-weight: 600;
-	letter-spacing: 0.2px;
-	margin: 0 0 var(--space-3);
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin: 0 0 var(--space-3);
 }
 
 p {
-	margin: 0 0 var(--space-3);
-	color: var(--text-muted);
+  margin: 0 0 var(--space-3);
+  color: var(--text-muted);
 }
 
 a {
-	color: var(--accent);
-	text-decoration: none;
+  color: var(--accent);
+  text-decoration: none;
 }
 
 a:hover {
-	color: var(--accent-strong);
+  color: var(--accent-strong);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	* {
-		animation-duration: 0.001ms !important;
-		animation-iteration-count: 1 !important;
-		transition-duration: 0.001ms !important;
-		scroll-behavior: auto !important;
-	}
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

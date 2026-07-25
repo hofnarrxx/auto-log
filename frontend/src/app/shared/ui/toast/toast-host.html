@@ -4,9 +4,15 @@
       class="toast"
       [class.toast-error]="toast.kind === 'error'"
       [class.toast-success]="toast.kind === 'success'"
-      role="status">
+      role="status"
+    >
       <p>{{ toast.messageKey | translate }}</p>
-      <button type="button" class="toast-dismiss" (click)="dismiss(toast.id)" [attr.aria-label]="'common.close' | translate">
+      <button
+        type="button"
+        class="toast-dismiss"
+        (click)="dismiss(toast.id)"
+        [attr.aria-label]="'common.close' | translate"
+      >
         ×
       </button>
     </div>
