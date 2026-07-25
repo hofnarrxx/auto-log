@@ -1,0 +1,14 @@
+<div class="toast-host" aria-live="polite" aria-relevant="additions">
+  @for (toast of notifications.notifications(); track toast.id) {
+    <div
+      class="toast"
+      [class.toast-error]="toast.kind === 'error'"
+      [class.toast-success]="toast.kind === 'success'"
+      role="status">
+      <p>{{ toast.messageKey | translate }}</p>
+      <button type="button" class="toast-dismiss" (click)="dismiss(toast.id)" [attr.aria-label]="'common.close' | translate">
+        ×
+      </button>
+    </div>
+  }
+</div>

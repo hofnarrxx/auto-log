@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { FuelListComponent } from '../../../../shared/ui/fuel-list/fuel-list.component';
 import type { FuelRecord } from '../../models';
@@ -36,6 +37,7 @@ type SortOption =
 export class VehicleFuelTab {
   private readonly http = inject(HttpClient);
   private readonly currencyService = inject(CurrencyService);
+  private readonly notifications = inject(NotificationService);
   private readonly vehicleApi = `${environment.apiBaseUrl}/vehicles`;
 
   readonly form = new FormGroup({
@@ -57,7 +59,6 @@ export class VehicleFuelTab {
 
   protected readonly isLoading = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly actionError = signal<string | null>(null);
   protected readonly isSaving = signal(false);
   protected readonly isDeleting = signal(false);
   protected readonly isModalOpen = signal(false);
@@ -169,7 +170,6 @@ export class VehicleFuelTab {
     this.isCreateMode.set(true);
     this.isEditMode.set(false);
     this.selectedRecord.set(null);
-    this.actionError.set(null);
     this.form.reset({
       date: '',
       amount: null,
@@ -185,7 +185,6 @@ export class VehicleFuelTab {
     this.isCreateMode.set(false);
     this.isEditMode.set(false);
     this.selectedRecord.set(record);
-    this.actionError.set(null);
     this.isModalOpen.set(true);
   }
 
@@ -197,7 +196,6 @@ export class VehicleFuelTab {
 
     this.isCreateMode.set(true);
     this.isEditMode.set(true);
-    this.actionError.set(null);
     this.form.reset({
       date: record.date,
       amount: record.amount,
@@ -213,7 +211,6 @@ export class VehicleFuelTab {
     this.isCreateMode.set(false);
     this.isEditMode.set(false);
     this.selectedRecord.set(null);
-    this.actionError.set(null);
   }
 
   protected saveRecord() {
@@ -224,12 +221,11 @@ export class VehicleFuelTab {
 
     const payload = this.buildPayload();
     if (!payload) {
-      this.actionError.set('vehicle.fuelTab.errors.invalidData');
+      this.notifications.notifyError('vehicle.fuelTab.errors.invalidData');
       return;
     }
 
     this.isSaving.set(true);
-    this.actionError.set(null);
 
     const selected = this.selectedRecord();
     const request$ = this.isEditMode() && selected
@@ -245,7 +241,7 @@ export class VehicleFuelTab {
         this.loadFuelRecords();
       },
       error: () => {
-        this.actionError.set('vehicle.fuelTab.errors.saveFailed');
+        this.notifications.notifyError('vehicle.fuelTab.errors.saveFailed');
       },
     });
   }
@@ -257,7 +253,6 @@ export class VehicleFuelTab {
     }
 
     this.isDeleting.set(true);
-    this.actionError.set(null);
 
     this.http
       .delete<void>(`${this.vehicleApi}/${this.currentVehicleId}/fuel/${selected.id}`)
@@ -268,7 +263,7 @@ export class VehicleFuelTab {
           this.loadFuelRecords();
         },
         error: () => {
-          this.actionError.set('vehicle.fuelTab.errors.deleteFailed');
+          this.notifications.notifyError('vehicle.fuelTab.errors.deleteFailed');
         },
       });
   }

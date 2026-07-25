@@ -1,26 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, finalize, map, of, switchMap, throwError } from 'rxjs';
+import { catchError, map, of, switchMap, throwError } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  LucideAngularModule,
-} from 'lucide-angular';
+import { LucideAngularModule } from 'lucide-angular';
 import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
 import { MaintenanceListComponent } from '../../../../shared/ui/maintenance-list/maintenance-list.component';
 import { getMaintenanceWarningRecordIds } from '../../../../shared/utils/maintenance-list.utils';
+import { MaintenanceStore } from '../../maintenance-store';
 import type {
   MaintenanceAttachment,
-  MaintenanceAttachmentDownloadUrlResponse,
   MaintenanceRecord,
   MaintenanceRecordPayload,
 } from '../../models';
 import { AttachmentService } from '../../services/attachment.service';
-import { MaintenanceApiService } from '../../services/maintenance-api.service';
 
 type ModalMode = 'closed' | 'create' | 'view' | 'edit';
-type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 
 @Component({
   selector: 'app-vehicle-maintenance-tab',
@@ -40,7 +37,8 @@ type SortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 export class VehicleMaintenanceTab {
   private readonly currencyService = inject(CurrencyService);
   private readonly attachmentService = inject(AttachmentService);
-  private readonly maintenanceApiService = inject(MaintenanceApiService);
+  private readonly maintenanceStore = inject(MaintenanceStore);
+  private readonly notifications = inject(NotificationService);
 
   readonly form = new FormGroup({
     serviceDate: new FormControl('', Validators.required),
@@ -55,22 +53,21 @@ export class VehicleMaintenanceTab {
   @Input({ required: true })
   set vehicleId(value: number) {
     this.currentVehicleId = value;
-    this.loadServiceRecords();
+    this.maintenanceStore.load(value);
   }
 
   private currentVehicleId: number | null = null;
 
-  protected readonly categories = signal<string[]>([]);
-  protected readonly isLoading = signal(false);
-  protected readonly error = signal<string | null>(null);
-  protected readonly actionError = signal<string | null>(null);
-  protected readonly isSaving = signal(false);
-  protected readonly isDeleting = signal(false);
+  protected readonly categories = this.maintenanceStore.categories;
+  protected readonly isLoading = this.maintenanceStore.isLoading;
+  protected readonly error = this.maintenanceStore.error;
+  protected readonly isSaving = this.maintenanceStore.isSaving;
+  protected readonly isDeleting = this.maintenanceStore.isDeleting;
+  protected readonly serviceRecords = this.maintenanceStore.records;
+
   protected readonly modalMode = signal<ModalMode>('closed');
   protected readonly selectedRecord = signal<MaintenanceRecord | null>(null);
   protected readonly pendingAttachments = signal<File[]>([]);
-
-  protected readonly serviceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly isModalOpen = computed(() => this.modalMode() !== 'closed');
   protected readonly isFormMode = computed(() => {
@@ -82,12 +79,11 @@ export class VehicleMaintenanceTab {
   );
 
   constructor() {
-    this.loadCategories();
+    this.maintenanceStore.loadCategories();
   }
 
   protected openCreateModal() {
     this.selectedRecord.set(null);
-    this.actionError.set(null);
     this.pendingAttachments.set([]);
     this.form.reset({
       serviceDate: '',
@@ -103,7 +99,6 @@ export class VehicleMaintenanceTab {
 
   protected openRecordDetails(record: MaintenanceRecord) {
     this.selectedRecord.set(record);
-    this.actionError.set(null);
     this.modalMode.set('view');
   }
 
@@ -113,7 +108,6 @@ export class VehicleMaintenanceTab {
       return;
     }
 
-    this.actionError.set(null);
     this.pendingAttachments.set([]);
     this.form.reset({
       serviceDate: record.serviceDate,
@@ -135,43 +129,29 @@ export class VehicleMaintenanceTab {
 
     const payload = this.buildPayload();
     if (!payload) {
-      this.actionError.set('vehicle.maintenanceTab.errors.invalidData');
+      this.notifications.notifyError('vehicle.maintenanceTab.errors.invalidData');
       return;
     }
 
     const selected = this.selectedRecord();
     const isEdit = this.modalMode() === 'edit' && !!selected;
 
-    this.isSaving.set(true);
-    this.actionError.set(null);
-
-    const request$ = isEdit
-      ? this.maintenanceApiService.updateMaintenance(
-          this.currentVehicleId,
-          selected.id,
-          payload as MaintenanceRecordPayload
-        )
-      : this.maintenanceApiService.createMaintenance(
-          this.currentVehicleId,
-          payload as MaintenanceRecordPayload
-        );
-
-    request$
+    this.maintenanceStore
+      .save(
+        this.currentVehicleId,
+        payload as MaintenanceRecordPayload,
+        isEdit ? selected.id : undefined
+      )
       .pipe(
-        switchMap(saved =>
-          this.uploadAttachmentsIfNeeded(saved.id).pipe(map(() => saved))
-        ),
-        finalize(() => this.isSaving.set(false))
+        switchMap(saved => this.uploadAttachmentsIfNeeded(saved.id).pipe(map(() => saved)))
       )
       .subscribe({
         next: () => {
           this.closeModal();
-          this.loadServiceRecords();
+          this.maintenanceStore.load(this.currentVehicleId!);
         },
-        error: () => {
-          if (!this.actionError()) {
-            this.actionError.set('vehicle.maintenanceTab.errors.saveFailed');
-          }
+        error: err => {
+          this.notifications.notifyError(this.resolveErrorKey(err, 'vehicle.maintenanceTab.errors.saveFailed'));
         },
       });
   }
@@ -182,27 +162,19 @@ export class VehicleMaintenanceTab {
       return;
     }
 
-    this.isDeleting.set(true);
-    this.actionError.set(null);
-
-    this.maintenanceApiService
-      .deleteMaintenance(this.currentVehicleId, selected.id)
-      .pipe(finalize(() => this.isDeleting.set(false)))
-      .subscribe({
-        next: () => {
-          this.closeModal();
-          this.loadServiceRecords();
-        },
-        error: () => {
-          this.actionError.set('vehicle.maintenanceTab.errors.deleteFailed');
-        },
-      });
+    this.maintenanceStore.delete(this.currentVehicleId, selected.id).subscribe({
+      next: () => {
+        this.closeModal();
+      },
+      error: () => {
+        this.notifications.notifyError('vehicle.maintenanceTab.errors.deleteFailed');
+      },
+    });
   }
 
   protected closeModal() {
     this.modalMode.set('closed');
     this.selectedRecord.set(null);
-    this.actionError.set(null);
     this.pendingAttachments.set([]);
   }
 
@@ -210,48 +182,6 @@ export class VehicleMaintenanceTab {
     return this.modalMode() === 'edit'
       ? 'vehicle.maintenanceTab.modalTitle.edit'
       : 'vehicle.maintenanceTab.modalTitle.add';
-  }
-
-  private loadCategories() {
-    this.maintenanceApiService.getCategories().subscribe({
-      next: categories => {
-        this.categories.set(categories);
-      },
-      error: () => {
-        this.categories.set([
-          'Inspection',
-          'Oil change',
-          'Repair',
-          'Part Replacement',
-          'Fluid refill',
-          'Tires & Wheels',
-          'Cosmetic',
-        ]);
-      },
-    });
-  }
-
-  private loadServiceRecords() {
-    if (!this.currentVehicleId) {
-      this.serviceRecords.set([]);
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.maintenanceApiService
-      .getMaintenance(this.currentVehicleId)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: data => {
-          this.serviceRecords.set(data);
-        },
-        error: () => {
-          this.serviceRecords.set([]);
-          this.error.set('vehicle.maintenanceTab.errors.loadFailed');
-        },
-      });
   }
 
   private buildPayload() {
@@ -305,15 +235,13 @@ export class VehicleMaintenanceTab {
     const selected = Array.from(input.files);
     const valid = selected.filter(file => this.attachmentService.isAllowedAttachment(file));
     if (valid.length !== selected.length) {
-      this.actionError.set('vehicle.maintenanceTab.errors.invalidAttachmentType');
-    } else if (valid.length) {
-      this.actionError.set(null);
+      this.notifications.notifyError('vehicle.maintenanceTab.errors.invalidAttachmentType');
     }
 
     const existing = this.pendingAttachments();
     const withinLimit = valid.filter(file => file.size <= this.attachmentService.maxAttachmentBytes);
     if (withinLimit.length !== valid.length) {
-      this.actionError.set('vehicle.maintenanceTab.errors.attachmentTooLarge');
+      this.notifications.notifyError('vehicle.maintenanceTab.errors.attachmentTooLarge');
     }
 
     this.pendingAttachments.set([...existing, ...withinLimit]);
@@ -332,17 +260,13 @@ export class VehicleMaintenanceTab {
       return of(undefined);
     }
 
-    return this.attachmentService
-      .uploadAttachments(this.currentVehicleId, maintenanceId, files)
-      .pipe(
+    return this.attachmentService.uploadAttachments(this.currentVehicleId, maintenanceId, files).pipe(
       catchError(err => {
         if (err instanceof Error && err.message === 'Attachment too large') {
-          this.actionError.set('vehicle.maintenanceTab.errors.attachmentTooLarge');
-          return throwError(() => err);
+          return throwError(() => ({ messageKey: 'vehicle.maintenanceTab.errors.attachmentTooLarge' }));
         }
 
-        this.actionError.set('vehicle.maintenanceTab.errors.uploadFailed');
-        return throwError(() => err);
+        return throwError(() => ({ messageKey: 'vehicle.maintenanceTab.errors.uploadFailed' }));
       })
     );
   }
@@ -352,9 +276,7 @@ export class VehicleMaintenanceTab {
       return;
     }
 
-    this.actionError.set(null);
-
-    this.maintenanceApiService
+    this.maintenanceStore
       .getAttachmentDownloadUrl(this.currentVehicleId, this.selectedRecord()!.id, attachment.id)
       .subscribe({
         next: response => {
@@ -363,9 +285,21 @@ export class VehicleMaintenanceTab {
           }
         },
         error: () => {
-          this.actionError.set('vehicle.maintenanceTab.errors.downloadFailed');
+          this.notifications.notifyError('vehicle.maintenanceTab.errors.downloadFailed');
         },
       });
   }
 
+  private resolveErrorKey(error: unknown, fallbackKey: string): string {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'messageKey' in error &&
+      typeof (error as { messageKey: unknown }).messageKey === 'string'
+    ) {
+      return (error as { messageKey: string }).messageKey;
+    }
+
+    return fallbackKey;
+  }
 }

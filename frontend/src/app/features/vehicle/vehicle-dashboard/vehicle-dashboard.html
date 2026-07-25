@@ -39,8 +39,6 @@
 
         @if (isLoadingShareLinks()) {
           <p class="share-status">{{ 'vehicle.dashboard.share.loadingLinks' | translate }}</p>
-        } @else if (shareError()) {
-          <p class="share-error">{{ shareError() | translate }}</p>
         } @else if (!shareLinks().length) {
           <p class="share-status">{{ 'vehicle.dashboard.share.noActiveLinks' | translate }}</p>
         } @else {
@@ -72,10 +70,6 @@
               </div>
             }
           </div>
-
-          @if (copySuccess()) {
-            <p class="copy-success">{{ 'vehicle.dashboard.share.copySuccess' | translate }}</p>
-          }
         }
 
         <label class="share-toggle">

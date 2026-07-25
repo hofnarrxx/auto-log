@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthApi } from '../../../core/auth/auth-api';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ export class Register {
   private authApi = inject(AuthApi);
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  private translate = inject(TranslateService);
+  private notifications = inject(NotificationService);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -31,11 +32,12 @@ export class Register {
     this.authApi.register(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: err => {
-        if (err.status === 409) {
-          alert(this.translate.instant('auth.register.errors.emailExists'));
-        } else {
-          alert(this.translate.instant('auth.register.errors.registrationFailed'));
-        }
+        this.notifications.notifyHttpError(err, {
+          fallback: 'auth.register.errors.registrationFailed',
+          byStatus: {
+            409: 'auth.register.errors.emailExists',
+          },
+        });
       }
     });
   }

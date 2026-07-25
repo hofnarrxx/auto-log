@@ -2,7 +2,7 @@
   @if (isLoading()) {
     <p class="status-message">{{ 'vehicle.maintenanceTab.loading' | translate }}</p>
   } @else if (error()) {
-    <p class="status-message error">{{ error() }}</p>
+    <p class="status-message error">{{ error() | translate }}</p>
   } @else {
     <app-maintenance-list
       [records]="serviceRecords()"
@@ -122,10 +122,6 @@
                       </ul>
                     }
 
-                    @if (actionError()) {
-                      <p class="error-text">{{ actionError() }}</p>
-                    }
-
                     <div class="modal-actions">
                       <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
                       <button type="submit" class="primary-btn" [disabled]="isSaving()">
@@ -190,10 +186,6 @@
                       <span>{{ record.updatedAt | dateFormat:'datetime' }}</span>
                     </div>
                   </div>
-
-                  @if (actionError()) {
-                    <p class="error-text">{{ actionError() }}</p>
-                  }
 
                   <div class="modal-actions">
                     <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.close' | translate }}</button>

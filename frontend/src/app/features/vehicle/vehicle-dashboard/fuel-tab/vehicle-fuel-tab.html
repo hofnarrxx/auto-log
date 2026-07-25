@@ -2,7 +2,7 @@
   @if (isLoading()) {
     <p class="status-message">{{ 'vehicle.fuelTab.loading' | translate }}</p>
   } @else if (error()) {
-    <p class="status-message error">{{ error() }}</p>
+    <p class="status-message error">{{ error() | translate }}</p>
   } @else {
     <app-fuel-list
       [records]="fuelRecords()"
@@ -81,10 +81,6 @@
           <p class="error-text">{{ 'vehicle.fuelTab.errors.gasStationMaxLength' | translate }}</p>
         }
 
-        @if (actionError()) {
-          <p class="error-text">{{ actionError() }}</p>
-        }
-
         <div class="modal-actions">
           <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.cancel' | translate }}</button>
           <button type="submit" class="primary-btn" [disabled]="isSaving()">
@@ -132,10 +128,6 @@
           <span>{{ record.updatedAt | dateFormat:'datetime' }}</span>
         </div>
       </div>
-
-      @if (actionError()) {
-        <p class="error-text">{{ actionError() }}</p>
-      }
 
       <div class="modal-actions">
         <button type="button" class="secondary-btn" (click)="closeModal()">{{ 'common.close' | translate }}</button>

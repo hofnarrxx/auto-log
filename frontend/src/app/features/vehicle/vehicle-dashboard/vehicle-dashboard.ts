@@ -6,6 +6,7 @@ import { ShareLinkResponse } from '../models';
 import { VehicleStore } from '../vehicle-store';
 import { VehicleForm } from '../vehicle-form/vehicle-form';
 import { Modal } from '../../../shared/ui/modal/modal';
+import { NotificationService } from '../../../shared/services/notification.service';
 import { VehicleDetailsTab } from './details-tab/vehicle-details-tab';
 import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab';
 import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
@@ -21,14 +22,13 @@ export class VehicleDashboard {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private vehicleStore = inject(VehicleStore);
+  private notifications = inject(NotificationService);
   showEditModal = signal(false);
   showShareModal = signal(false);
   shareLinks = signal<ShareLinkResponse[]>([]);
   isLoadingShareLinks = signal(false);
   isCreatingShareLink = signal(false);
   deletingShareLinkId = signal<number | null>(null);
-  shareError = signal('');
-  copySuccess = signal(false);
   shareAttachments = signal(true);
   private readonly maxActiveShareLinks = 1;
   readonly canCreateShareLink = computed(() => this.shareLinks().length < this.maxActiveShareLinks);
@@ -71,8 +71,6 @@ export class VehicleDashboard {
     if (!vehicle) return;
 
     this.isLoadingShareLinks.set(true);
-    this.shareError.set('');
-    this.copySuccess.set(false);
     this.shareLinks.set([]);
     this.shareAttachments.set(true);
 
@@ -84,7 +82,7 @@ export class VehicleDashboard {
         this.showShareModal.set(true);
       },
       error: () => {
-        this.shareError.set('vehicle.dashboard.share.errors.load');
+        this.notifications.notifyError('vehicle.dashboard.share.errors.load');
         this.showShareModal.set(true);
       }
     });
@@ -92,8 +90,6 @@ export class VehicleDashboard {
 
   closeShareModal() {
     this.showShareModal.set(false);
-    this.copySuccess.set(false);
-    this.shareError.set('');
     this.shareLinks.set([]);
     this.deletingShareLinkId.set(null);
     this.shareAttachments.set(true);
@@ -120,9 +116,8 @@ export class VehicleDashboard {
       copied = this.copyWithFallback(link);
     }
 
-    this.copySuccess.set(copied);
     if (copied) {
-      window.setTimeout(() => this.copySuccess.set(false), 2000);
+      this.notifications.notifySuccess('vehicle.dashboard.share.copySuccess');
     }
   }
 
@@ -132,7 +127,6 @@ export class VehicleDashboard {
     }
 
     this.deletingShareLinkId.set(linkId);
-    this.shareError.set('');
 
     this.vehicleStore.revokeShareLink(linkId).pipe(
       finalize(() => this.deletingShareLinkId.set(null))
@@ -141,7 +135,7 @@ export class VehicleDashboard {
         this.shareLinks.update(links => links.filter(link => link.id !== linkId));
       },
       error: () => {
-        this.shareError.set('vehicle.dashboard.share.errors.delete');
+        this.notifications.notifyError('vehicle.dashboard.share.errors.delete');
       }
     });
   }
@@ -153,8 +147,6 @@ export class VehicleDashboard {
     }
 
     this.isCreatingShareLink.set(true);
-    this.shareError.set('');
-    this.copySuccess.set(false);
 
     this.vehicleStore.createShareLink(vehicle.id, this.shareAttachments()).pipe(
       finalize(() => this.isCreatingShareLink.set(false))
@@ -163,7 +155,7 @@ export class VehicleDashboard {
         this.shareLinks.update(links => [response, ...links].slice(0, this.maxActiveShareLinks));
       },
       error: () => {
-        this.shareError.set('vehicle.dashboard.share.errors.generate');
+        this.notifications.notifyError('vehicle.dashboard.share.errors.generate');
       }
     });
   }

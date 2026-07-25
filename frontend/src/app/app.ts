@@ -2,9 +2,11 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthApi } from './core/auth/auth-api';
+import { ToastHost } from './shared/ui/toast/toast-host';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterModule],
+  imports: [RouterOutlet, RouterModule, ToastHost],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
