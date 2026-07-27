@@ -9,16 +9,11 @@ import { CurrencyService } from '../../../../shared/services/currency.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { FuelListComponent } from '../../../../shared/ui/fuel-list/fuel-list.component';
-import type { FuelRecord } from '../../models';
+import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/fuel-record.utils';
+import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
+import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
+import type { FuelRecord, FuelRecordPayload } from '../../models';
 import { environment } from '../../../../../environments/environment';
-
-type SortOption =
-  | 'newest'
-  | 'oldest'
-  | 'price-low-high'
-  | 'price-high-low'
-  | 'price-per-unit-low-high'
-  | 'price-per-unit-high-low';
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
@@ -66,9 +61,6 @@ export class VehicleFuelTab {
   protected readonly isEditMode = signal(false);
   protected readonly selectedRecord = signal<FuelRecord | null>(null);
   protected readonly fuelRecords = signal<FuelRecord[]>([]);
-  protected readonly gasStationSearch = signal('');
-  protected readonly selectedSort = signal<SortOption>('newest');
-  protected readonly hasAnyRecords = computed(() => this.fuelRecords().length > 0);
   protected readonly totalFuelCostByCurrency = computed(() => {
     const totals = new Map<string, number>();
 
@@ -86,22 +78,12 @@ export class VehicleFuelTab {
       .map(([currency, total]) => this.currencyService.formatCurrency(total, currency))
       .join(' | ');
   });
-  protected readonly filteredFuelRecords = computed(() =>
-    this.fuelRecords().filter((record) => this.matchesGasStationFilter(record))
-  );
-  protected readonly visibleFuelRecords = computed(() =>
-    [...this.filteredFuelRecords()].sort((left, right) => this.compareRecords(left, right))
-  );
   protected readonly mileageWarningRecordIds = computed(() =>
-    this.findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
+    findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
   );
 
   protected formatFuelAmount(amount: number | null | undefined): string {
-    if (amount === null || amount === undefined) {
-      return '-';
-    }
-
-    return `${amount.toFixed(2)} L`;
+    return formatFuelAmount(amount);
   }
 
   protected formatPricePerLitre(
@@ -109,41 +91,17 @@ export class VehicleFuelTab {
     amount: number | null | undefined,
     currency?: string
   ): string {
-    if (
-      cost === null ||
-      cost === undefined ||
-      amount === null ||
-      amount === undefined ||
-      amount <= 0
-    ) {
+    const pricePerLitre = getFuelPricePerUnit({ cost: cost ?? null, amount: amount ?? null });
+
+    if (pricePerLitre === null) {
       return '-';
     }
 
-    const pricePerLitre = cost / amount;
     return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
   }
 
   protected hasMileageWarning(record: FuelRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
-  }
-
-  protected onGasStationSearchChange(rawValue: string) {
-    this.gasStationSearch.set(rawValue.trimStart());
-  }
-
-  protected onSortChange(rawValue: string) {
-    if (
-      rawValue !== 'newest' &&
-      rawValue !== 'oldest' &&
-      rawValue !== 'price-low-high' &&
-      rawValue !== 'price-high-low' &&
-      rawValue !== 'price-per-unit-low-high' &&
-      rawValue !== 'price-per-unit-high-low'
-    ) {
-      return;
-    }
-
-    this.selectedSort.set(rawValue);
   }
 
   protected modalTitle(): string {
@@ -281,14 +239,7 @@ export class VehicleFuelTab {
       .get<FuelRecord[]>(`${this.vehicleApi}/${this.currentVehicleId}/fuel`)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (records) => {
-          const sorted = [...records].sort((a, b) => {
-            const left = new Date(b.date).getTime();
-            const right = new Date(a.date).getTime();
-            return left - right;
-          });
-          this.fuelRecords.set(sorted);
-        },
+        next: (records) => this.fuelRecords.set(records ?? []),
         error: () => {
           this.error.set('vehicle.fuelTab.errors.loadFailed');
           this.fuelRecords.set([]);
@@ -296,166 +247,39 @@ export class VehicleFuelTab {
       });
   }
 
-  private buildPayload() {
+  private buildPayload(): FuelRecordPayload | null {
     const date = (this.form.controls.date.value ?? '').trim();
-    const gasStationValue = (this.form.controls.gasStation.value ?? '').trim();
-    const amountValue = this.form.controls.amount.value;
-    const costValue = this.form.controls.cost.value;
-    const mileageValue = this.form.controls.mileage.value;
-    const currencyValue = (this.form.controls.currency.value ?? '').trim();
+    const gasStation = (this.form.controls.gasStation.value ?? '').trim();
+    const currency = (this.form.controls.currency.value ?? '').trim();
 
-    if (!date || gasStationValue.length > 50 || !currencyValue) {
+    if (!date || gasStation.length > 50 || !currency) {
       return null;
     }
 
-    const amount =
-      amountValue === null || amountValue === undefined || amountValue === ('' as any)
-        ? null
-        : Number(amountValue);
+    const amount = parseNumericField(this.form.controls.amount.value);
+    const cost = parseNumericField(this.form.controls.cost.value);
+    const mileage = parseIntegerField(this.form.controls.mileage.value);
 
-    const cost =
-      costValue === null || costValue === undefined || costValue === ('' as any)
-        ? null
-        : Number(costValue);
+    if (amount.kind !== 'number' || cost.kind !== 'number' || mileage.kind !== 'number') {
+      return null;
+    }
 
-    const mileage =
-      mileageValue === null || mileageValue === undefined || mileageValue === ('' as any)
-        ? null
-        : Math.trunc(Number(mileageValue));
-
-    if (
-      amount === null ||
-      cost === null ||
-      mileage === null ||
-      amount <= 0 ||
-      Number.isNaN(amount) ||
-      Number.isNaN(cost) ||
-      Number.isNaN(mileage)
-    ) {
+    if (amount.value <= 0) {
       return null;
     }
 
     return {
       date,
-      amount,
-      cost,
-      mileage,
-      gasStation: gasStationValue || null,
-      currency: currencyValue,
+      amount: amount.value,
+      cost: cost.value,
+      mileage: mileage.value,
+      gasStation: gasStation || null,
+      currency,
     };
-  }
-
-  private matchesGasStationFilter(record: FuelRecord): boolean {
-    const query = this.gasStationSearch().trim().toLowerCase();
-    if (!query) {
-      return true;
-    }
-
-    const station = (record.gasStation ?? '').toLowerCase();
-    return station.includes(query);
-  }
-
-  private compareRecords(left: FuelRecord, right: FuelRecord): number {
-    const sort = this.selectedSort();
-
-    if (sort === 'oldest') {
-      return this.toTimestamp(left.date) - this.toTimestamp(right.date);
-    }
-
-    if (sort === 'price-low-high') {
-      return (
-        this.compareNullableNumbers(left.cost, right.cost, 'asc') ||
-        this.toTimestamp(right.date) - this.toTimestamp(left.date)
-      );
-    }
-
-    if (sort === 'price-high-low') {
-      return (
-        this.compareNullableNumbers(left.cost, right.cost, 'desc') ||
-        this.toTimestamp(right.date) - this.toTimestamp(left.date)
-      );
-    }
-
-    if (sort === 'price-per-unit-low-high') {
-      return (
-        this.compareNullableNumbers(this.pricePerUnit(left), this.pricePerUnit(right), 'asc') ||
-        this.toTimestamp(right.date) - this.toTimestamp(left.date)
-      );
-    }
-
-    if (sort === 'price-per-unit-high-low') {
-      return (
-        this.compareNullableNumbers(this.pricePerUnit(left), this.pricePerUnit(right), 'desc') ||
-        this.toTimestamp(right.date) - this.toTimestamp(left.date)
-      );
-    }
-
-    return this.toTimestamp(right.date) - this.toTimestamp(left.date);
-  }
-
-  private compareNullableNumbers(
-    left: number | null,
-    right: number | null,
-    direction: 'asc' | 'desc'
-  ): number {
-    if (left === null && right === null) {
-      return 0;
-    }
-
-    if (left === null) {
-      return 1;
-    }
-
-    if (right === null) {
-      return -1;
-    }
-
-    return direction === 'asc' ? left - right : right - left;
-  }
-
-  private pricePerUnit(record: FuelRecord): number | null {
-    if (record.cost === null || record.amount === null || record.amount <= 0) {
-      return null;
-    }
-
-    return record.cost / record.amount;
   }
 
   private getRecordCurrency(record: FuelRecord): string {
     const fallbackCurrency = this.currencyService.selectedCurrency();
     return (record.currency || fallbackCurrency).trim().toUpperCase();
-  }
-
-  private findMileageWarningRecordIds<T extends { id: number; mileage: number | null }>(
-    records: T[],
-    getDate: (record: T) => string
-  ): Set<number> {
-    const sorted = [...records].sort(
-      (left, right) => this.toTimestamp(getDate(left)) - this.toTimestamp(getDate(right))
-    );
-
-    const warnings = new Set<number>();
-    let maxMileageSeen: number | null = null;
-
-    sorted.forEach((record) => {
-      const mileage = record.mileage;
-      if (mileage === null) {
-        return;
-      }
-
-      if (maxMileageSeen !== null && mileage < maxMileageSeen) {
-        warnings.add(record.id);
-        return;
-      }
-
-      maxMileageSeen = maxMileageSeen === null ? mileage : Math.max(maxMileageSeen, mileage);
-    });
-
-    return warnings;
-  }
-
-  private toTimestamp(date: string): number {
-    const timestamp = new Date(`${date}T00:00:00`).getTime();
-    return Number.isNaN(timestamp) ? 0 : timestamp;
   }
 }

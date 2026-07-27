@@ -2,7 +2,12 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import type { ShareLinkResponse, Vehicle } from './models';
+import type {
+  CreateVehicleCommand,
+  ShareLinkResponse,
+  UpdateVehicleCommand,
+  Vehicle,
+} from './models';
 
 export type { ShareLinkResponse } from './models';
 
@@ -16,7 +21,7 @@ export class VehicleStore {
 
   vehicles = signal<Vehicle[]>([]);
 
-  add(vehicle: Vehicle): Observable<Vehicle> {
+  add(vehicle: CreateVehicleCommand): Observable<Vehicle> {
     return this.http.post<Vehicle>(this.api, vehicle).pipe(
       tap((newVehicle) => {
         this.vehicles.update((v) => [...v, newVehicle]);
@@ -24,7 +29,7 @@ export class VehicleStore {
     );
   }
 
-  update(vehicle: Vehicle): Observable<Vehicle> {
+  update(vehicle: UpdateVehicleCommand): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.api}/${vehicle.id}`, vehicle).pipe(
       tap((updated) => {
         this.vehicles.update((list) => list.map((v) => (v.id === updated.id ? updated : v)));

@@ -2,8 +2,6 @@ import {
   getMaintenanceCategoryIcon,
   getMaintenanceCategoryLabel,
   getMaintenanceTimelineEntries,
-  getMaintenanceTimestamp,
-  getMaintenanceWarningRecordIds,
   MaintenanceFilterState,
   MaintenanceListRecord,
 } from './maintenance-list.utils';
@@ -59,10 +57,6 @@ describe('maintenance-list utilities', () => {
     expect(getMaintenanceCategoryIcon('Custom work')).toBe('tool-case');
   });
 
-  it('returns zero for invalid dates', () => {
-    expect(getMaintenanceTimestamp('not-a-date')).toBe(0);
-  });
-
   it('filters by category, currency, price, and title', () => {
     const result = getMaintenanceTimelineEntries(
       records,
@@ -100,9 +94,20 @@ describe('maintenance-list utilities', () => {
     expect(result).toEqual([]);
   });
 
-  it('flags a later record whose mileage decreases', () => {
-    const warnings = getMaintenanceWarningRecordIds(records, (record) => record.serviceDate);
+  it('keeps records without a cost only when every currency is allowed', () => {
+    const withoutCost = records.map((record) => ({ ...record, cost: null }));
 
-    expect([...warnings]).toEqual([3]);
+    expect(
+      getMaintenanceTimelineEntries(withoutCost, defaultFilters, getCurrency).map(
+        (record) => record.id
+      )
+    ).toEqual([3, 2, 1]);
+    expect(
+      getMaintenanceTimelineEntries(
+        withoutCost,
+        { ...defaultFilters, selectedCurrencyFilter: 'PLN' },
+        getCurrency
+      )
+    ).toEqual([]);
   });
 });

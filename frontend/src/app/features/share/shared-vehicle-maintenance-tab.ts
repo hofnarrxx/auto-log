@@ -3,7 +3,7 @@ import { Component, Input, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../shared/pipes';
 import { MaintenanceListComponent } from '../../shared/ui/maintenance-list/maintenance-list.component';
-import { getMaintenanceWarningRecordIds } from '../../shared/utils/maintenance-list.utils';
+import { findMileageWarningRecordIds } from '../../shared/utils/mileage.utils';
 import type { MaintenanceRecord } from '../vehicle/models';
 
 @Component({
@@ -33,7 +33,7 @@ export class SharedVehicleMaintenanceTab {
   protected readonly serviceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly mileageWarningRecordIds = computed(() =>
-    getMaintenanceWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
+    findMileageWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
   );
 
   protected openRecordDetails(record: MaintenanceRecord) {

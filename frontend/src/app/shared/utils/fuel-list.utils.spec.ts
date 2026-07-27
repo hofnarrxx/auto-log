@@ -1,9 +1,4 @@
-import {
-  filterFuelRecords,
-  findMileageWarningRecordIds,
-  FuelListRecord,
-  sortFuelRecords,
-} from './fuel-list.utils';
+import { filterFuelRecords, FuelListRecord, sortFuelRecords } from './fuel-list.utils';
 
 const records: FuelListRecord[] = [
   {
@@ -65,19 +60,17 @@ describe('fuel-list utilities', () => {
         sortFuelRecords(records, 'price-per-unit-high-low').map((record) => record.id)
       ).toEqual([2, 1, 3]);
     });
-  });
 
-  describe('findMileageWarningRecordIds', () => {
-    it('flags a later record whose mileage decreases', () => {
-      const warnings = findMileageWarningRecordIds(records, (record) => record.date);
+    it('treats records with unparseable dates as the oldest', () => {
+      const withInvalidDate = [...records, { ...records[0], id: 4, date: 'not-a-date' }];
 
-      expect([...warnings]).toEqual([3]);
+      expect(sortFuelRecords(withInvalidDate, 'newest').map((record) => record.id)).toEqual([
+        3, 2, 1, 4,
+      ]);
     });
 
-    it('ignores records without mileage', () => {
-      const withoutMileage = records.map((record) => ({ ...record, mileage: null }));
-
-      expect(findMileageWarningRecordIds(withoutMileage, (record) => record.date).size).toBe(0);
+    it('returns an empty list unchanged', () => {
+      expect(sortFuelRecords([], 'price-per-unit-low-high')).toEqual([]);
     });
   });
 });

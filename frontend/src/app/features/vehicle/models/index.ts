@@ -8,4 +8,4 @@ export type {
 
 export type { FuelRecord, FuelRecordPayload } from './fuel-record.model';
 export type { ShareLinkResponse } from './share-link.model';
-export type { Vehicle } from './vehicle.model';
+export type { CreateVehicleCommand, UpdateVehicleCommand, Vehicle } from './vehicle.model';

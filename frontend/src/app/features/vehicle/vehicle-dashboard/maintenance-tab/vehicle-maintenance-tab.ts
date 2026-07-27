@@ -8,7 +8,8 @@ import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../../../shared
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { MaintenanceListComponent } from '../../../../shared/ui/maintenance-list/maintenance-list.component';
-import { getMaintenanceWarningRecordIds } from '../../../../shared/utils/maintenance-list.utils';
+import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
+import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 import { MaintenanceStore } from '../../maintenance-store';
 import type {
   MaintenanceAttachment,
@@ -75,7 +76,7 @@ export class VehicleMaintenanceTab {
     return mode === 'create' || mode === 'edit';
   });
   protected readonly mileageWarningRecordIds = computed(() =>
-    getMaintenanceWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
+    findMileageWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
   );
 
   constructor() {
@@ -184,40 +185,31 @@ export class VehicleMaintenanceTab {
       : 'vehicle.maintenanceTab.modalTitle.add';
   }
 
-  private buildPayload() {
+  private buildPayload(): MaintenanceRecordPayload | null {
     const serviceDate = (this.form.controls.serviceDate.value ?? '').trim();
     const title = (this.form.controls.title.value ?? '').trim();
     const category = (this.form.controls.category.value ?? '').trim();
     const description = (this.form.controls.description.value ?? '').trim();
-    const mileageValue = this.form.controls.mileage.value;
-    const costValue = this.form.controls.cost.value;
     const currencyValue = (this.form.controls.currency.value ?? '').trim();
 
     if (!serviceDate || !title || !category || title.length > 50 || !currencyValue) {
       return null;
     }
 
-    const mileage =
-      mileageValue === null || mileageValue === undefined || mileageValue === ('' as any)
-        ? null
-        : Math.trunc(Number(mileageValue));
+    const mileage = parseIntegerField(this.form.controls.mileage.value);
+    const cost = parseNumericField(this.form.controls.cost.value);
 
-    const cost =
-      costValue === null || costValue === undefined || costValue === ('' as any)
-        ? null
-        : Number(costValue);
-
-    if ((mileage !== null && Number.isNaN(mileage)) || (cost !== null && Number.isNaN(cost))) {
+    if (mileage.kind === 'invalid' || cost.kind === 'invalid') {
       return null;
     }
 
     return {
       serviceDate,
       title,
-      mileage,
+      mileage: mileage.kind === 'number' ? mileage.value : null,
       category,
       description,
-      cost,
+      cost: cost.kind === 'number' ? cost.value : null,
       currency: currencyValue,
     };
   }

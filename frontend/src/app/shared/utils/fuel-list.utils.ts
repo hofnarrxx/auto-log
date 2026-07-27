@@ -1,3 +1,6 @@
+import { toDateTimestamp } from './date.utils';
+import { getFuelPricePerUnit } from './fuel-record.utils';
+
 export type FuelSortOption =
   | 'newest'
   | 'oldest'
@@ -32,63 +35,37 @@ export function sortFuelRecords<T extends FuelListRecord>(records: T[], sort: Fu
 
   switch (sort) {
     case 'oldest':
-      return sorted.sort((left, right) => toTimestamp(left.date) - toTimestamp(right.date));
+      return sorted.sort((left, right) => toDateTimestamp(left.date) - toDateTimestamp(right.date));
     case 'price-low-high':
       return sorted.sort(
         (left, right) =>
-          compareNullableNumbers(left.cost, right.cost, 'asc') ||
-          toTimestamp(right.date) - toTimestamp(left.date)
+          compareNullableNumbers(left.cost, right.cost, 'asc') || compareByNewest(left, right)
       );
     case 'price-high-low':
       return sorted.sort(
         (left, right) =>
-          compareNullableNumbers(left.cost, right.cost, 'desc') ||
-          toTimestamp(right.date) - toTimestamp(left.date)
+          compareNullableNumbers(left.cost, right.cost, 'desc') || compareByNewest(left, right)
       );
     case 'price-per-unit-low-high':
       return sorted.sort(
         (left, right) =>
-          compareNullableNumbers(pricePerUnit(left), pricePerUnit(right), 'asc') ||
-          toTimestamp(right.date) - toTimestamp(left.date)
+          compareNullableNumbers(getFuelPricePerUnit(left), getFuelPricePerUnit(right), 'asc') ||
+          compareByNewest(left, right)
       );
     case 'price-per-unit-high-low':
       return sorted.sort(
         (left, right) =>
-          compareNullableNumbers(pricePerUnit(left), pricePerUnit(right), 'desc') ||
-          toTimestamp(right.date) - toTimestamp(left.date)
+          compareNullableNumbers(getFuelPricePerUnit(left), getFuelPricePerUnit(right), 'desc') ||
+          compareByNewest(left, right)
       );
     case 'newest':
     default:
-      return sorted.sort((left, right) => toTimestamp(right.date) - toTimestamp(left.date));
+      return sorted.sort(compareByNewest);
   }
 }
 
-export function findMileageWarningRecordIds<T extends { id: number; mileage: number | null }>(
-  records: T[],
-  getDate: (record: T) => string
-): Set<number> {
-  const sorted = [...records].sort(
-    (left, right) => toTimestamp(getDate(left)) - toTimestamp(getDate(right))
-  );
-
-  const warnings = new Set<number>();
-  let maxMileageSeen: number | null = null;
-
-  sorted.forEach((record) => {
-    const mileage = record.mileage;
-    if (mileage === null) {
-      return;
-    }
-
-    if (maxMileageSeen !== null && mileage < maxMileageSeen) {
-      warnings.add(record.id);
-      return;
-    }
-
-    maxMileageSeen = maxMileageSeen === null ? mileage : Math.max(maxMileageSeen, mileage);
-  });
-
-  return warnings;
+function compareByNewest(left: FuelListRecord, right: FuelListRecord): number {
+  return toDateTimestamp(right.date) - toDateTimestamp(left.date);
 }
 
 function compareNullableNumbers(
@@ -109,17 +86,4 @@ function compareNullableNumbers(
   }
 
   return direction === 'asc' ? left - right : right - left;
-}
-
-function pricePerUnit(record: FuelListRecord): number | null {
-  if (record.cost === null || record.amount === null || record.amount <= 0) {
-    return null;
-  }
-
-  return record.cost / record.amount;
-}
-
-function toTimestamp(date: string): number {
-  const timestamp = new Date(`${date}T00:00:00`).getTime();
-  return Number.isNaN(timestamp) ? 0 : timestamp;
 }

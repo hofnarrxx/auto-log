@@ -4,13 +4,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { DateFormatPipe, MoneyPipe } from '../../pipes';
 import { CurrencyService } from '../../services/currency.service';
+import { formatFuelAmount, getFuelPricePerUnit } from '../../utils/fuel-record.utils';
 import {
   type FuelListRecord,
   type FuelSortOption,
   filterFuelRecords,
-  findMileageWarningRecordIds,
   sortFuelRecords,
 } from '../../utils/fuel-list.utils';
+import { findMileageWarningRecordIds } from '../../utils/mileage.utils';
 
 @Component({
   selector: 'app-fuel-list',
@@ -19,10 +20,10 @@ import {
   templateUrl: './fuel-list.component.html',
   styleUrl: './fuel-list.component.css',
 })
-export class FuelListComponent {
+export class FuelListComponent<T extends FuelListRecord> {
   private readonly currencyService = inject(CurrencyService);
 
-  protected readonly fuelRecords = signal<FuelListRecord[]>([]);
+  protected readonly fuelRecords = signal<T[]>([]);
   protected readonly gasStationSearch = signal('');
   protected readonly selectedSort = signal<FuelSortOption>('newest');
   protected readonly titleKeyPrefixValue = signal('vehicle.fuelTab');
@@ -31,7 +32,7 @@ export class FuelListComponent {
   protected readonly totalCostTextValue = signal('');
 
   @Input()
-  set records(value: FuelListRecord[]) {
+  set records(value: T[]) {
     this.fuelRecords.set(value ?? []);
   }
 
@@ -55,7 +56,7 @@ export class FuelListComponent {
     this.totalCostTextValue.set(value ?? '');
   }
 
-  @Output() recordSelected = new EventEmitter<any>();
+  @Output() recordSelected = new EventEmitter<T>();
   @Output() addRequested = new EventEmitter<void>();
 
   protected readonly hasAnyRecords = computed(() => this.fuelRecords().length > 0);
@@ -63,7 +64,7 @@ export class FuelListComponent {
     filterFuelRecords(this.fuelRecords(), this.gasStationSearch().trim())
   );
   protected readonly visibleFuelRecords = computed(() =>
-    sortFuelRecords([...this.filteredFuelRecords()], this.selectedSort())
+    sortFuelRecords(this.filteredFuelRecords(), this.selectedSort())
   );
   protected readonly mileageWarningRecordIds = computed(() =>
     findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
@@ -74,11 +75,7 @@ export class FuelListComponent {
   }
 
   protected formatFuelAmount(amount: number | null | undefined): string {
-    if (amount === null || amount === undefined) {
-      return '-';
-    }
-
-    return `${amount.toFixed(2)} L`;
+    return formatFuelAmount(amount);
   }
 
   protected formatPricePerLitre(
@@ -86,21 +83,16 @@ export class FuelListComponent {
     amount: number | null | undefined,
     currency?: string
   ): string {
-    if (
-      cost === null ||
-      cost === undefined ||
-      amount === null ||
-      amount === undefined ||
-      amount <= 0
-    ) {
+    const pricePerLitre = getFuelPricePerUnit({ cost: cost ?? null, amount: amount ?? null });
+
+    if (pricePerLitre === null) {
       return '-';
     }
 
-    const pricePerLitre = cost / amount;
     return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
   }
 
-  protected hasMileageWarning(record: FuelListRecord): boolean {
+  protected hasMileageWarning(record: T): boolean {
     return this.mileageWarningRecordIds().has(record.id);
   }
 
@@ -123,7 +115,7 @@ export class FuelListComponent {
     this.selectedSort.set(rawValue);
   }
 
-  protected openRecordDetails(record: FuelListRecord) {
+  protected openRecordDetails(record: T) {
     this.recordSelected.emit(record);
   }
 

@@ -9,9 +9,11 @@ import {
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
-import { Vehicle as VehicleModel } from '../models';
+import type { UpdateVehicleCommand, Vehicle as VehicleModel } from '../models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { of, switchMap, map } from 'rxjs';
+import { FUEL_TYPES, getFuelTypeLabelKey } from '../../../shared/utils/fuel-type.utils';
+import { toCreateVehicleCommand, toUpdateVehicleCommand } from './vehicle-form.mapper';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -35,25 +37,10 @@ export class VehicleForm {
   private currentImageKey: string | null = null;
 
   readonly currentYear = new Date().getFullYear();
-  readonly fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'LPG', 'CNG'];
+  readonly fuelTypes = FUEL_TYPES;
 
   protected fuelTypeLabel(fuelType: string): string {
-    switch (fuelType.trim().toLowerCase()) {
-      case 'petrol':
-        return 'vehicle.form.fuelTypes.petrol';
-      case 'diesel':
-        return 'vehicle.form.fuelTypes.diesel';
-      case 'hybrid':
-        return 'vehicle.form.fuelTypes.hybrid';
-      case 'electric':
-        return 'vehicle.form.fuelTypes.electric';
-      case 'lpg':
-        return 'vehicle.form.fuelTypes.lpg';
-      case 'cng':
-        return 'vehicle.form.fuelTypes.cng';
-      default:
-        return fuelType;
-    }
+    return getFuelTypeLabelKey(fuelType) ?? fuelType;
   }
 
   private integerValidator(control: AbstractControl): ValidationErrors | null {
@@ -63,8 +50,8 @@ export class VehicleForm {
   }
 
   form = new FormGroup({
-    brand: new FormControl('', Validators.required),
-    model: new FormControl('', Validators.required),
+    brand: new FormControl('', { nonNullable: true, validators: Validators.required }),
+    model: new FormControl('', { nonNullable: true, validators: Validators.required }),
     year: new FormControl<number | null>(null, [
       Validators.required,
       Validators.min(1886),
@@ -128,23 +115,24 @@ export class VehicleForm {
 
   private saveExistingVehicle() {
     const vehicleId = this.vehicle!.id;
-    const payload = {
-      id: vehicleId,
-      ...(this.form.value as any),
-      imageKey: this.currentImageKey ?? null,
-    } as VehicleModel;
+    const command = toUpdateVehicleCommand(
+      vehicleId,
+      this.form.getRawValue(),
+      this.currentImageKey ?? null
+    );
+
+    if (!command) {
+      return;
+    }
 
     const update$ = this.selectedImageFile
       ? this.uploadSelectedImage(vehicleId, this.selectedImageFile).pipe(
           switchMap((objectKey) => {
             this.currentImageKey = objectKey;
-            return this.vehicleStore.update({
-              ...payload,
-              imageKey: objectKey,
-            });
+            return this.vehicleStore.update({ ...command, imageKey: objectKey });
           })
         )
-      : this.vehicleStore.update(payload);
+      : this.vehicleStore.update(command);
 
     update$.subscribe(() => {
       this.closed.emit();
@@ -152,13 +140,14 @@ export class VehicleForm {
   }
 
   private saveNewVehicle() {
-    const payload = {
-      ...(this.form.value as any),
-      imageKey: null,
-    } as VehicleModel;
+    const command = toCreateVehicleCommand(this.form.getRawValue(), null);
+
+    if (!command) {
+      return;
+    }
 
     this.vehicleStore
-      .add(payload)
+      .add(command)
       .pipe(
         switchMap((created) => {
           if (!this.selectedImageFile) {
@@ -166,13 +155,15 @@ export class VehicleForm {
           }
 
           return this.uploadSelectedImage(created.id, this.selectedImageFile).pipe(
-            switchMap((objectKey) =>
-              this.vehicleStore.update({
-                ...payload,
+            switchMap((objectKey) => {
+              const update: UpdateVehicleCommand = {
+                ...command,
                 id: created.id,
                 imageKey: objectKey,
-              })
-            )
+              };
+
+              return this.vehicleStore.update(update);
+            })
           );
         })
       )

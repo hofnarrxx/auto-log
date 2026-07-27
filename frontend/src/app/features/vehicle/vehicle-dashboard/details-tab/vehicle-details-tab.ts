@@ -3,7 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { formatAppDate } from '../../../../shared/utils/date-format.utils';
+import { getFuelTypeLabelKey } from '../../../../shared/utils/fuel-type.utils';
+import {
+  getLatestOdometerMileage,
+  getLatestOdometerRecord,
+  getOdometerRecordDate,
+} from '../../../../shared/utils/odometer.utils';
 import type { FuelRecord, MaintenanceRecord, Vehicle } from '../../models';
+import { getAverageFuelConsumptionPer100Km } from '../../utils/vehicle-statistics';
 import { environment } from '../../../../../environments/environment';
 
 @Component({
@@ -27,43 +34,8 @@ export class VehicleDetailsTab {
   protected readonly maintenanceRecords = signal<MaintenanceRecord[]>([]);
 
   protected readonly avgFuelEfficiency = computed(() => {
-    const records = [...this.fuelRecords()]
-      .filter((record) => record.mileage !== null && record.amount !== null && record.amount > 0)
-      .sort((left, right) => this.toTimestamp(left.date) - this.toTimestamp(right.date));
-
-    if (records.length < 2) {
-      return '-';
-    }
-
-    let totalKm = 0;
-    let totalLiters = 0;
-
-    for (let index = 1; index < records.length; index++) {
-      const previous = records[index - 1];
-      const current = records[index];
-
-      if (previous.mileage === null || current.mileage === null) {
-        continue;
-      }
-
-      if (current.mileage < previous.mileage) {
-        continue;
-      }
-
-      const distance = current.mileage - previous.mileage;
-      if (distance <= 0 || current.amount === null) {
-        continue;
-      }
-
-      totalKm += distance;
-      totalLiters += current.amount;
-    }
-
-    if (totalKm <= 0 || totalLiters <= 0) {
-      return '-';
-    }
-
-    return `${((totalLiters / totalKm) * 100).toFixed(2)} L/100km`;
+    const litresPer100Km = getAverageFuelConsumptionPer100Km(this.fuelRecords());
+    return litresPer100Km === null ? '-' : `${litresPer100Km.toFixed(2)} L/100km`;
   });
 
   ngOnInit() {
@@ -74,7 +46,7 @@ export class VehicleDetailsTab {
   }
 
   protected lastOdometerReading(): string {
-    const mileage = this.getLatestOdometerMileage();
+    const mileage = getLatestOdometerMileage(this.odometerRecords(), this.vehicle.mileage);
 
     if (mileage === null) {
       return '-';
@@ -84,14 +56,13 @@ export class VehicleDetailsTab {
   }
 
   protected lastOdometerDate(): string {
-    const latest = this.getLatestOdometerRecord();
+    const latest = getLatestOdometerRecord(this.odometerRecords());
 
     if (!latest) {
       return '-';
     }
 
-    const date = (latest as FuelRecord).date ?? (latest as MaintenanceRecord).serviceDate;
-    return formatAppDate(date);
+    return formatAppDate(getOdometerRecordDate(latest));
   }
 
   protected vehicleInfoTitle(): string {
@@ -127,23 +98,8 @@ export class VehicleDetailsTab {
   }
 
   protected fuelTypeLabel(): string {
-    const value = this.vehicle.fuelType?.trim().toLowerCase();
-    switch (value) {
-      case 'petrol':
-        return this.translate.instant('vehicle.form.fuelTypes.petrol');
-      case 'diesel':
-        return this.translate.instant('vehicle.form.fuelTypes.diesel');
-      case 'hybrid':
-        return this.translate.instant('vehicle.form.fuelTypes.hybrid');
-      case 'electric':
-        return this.translate.instant('vehicle.form.fuelTypes.electric');
-      case 'lpg':
-        return this.translate.instant('vehicle.form.fuelTypes.lpg');
-      case 'cng':
-        return this.translate.instant('vehicle.form.fuelTypes.cng');
-      default:
-        return this.vehicle.fuelType ?? '-';
-    }
+    const labelKey = getFuelTypeLabelKey(this.vehicle.fuelType);
+    return labelKey === null ? (this.vehicle.fuelType ?? '-') : this.translate.instant(labelKey);
   }
 
   protected vehicleThumbnailAlt(): string {
@@ -179,52 +135,7 @@ export class VehicleDetailsTab {
       });
   }
 
-  private getLatestFuelRecord(): FuelRecord | null {
-    const records = this.fuelRecords().filter((record) => record.mileage !== null);
-
-    if (!records.length) {
-      return null;
-    }
-
-    return [...records].sort(
-      (left, right) => this.toTimestamp(right.date) - this.toTimestamp(left.date)
-    )[0];
-  }
-
-  private getLatestOdometerRecord(): FuelRecord | MaintenanceRecord | null {
-    const fuelRecords = this.fuelRecords().filter((record) => record.mileage !== null);
-    const maintenanceRecords = this.maintenanceRecords().filter(
-      (record) => record.mileage !== null
-    );
-    const allRecords = [...fuelRecords, ...maintenanceRecords] as (
-      FuelRecord | MaintenanceRecord
-    )[];
-
-    if (!allRecords.length) {
-      return null;
-    }
-
-    return [...allRecords].sort((left, right) => {
-      const leftDate = (left as FuelRecord).date ?? (left as MaintenanceRecord).serviceDate;
-      const rightDate = (right as FuelRecord).date ?? (right as MaintenanceRecord).serviceDate;
-      return this.toTimestamp(rightDate) - this.toTimestamp(leftDate);
-    })[0];
-  }
-
-  private getLatestOdometerMileage(): number | null {
-    const latest = this.getLatestOdometerRecord();
-
-    if (latest && latest.mileage !== null && latest.mileage !== undefined) {
-      return latest.mileage;
-    }
-
-    return this.vehicle.mileage === null || this.vehicle.mileage === undefined
-      ? null
-      : Math.trunc(this.vehicle.mileage);
-  }
-
-  private toTimestamp(date: string): number {
-    const timestamp = new Date(`${date}T00:00:00`).getTime();
-    return Number.isNaN(timestamp) ? 0 : timestamp;
+  private odometerRecords(): (FuelRecord | MaintenanceRecord)[] {
+    return [...this.fuelRecords(), ...this.maintenanceRecords()];
   }
 }

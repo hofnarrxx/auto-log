@@ -6,11 +6,11 @@ import { CategoryIconPipe, CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '
 import { CurrencyService } from '../../services/currency.service';
 import {
   getMaintenanceTimelineEntries,
-  getMaintenanceWarningRecordIds,
   type MaintenanceFilterState,
   type MaintenanceListRecord,
   type MaintenanceSortOption,
 } from '../../../shared/utils/maintenance-list.utils';
+import { findMileageWarningRecordIds } from '../../utils/mileage.utils';
 
 @Component({
   selector: 'app-maintenance-list',
@@ -89,7 +89,7 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
   });
 
   protected readonly mileageWarningRecordIds = computed(() =>
-    getMaintenanceWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
+    findMileageWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
   );
 
   protected readonly maxAvailablePrice = computed(() => {

@@ -1,3 +1,5 @@
+import { toDateTimestamp } from './date.utils';
+
 export type MaintenanceSortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 
 export interface MaintenanceListRecord {
@@ -55,11 +57,6 @@ export function getMaintenanceCategoryIcon(category: string): string {
   return iconMap[normalizedCategory] ?? 'tool-case';
 }
 
-export function getMaintenanceTimestamp(serviceDate: string): number {
-  const timestamp = new Date(`${serviceDate}T00:00:00`).getTime();
-  return Number.isNaN(timestamp) ? 0 : timestamp;
-}
-
 export function getMaintenanceTimelineEntries<T extends MaintenanceListRecord>(
   records: T[],
   filters: MaintenanceFilterState,
@@ -69,38 +66,7 @@ export function getMaintenanceTimelineEntries<T extends MaintenanceListRecord>(
     .filter((record) => matchesMaintenanceCategoryFilter(record, filters.selectedCategories))
     .filter((record) => matchesMaintenancePriceFilter(record, filters, getRecordCurrency))
     .filter((record) => matchesMaintenanceTitleFilter(record, filters.titleSearch))
-    .sort((left, right) =>
-      compareMaintenanceRecords(left, right, filters.selectedSort, getRecordCurrency)
-    );
-}
-
-export function getMaintenanceWarningRecordIds<T extends MaintenanceListRecord>(
-  records: T[],
-  getDate: (record: T) => string
-): Set<number> {
-  const sorted = [...records].sort(
-    (left, right) =>
-      getMaintenanceTimestamp(getDate(left)) - getMaintenanceTimestamp(getDate(right))
-  );
-
-  const warnings = new Set<number>();
-  let maxMileageSeen: number | null = null;
-
-  sorted.forEach((record) => {
-    const mileage = record.mileage;
-    if (mileage === null) {
-      return;
-    }
-
-    if (maxMileageSeen !== null && mileage < maxMileageSeen) {
-      warnings.add(record.id);
-      return;
-    }
-
-    maxMileageSeen = maxMileageSeen === null ? mileage : Math.max(maxMileageSeen, mileage);
-  });
-
-  return warnings;
+    .sort((left, right) => compareMaintenanceRecords(left, right, filters.selectedSort));
 }
 
 function matchesMaintenanceCategoryFilter<T extends MaintenanceListRecord>(
@@ -149,11 +115,10 @@ function matchesMaintenanceTitleFilter<T extends MaintenanceListRecord>(
 function compareMaintenanceRecords<T extends MaintenanceListRecord>(
   left: T,
   right: T,
-  sort: MaintenanceSortOption,
-  getRecordCurrency: (record: T) => string
+  sort: MaintenanceSortOption
 ): number {
   if (sort === 'oldest') {
-    return getMaintenanceTimestamp(left.serviceDate) - getMaintenanceTimestamp(right.serviceDate);
+    return toDateTimestamp(left.serviceDate) - toDateTimestamp(right.serviceDate);
   }
 
   if (sort === 'price-low-high') {
@@ -164,7 +129,7 @@ function compareMaintenanceRecords<T extends MaintenanceListRecord>(
     return compareMaintenancePrice(left, right, 'desc');
   }
 
-  return getMaintenanceTimestamp(right.serviceDate) - getMaintenanceTimestamp(left.serviceDate);
+  return toDateTimestamp(right.serviceDate) - toDateTimestamp(left.serviceDate);
 }
 
 function compareMaintenancePrice<T extends MaintenanceListRecord>(
@@ -179,5 +144,5 @@ function compareMaintenancePrice<T extends MaintenanceListRecord>(
     return direction === 'asc' ? leftValue - rightValue : rightValue - leftValue;
   }
 
-  return getMaintenanceTimestamp(right.serviceDate) - getMaintenanceTimestamp(left.serviceDate);
+  return toDateTimestamp(right.serviceDate) - toDateTimestamp(left.serviceDate);
 }

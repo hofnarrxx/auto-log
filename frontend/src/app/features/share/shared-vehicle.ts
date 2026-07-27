@@ -5,6 +5,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatAppDate } from '../../shared/utils/date-format.utils';
+import { getFuelTypeLabelKey } from '../../shared/utils/fuel-type.utils';
+import {
+  getLatestOdometerMileage,
+  getLatestOdometerRecord,
+  getOdometerRecordDate,
+} from '../../shared/utils/odometer.utils';
 import type { FuelRecord, MaintenanceRecord } from '../vehicle/models';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
@@ -36,24 +42,8 @@ export class SharedVehicle {
   readonly activeTab = signal<SharedTab>('details');
 
   fuelTypeLabel(fuelType: string | null | undefined): string {
-    const value = (fuelType ?? '').trim().toLowerCase();
-
-    switch (value) {
-      case 'petrol':
-        return this.translate.instant('vehicle.form.fuelTypes.petrol');
-      case 'diesel':
-        return this.translate.instant('vehicle.form.fuelTypes.diesel');
-      case 'hybrid':
-        return this.translate.instant('vehicle.form.fuelTypes.hybrid');
-      case 'electric':
-        return this.translate.instant('vehicle.form.fuelTypes.electric');
-      case 'lpg':
-        return this.translate.instant('vehicle.form.fuelTypes.lpg');
-      case 'cng':
-        return this.translate.instant('vehicle.form.fuelTypes.cng');
-      default:
-        return fuelType || '-';
-    }
+    const labelKey = getFuelTypeLabelKey(fuelType);
+    return labelKey === null ? fuelType || '-' : this.translate.instant(labelKey);
   }
 
   ngOnInit() {
@@ -84,7 +74,7 @@ export class SharedVehicle {
   }
 
   lastOdometerReading(): string {
-    const mileage = this.getLatestOdometerMileage();
+    const mileage = getLatestOdometerMileage(this.odometerRecords(), this.data()?.mileage);
 
     if (mileage === null) {
       return '-';
@@ -94,60 +84,26 @@ export class SharedVehicle {
   }
 
   lastOdometerDate(): string {
-    const latest = this.getLatestOdometerRecord();
+    const latest = getLatestOdometerRecord(this.odometerRecords());
 
     if (!latest) {
       return '-';
     }
 
-    const date = (latest as FuelRecord).date ?? (latest as MaintenanceRecord).serviceDate;
-    return formatAppDate(date);
+    return formatAppDate(getOdometerRecordDate(latest));
   }
 
   setTab(tab: SharedTab) {
     this.activeTab.set(tab);
   }
 
-  private getLatestOdometerRecord(): FuelRecord | MaintenanceRecord | null {
+  private odometerRecords(): (FuelRecord | MaintenanceRecord)[] {
     const response = this.data();
+
     if (!response) {
-      return null;
+      return [];
     }
 
-    const fuelRecords = (response.fuelEntries ?? []).filter((record) => record.mileage !== null);
-    const maintenanceRecords = (response.maintenanceEntries ?? []).filter(
-      (record) => record.mileage !== null
-    );
-    const allRecords = [...fuelRecords, ...maintenanceRecords] as (
-      FuelRecord | MaintenanceRecord
-    )[];
-
-    if (!allRecords.length) {
-      return null;
-    }
-
-    return [...allRecords].sort((left, right) => {
-      const leftDate = (left as FuelRecord).date ?? (left as MaintenanceRecord).serviceDate;
-      const rightDate = (right as FuelRecord).date ?? (right as MaintenanceRecord).serviceDate;
-      return this.toTimestamp(rightDate) - this.toTimestamp(leftDate);
-    })[0];
-  }
-
-  private getLatestOdometerMileage(): number | null {
-    const latest = this.getLatestOdometerRecord();
-
-    if (latest && latest.mileage !== null && latest.mileage !== undefined) {
-      return latest.mileage;
-    }
-
-    const fallbackMileage = this.data()?.mileage;
-    return fallbackMileage === null || fallbackMileage === undefined
-      ? null
-      : Math.trunc(fallbackMileage);
-  }
-
-  private toTimestamp(date: string): number {
-    const timestamp = new Date(`${date}T00:00:00`).getTime();
-    return Number.isNaN(timestamp) ? 0 : timestamp;
+    return [...(response.fuelEntries ?? []), ...(response.maintenanceEntries ?? [])];
   }
 }
