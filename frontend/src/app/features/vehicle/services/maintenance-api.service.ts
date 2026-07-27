@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 import type {
   MaintenanceAttachment,
   MaintenanceAttachmentDownloadUrlResponse,
@@ -23,7 +23,7 @@ export type {
 })
 export class MaintenanceApiService {
   private readonly http = inject(HttpClient);
-  private readonly apiBaseUrl = environment.apiBaseUrl;
+  private readonly apiBaseUrl = inject(API_BASE_URL);
   private readonly vehicleApi = `${this.apiBaseUrl}/vehicles`;
   private readonly metadataApi = `${this.apiBaseUrl}/metadata/maintenance/categories`;
 

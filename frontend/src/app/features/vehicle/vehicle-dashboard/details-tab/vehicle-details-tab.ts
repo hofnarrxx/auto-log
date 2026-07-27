@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs';
 import { formatAppDate } from '../../../../shared/utils/date-format.utils';
@@ -11,7 +10,8 @@ import {
 } from '../../../../shared/utils/odometer.utils';
 import type { FuelRecord, MaintenanceRecord, Vehicle } from '../../models';
 import { getAverageFuelConsumptionPer100Km } from '../../utils/vehicle-statistics';
-import { environment } from '../../../../../environments/environment';
+import { FuelApi } from '../../services/fuel-api';
+import { MaintenanceApiService } from '../../services/maintenance-api.service';
 
 @Component({
   selector: 'app-vehicle-details-tab',
@@ -21,8 +21,8 @@ import { environment } from '../../../../../environments/environment';
 })
 export class VehicleDetailsTab {
   private translate = inject(TranslateService);
-  private http = inject(HttpClient);
-  private vehicleApi = `${environment.apiBaseUrl}/vehicles`;
+  private fuelApi = inject(FuelApi);
+  private maintenanceApi = inject(MaintenanceApiService);
 
   @Input({ required: true }) vehicle!: Vehicle;
   @Output() editRequested = new EventEmitter<void>();
@@ -113,8 +113,8 @@ export class VehicleDetailsTab {
 
     this.isLoadingStats.set(true);
 
-    this.http
-      .get<FuelRecord[]>(`${this.vehicleApi}/${this.vehicle.id}/fuel`)
+    this.fuelApi
+      .getAll(this.vehicle.id)
       .pipe(finalize(() => this.isLoadingStats.set(false)))
       .subscribe({
         next: (records) => this.fuelRecords.set(records ?? []),
@@ -127,12 +127,10 @@ export class VehicleDetailsTab {
       return;
     }
 
-    this.http
-      .get<MaintenanceRecord[]>(`${this.vehicleApi}/${this.vehicle.id}/maintenance`)
-      .subscribe({
-        next: (records) => this.maintenanceRecords.set(records ?? []),
-        error: () => this.maintenanceRecords.set([]),
-      });
+    this.maintenanceApi.getMaintenance(this.vehicle.id).subscribe({
+      next: (records) => this.maintenanceRecords.set(records ?? []),
+      error: () => this.maintenanceRecords.set([]),
+    });
   }
 
   private odometerRecords(): (FuelRecord | MaintenanceRecord)[] {

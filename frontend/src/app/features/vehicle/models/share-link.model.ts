@@ -8,3 +8,9 @@ export interface ShareLinkResponse {
   revoked: boolean;
   includeAttachments: boolean;
 }
+
+export interface CreateShareLinkRequest {
+  carId: number;
+  expiresAt: string;
+  includeAttachments: boolean;
+}

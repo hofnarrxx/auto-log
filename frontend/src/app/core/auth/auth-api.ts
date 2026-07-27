@@ -1,25 +1,16 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { API_BASE_URL } from '../config/api-base-url.token';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthApi {
   isAuthenticated = signal<boolean>(false);
-  private readonly authApi = `${environment.apiBaseUrl}/api/auth`;
+  private readonly authApi = `${inject(API_BASE_URL)}/api/auth`;
 
-  constructor(private http: HttpClient) {
-    if (window.location.pathname.startsWith('/share/')) {
-      return;
-    }
-
-    this.checkAuth().subscribe({
-      next: () => this.isAuthenticated.set(true),
-      error: () => this.isAuthenticated.set(false),
-    });
-  }
+  constructor(private http: HttpClient) {}
 
   login(email: string, password: string) {
     return this.http

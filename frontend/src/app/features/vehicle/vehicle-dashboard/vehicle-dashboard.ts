@@ -42,6 +42,9 @@ export class VehicleDashboard {
   private queryParamMap = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
+  private paramMap = toSignal(this.route.paramMap, {
+    initialValue: this.route.snapshot.paramMap,
+  });
 
   activeTab = computed<'details' | 'maintenance' | 'fuel'>(() => {
     const tab = this.queryParamMap().get('tab');
@@ -61,7 +64,7 @@ export class VehicleDashboard {
   }
 
   vehicle = computed(() => {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const id = Number(this.paramMap().get('id'));
     return this.vehicleStore.vehicles().find((v) => v.id === id);
   });
 

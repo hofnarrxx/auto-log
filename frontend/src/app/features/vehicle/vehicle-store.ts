@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { ShareLinkApi } from './services/share-link-api';
+import { VehicleApi } from './services/vehicle-api';
 import type {
   CreateVehicleCommand,
   ShareLinkResponse,
@@ -15,14 +15,13 @@ export type { ShareLinkResponse } from './models';
   providedIn: 'root',
 })
 export class VehicleStore {
-  private http = inject(HttpClient);
-  private api = `${environment.apiBaseUrl}/vehicles`;
-  private shareApi = `${environment.apiBaseUrl}/api/share-links`;
+  private readonly vehicleApi = inject(VehicleApi);
+  private readonly shareLinkApi = inject(ShareLinkApi);
 
   vehicles = signal<Vehicle[]>([]);
 
   add(vehicle: CreateVehicleCommand): Observable<Vehicle> {
-    return this.http.post<Vehicle>(this.api, vehicle).pipe(
+    return this.vehicleApi.create(vehicle).pipe(
       tap((newVehicle) => {
         this.vehicles.update((v) => [...v, newVehicle]);
       })
@@ -30,42 +29,36 @@ export class VehicleStore {
   }
 
   update(vehicle: UpdateVehicleCommand): Observable<Vehicle> {
-    return this.http.put<Vehicle>(`${this.api}/${vehicle.id}`, vehicle).pipe(
+    return this.vehicleApi.update(vehicle).pipe(
       tap((updated) => {
         this.vehicles.update((list) => list.map((v) => (v.id === updated.id ? updated : v)));
       })
     );
   }
 
-  remove(id: number) {
-    return this.http.delete<void>(`${this.api}/${id}`).pipe(
+  remove(id: number): Observable<void> {
+    return this.vehicleApi.remove(id).pipe(
       tap(() => {
         this.vehicles.update((v) => v.filter((vehicle) => vehicle.id !== id));
       })
     );
   }
 
-  load() {
-    this.http.get<Vehicle[]>(this.api).subscribe((data) => {
+  load(): void {
+    this.vehicleApi.getAll().subscribe((data) => {
       this.vehicles.set(data);
     });
   }
 
   createShareLink(carId: number, includeAttachments = true): Observable<ShareLinkResponse> {
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-
-    return this.http.post<ShareLinkResponse>(this.shareApi, {
-      carId,
-      expiresAt,
-      includeAttachments,
-    });
+    return this.shareLinkApi.create(carId, includeAttachments);
   }
 
   listShareLinks(carId: number): Observable<ShareLinkResponse[]> {
-    return this.http.get<ShareLinkResponse[]>(`${this.shareApi}?carId=${carId}`);
+    return this.shareLinkApi.list(carId);
   }
 
   revokeShareLink(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.shareApi}/${id}`);
+    return this.shareLinkApi.revoke(id);
   }
 }

@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthApi } from '../../../core/auth/auth-api';
 import { NotificationService } from '../../../shared/services/notification.service';
-import { environment } from '../../../../environments/environment';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +17,7 @@ export class Login {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private notifications = inject(NotificationService);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -35,6 +36,6 @@ export class Login {
   }
 
   googleLogin() {
-    window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/google`;
+    window.location.href = `${this.apiBaseUrl}/oauth2/authorization/google`;
   }
 }

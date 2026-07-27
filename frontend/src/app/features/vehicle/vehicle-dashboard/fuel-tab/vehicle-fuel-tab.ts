@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,7 +12,7 @@ import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
 import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 import type { FuelRecord, FuelRecordPayload } from '../../models';
-import { environment } from '../../../../../environments/environment';
+import { FuelApi } from '../../services/fuel-api';
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
@@ -30,10 +29,9 @@ import { environment } from '../../../../../environments/environment';
   styleUrl: './vehicle-fuel-tab.css',
 })
 export class VehicleFuelTab {
-  private readonly http = inject(HttpClient);
+  private readonly fuelApi = inject(FuelApi);
   private readonly currencyService = inject(CurrencyService);
   private readonly notifications = inject(NotificationService);
-  private readonly vehicleApi = `${environment.apiBaseUrl}/vehicles`;
 
   readonly form = new FormGroup({
     date: new FormControl('', Validators.required),
@@ -188,11 +186,8 @@ export class VehicleFuelTab {
     const selected = this.selectedRecord();
     const request$ =
       this.isEditMode() && selected
-        ? this.http.put<FuelRecord>(
-            `${this.vehicleApi}/${this.currentVehicleId}/fuel/${selected.id}`,
-            payload
-          )
-        : this.http.post<FuelRecord>(`${this.vehicleApi}/${this.currentVehicleId}/fuel`, payload);
+        ? this.fuelApi.update(this.currentVehicleId, selected.id, payload)
+        : this.fuelApi.create(this.currentVehicleId, payload);
 
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: () => {
@@ -213,8 +208,8 @@ export class VehicleFuelTab {
 
     this.isDeleting.set(true);
 
-    this.http
-      .delete<void>(`${this.vehicleApi}/${this.currentVehicleId}/fuel/${selected.id}`)
+    this.fuelApi
+      .remove(this.currentVehicleId, selected.id)
       .pipe(finalize(() => this.isDeleting.set(false)))
       .subscribe({
         next: () => {
@@ -235,8 +230,8 @@ export class VehicleFuelTab {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.http
-      .get<FuelRecord[]>(`${this.vehicleApi}/${this.currentVehicleId}/fuel`)
+    this.fuelApi
+      .getAll(this.currentVehicleId)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (records) => this.fuelRecords.set(records ?? []),

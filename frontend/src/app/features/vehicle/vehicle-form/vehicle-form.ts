@@ -10,11 +10,11 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
 import type { UpdateVehicleCommand, Vehicle as VehicleModel } from '../models';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { of, switchMap, map } from 'rxjs';
 import { FUEL_TYPES, getFuelTypeLabelKey } from '../../../shared/utils/fuel-type.utils';
 import { toCreateVehicleCommand, toUpdateVehicleCommand } from './vehicle-form.mapper';
-import { environment } from '../../../../environments/environment';
+import { VehicleApi } from '../services/vehicle-api';
+import { ObjectStorageApi } from '../../../shared/services/object-storage-api';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -24,8 +24,8 @@ import { environment } from '../../../../environments/environment';
 })
 export class VehicleForm {
   private vehicleStore = inject(VehicleStore);
-  private http = inject(HttpClient);
-  private readonly vehicleApi = `${environment.apiBaseUrl}/vehicles`;
+  private vehicleApi = inject(VehicleApi);
+  private objectStorageApi = inject(ObjectStorageApi);
   private static readonly MAX_IMAGE_BYTES = 5 * 1024 * 1024;
   private static readonly MAX_IMAGE_DIMENSION = 1600;
   private static readonly IMAGE_QUALITY = 0.75;
@@ -173,24 +173,13 @@ export class VehicleForm {
   }
 
   private uploadSelectedImage(vehicleId: number, file: File) {
-    return this.http
-      .post<VehicleImageUploadUrlResponse>(`${this.vehicleApi}/${vehicleId}/image/upload-url`, {
-        fileName: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-      })
+    return this.vehicleApi
+      .requestImageUploadUrl(vehicleId, file)
       .pipe(
         switchMap((response) =>
-          this.uploadToR2(response.uploadUrl, file).pipe(map(() => response.objectKey))
+          this.objectStorageApi.upload(response.uploadUrl, file).pipe(map(() => response.objectKey))
         )
       );
-  }
-
-  private uploadToR2(uploadUrl: string, file: File) {
-    return this.http.put(uploadUrl, file, {
-      headers: new HttpHeaders({ 'Content-Type': file.type }),
-      responseType: 'text',
-    });
   }
 
   private async prepareImage(file: File): Promise<File> {
@@ -225,9 +214,4 @@ export class VehicleForm {
     const name = file.name.replace(/\.[^.]+$/, '.jpg');
     return new File([blob], name, { type: 'image/jpeg' });
   }
-}
-
-interface VehicleImageUploadUrlResponse {
-  uploadUrl: string;
-  objectKey: string;
 }

@@ -27,3 +27,8 @@ export interface CreateVehicleCommand {
 export interface UpdateVehicleCommand extends CreateVehicleCommand {
   id: number;
 }
+
+export interface VehicleImageUploadUrlResponse {
+  uploadUrl: string;
+  objectKey: string;
+}

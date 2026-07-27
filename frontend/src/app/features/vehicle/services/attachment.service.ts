@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, concatMap, from, map, switchMap, toArray } from 'rxjs';
+import { ObjectStorageApi } from '../../../shared/services/object-storage-api';
 import { MaintenanceApiService } from './maintenance-api.service';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class AttachmentService {
   private static readonly MAX_IMAGE_DIMENSION = 1600;
   private static readonly IMAGE_QUALITY = 0.75;
 
-  private readonly http = inject(HttpClient);
+  private readonly objectStorageApi = inject(ObjectStorageApi);
   private readonly maintenanceApiService = inject(MaintenanceApiService);
 
   isAllowedAttachment(file: File): boolean {
@@ -91,10 +91,7 @@ export class AttachmentService {
   }
 
   private uploadToR2(uploadUrl: string, file: File) {
-    return this.http.put(uploadUrl, file, {
-      headers: new HttpHeaders({ 'Content-Type': file.type }),
-      responseType: 'text',
-    });
+    return this.objectStorageApi.upload(uploadUrl, file);
   }
 
   private saveAttachmentMetadata(

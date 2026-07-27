@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -15,7 +14,7 @@ import type { FuelRecord, MaintenanceRecord } from '../vehicle/models';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
 import type { SharedVehicleResponse } from './shared-vehicle-model';
-import { environment } from '../../../environments/environment';
+import { PublicShareApi } from './public-share-api';
 
 type SharedTab = 'details' | 'maintenance' | 'fuel';
 
@@ -28,7 +27,7 @@ type SharedTab = 'details' | 'maintenance' | 'fuel';
 })
 export class SharedVehicle {
   private readonly route = inject(ActivatedRoute);
-  private readonly http = inject(HttpClient);
+  private readonly publicShareApi = inject(PublicShareApi);
   private readonly translate = inject(TranslateService);
 
   private readonly tokenParamMap = toSignal(this.route.paramMap, {
@@ -60,7 +59,7 @@ export class SharedVehicle {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.http.get<SharedVehicleResponse>(`${environment.apiBaseUrl}/share/${token}`).subscribe({
+    this.publicShareApi.getSharedVehicle(token).subscribe({
       next: (response) => {
         this.data.set(response);
         this.activeTab.set('details');

@@ -7,5 +7,10 @@ export type {
 } from './maintenance-record.model';
 
 export type { FuelRecord, FuelRecordPayload } from './fuel-record.model';
-export type { ShareLinkResponse } from './share-link.model';
-export type { CreateVehicleCommand, UpdateVehicleCommand, Vehicle } from './vehicle.model';
+export type { CreateShareLinkRequest, ShareLinkResponse } from './share-link.model';
+export type {
+  CreateVehicleCommand,
+  UpdateVehicleCommand,
+  Vehicle,
+  VehicleImageUploadUrlResponse,
+} from './vehicle.model';
