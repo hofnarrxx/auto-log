@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthApi } from '../../../core/auth/auth-api';
+import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
   styleUrl: '../login/login.css',
 })
 export class Register {
-  private authApi = inject(AuthApi);
+  private authStore = inject(AuthStore);
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private notifications = inject(NotificationService);
@@ -29,7 +29,7 @@ export class Register {
     const { email, password, confirmPassword } = this.form.value;
     if (password !== confirmPassword) return;
 
-    this.authApi.register(email!, password!).subscribe({
+    this.authStore.register(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
         this.notifications.notifyHttpError(err, {

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { finalize } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
@@ -12,7 +11,7 @@ import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
 import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 import type { FuelRecord, FuelRecordPayload } from '../../models';
-import { FuelApi } from '../../services/fuel-api';
+import { FuelStore } from '../../fuel-store';
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
@@ -29,7 +28,7 @@ import { FuelApi } from '../../services/fuel-api';
   styleUrl: './vehicle-fuel-tab.css',
 })
 export class VehicleFuelTab {
-  private readonly fuelApi = inject(FuelApi);
+  private readonly fuelStore = inject(FuelStore);
   private readonly currencyService = inject(CurrencyService);
   private readonly notifications = inject(NotificationService);
 
@@ -45,20 +44,20 @@ export class VehicleFuelTab {
   @Input({ required: true })
   set vehicleId(value: number) {
     this.currentVehicleId = value;
-    this.loadFuelRecords();
+    this.fuelStore.load(value);
   }
 
   private currentVehicleId: number | null = null;
 
-  protected readonly isLoading = signal(false);
-  protected readonly error = signal<string | null>(null);
-  protected readonly isSaving = signal(false);
-  protected readonly isDeleting = signal(false);
+  protected readonly isLoading = this.fuelStore.isLoading;
+  protected readonly error = this.fuelStore.error;
+  protected readonly isSaving = this.fuelStore.isSaving;
+  protected readonly isDeleting = this.fuelStore.isDeleting;
+  protected readonly fuelRecords = this.fuelStore.records;
   protected readonly isModalOpen = signal(false);
   protected readonly isCreateMode = signal(false);
   protected readonly isEditMode = signal(false);
   protected readonly selectedRecord = signal<FuelRecord | null>(null);
-  protected readonly fuelRecords = signal<FuelRecord[]>([]);
   protected readonly totalFuelCostByCurrency = computed(() => {
     const totals = new Map<string, number>();
 
@@ -181,23 +180,18 @@ export class VehicleFuelTab {
       return;
     }
 
-    this.isSaving.set(true);
-
     const selected = this.selectedRecord();
-    const request$ =
-      this.isEditMode() && selected
-        ? this.fuelApi.update(this.currentVehicleId, selected.id, payload)
-        : this.fuelApi.create(this.currentVehicleId, payload);
 
-    request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
-      next: () => {
-        this.closeModal();
-        this.loadFuelRecords();
-      },
-      error: () => {
-        this.notifications.notifyError('vehicle.fuelTab.errors.saveFailed');
-      },
-    });
+    this.fuelStore
+      .save(this.currentVehicleId, payload, this.isEditMode() && selected ? selected.id : undefined)
+      .subscribe({
+        next: () => {
+          this.closeModal();
+        },
+        error: () => {
+          this.notifications.notifyError('vehicle.fuelTab.errors.saveFailed');
+        },
+      });
   }
 
   protected deleteSelectedRecord() {
@@ -206,40 +200,14 @@ export class VehicleFuelTab {
       return;
     }
 
-    this.isDeleting.set(true);
-
-    this.fuelApi
-      .remove(this.currentVehicleId, selected.id)
-      .pipe(finalize(() => this.isDeleting.set(false)))
-      .subscribe({
-        next: () => {
-          this.closeModal();
-          this.loadFuelRecords();
-        },
-        error: () => {
-          this.notifications.notifyError('vehicle.fuelTab.errors.deleteFailed');
-        },
-      });
-  }
-
-  private loadFuelRecords() {
-    if (this.currentVehicleId === null) {
-      return;
-    }
-
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.fuelApi
-      .getAll(this.currentVehicleId)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (records) => this.fuelRecords.set(records ?? []),
-        error: () => {
-          this.error.set('vehicle.fuelTab.errors.loadFailed');
-          this.fuelRecords.set([]);
-        },
-      });
+    this.fuelStore.delete(this.currentVehicleId, selected.id).subscribe({
+      next: () => {
+        this.closeModal();
+      },
+      error: () => {
+        this.notifications.notifyError('vehicle.fuelTab.errors.deleteFailed');
+      },
+    });
   }
 
   private buildPayload(): FuelRecordPayload | null {

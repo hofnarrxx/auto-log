@@ -3,11 +3,11 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { API_BASE_URL } from '../config/api-base-url.token';
-import { AuthApi } from './auth-api';
+import { AuthStore } from './auth-store';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const authApi = inject(AuthApi);
+  const authStore = inject(AuthStore);
   const apiBaseUrl = inject(API_BASE_URL);
 
   const isApiRequest = req.url.startsWith(apiBaseUrl);
@@ -35,17 +35,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((err) => {
       if (err.status === 401 && shouldTryRefresh) {
-        return authApi.refreshSession().pipe(
+        return authStore.refreshAndAuthenticate().pipe(
           switchMap(() => next(authReq)),
           catchError((refreshErr) => {
-            authApi.isAuthenticated.set(false);
+            authStore.markUnauthenticated();
             return throwError(() => refreshErr);
           })
         );
       }
 
       if (err.status === 401 && !isShareRequest && !isOnSharePage && !isAuthRequest) {
-        authApi.isAuthenticated.set(false);
+        authStore.markUnauthenticated();
       }
       return throwError(() => err);
     })

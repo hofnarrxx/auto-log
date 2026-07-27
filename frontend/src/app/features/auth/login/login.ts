@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthApi } from '../../../core/auth/auth-api';
+import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 
@@ -13,7 +13,7 @@ import { API_BASE_URL } from '../../../core/config/api-base-url.token';
   styleUrl: './login.css',
 })
 export class Login {
-  private authApi = inject(AuthApi);
+  private authStore = inject(AuthStore);
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private notifications = inject(NotificationService);
@@ -29,7 +29,7 @@ export class Login {
 
     const { email, password } = this.form.value;
 
-    this.authApi.login(email!, password!).subscribe({
+    this.authStore.login(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: () => this.notifications.notifyError('auth.login.errors.invalidCredentials'),
     });

@@ -70,7 +70,10 @@
   },
   "dashboard": {
     "addVehicle": "Add Vehicle",
-    "noImage": "No Image"
+    "noImage": "No Image",
+    "errors": {
+      "loadFailed": "Unable to load vehicles right now."
+    }
   },
   "settings": {
     "title": "Settings",

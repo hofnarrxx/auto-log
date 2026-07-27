@@ -27,36 +27,44 @@ describe('AuthApi', () => {
     httpMock.verify();
   });
 
-  it('does not issue any request on construction', () => {
-    httpMock.verify();
-    expect(api.isAuthenticated()).toBe(false);
-  });
-
-  it('marks the user authenticated after a successful login', () => {
+  it('posts credentials to the login endpoint', () => {
     api.login('a@b.com', 'secret').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/login`);
     expect(req.request.method).toBe('POST');
-    req.flush({});
-
-    expect(api.isAuthenticated()).toBe(true);
+    expect(req.request.body).toEqual({ email: 'a@b.com', password: 'secret' });
+    req.flush(null);
   });
 
-  it('marks the user unauthenticated after logout', () => {
+  it('posts credentials to the register endpoint', () => {
+    api.register('a@b.com', 'secret').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/register`);
+    expect(req.request.method).toBe('POST');
+    req.flush(null);
+  });
+
+  it('posts to the refresh endpoint', () => {
+    api.refreshSession().subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/refresh`);
+    expect(req.request.method).toBe('POST');
+    req.flush(null);
+  });
+
+  it('posts to the logout endpoint', () => {
     api.logout().subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/logout`);
     expect(req.request.method).toBe('POST');
-    req.flush({});
-
-    expect(api.isAuthenticated()).toBe(false);
+    req.flush(null);
   });
 
-  it('checks the current session without mutating authentication state itself', () => {
+  it('requests the current session from the me endpoint', () => {
     api.checkAuth().subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/me`);
     expect(req.request.method).toBe('GET');
-    req.flush({});
+    req.flush(null);
   });
 });

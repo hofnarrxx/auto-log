@@ -70,7 +70,10 @@
   },
   "dashboard": {
     "addVehicle": "Dodaj pojazd",
-    "noImage": "Brak zdjęcia"
+    "noImage": "Brak zdjęcia",
+    "errors": {
+      "loadFailed": "Nie można teraz wczytać pojazdów."
+    }
   },
   "settings": {
     "title": "Ustawienia",

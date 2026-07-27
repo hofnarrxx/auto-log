@@ -1,27 +1,21 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthApi } from './auth-api';
+import { AuthStore } from './auth-store';
 import { map, catchError, of } from 'rxjs';
 
 export const authGuard: CanActivateFn = () => {
-  const authApi = inject(AuthApi);
+  const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  if (authApi.isAuthenticated()) {
+  if (authStore.isAuthenticated()) {
     return true;
   }
 
-  return authApi.checkAuth().pipe(
-    map(() => {
-      authApi.isAuthenticated.set(true);
-      return true;
-    }),
+  return authStore.checkAuth().pipe(
+    map(() => true),
     catchError(() =>
-      authApi.refreshSession().pipe(
-        map(() => {
-          authApi.isAuthenticated.set(true);
-          return true;
-        }),
+      authStore.refreshAndAuthenticate().pipe(
+        map(() => true),
         catchError(() => of(router.createUrlTree(['/login'])))
       )
     )

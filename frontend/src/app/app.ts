@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthApi } from './core/auth/auth-api';
+import { AuthStore } from './core/auth/auth-store';
 import { ToastHost } from './shared/ui/toast/toast-host';
 
 @Component({
@@ -13,7 +13,7 @@ import { ToastHost } from './shared/ui/toast/toast-host';
 export class App {
   protected title = 'AutoLog';
   private translate = inject(TranslateService);
-  private authApi = inject(AuthApi);
+  private authStore = inject(AuthStore);
 
   constructor() {
     this.translate.addLangs(['pl', 'en']);
@@ -27,13 +27,12 @@ export class App {
 
   ngOnInit() {
     if (window.location.pathname.startsWith('/share/')) {
-      this.authApi.isAuthenticated.set(false);
+      this.authStore.markUnauthenticated();
       return;
     }
 
-    this.authApi.checkAuth().subscribe({
-      next: () => this.authApi.isAuthenticated.set(true),
-      error: () => this.authApi.isAuthenticated.set(false),
+    this.authStore.checkAuth().subscribe({
+      error: () => this.authStore.markUnauthenticated(),
     });
   }
 }

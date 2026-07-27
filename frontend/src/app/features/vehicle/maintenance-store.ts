@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, finalize, tap } from 'rxjs';
+import { Observable, Subject, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import type {
   MaintenanceAttachmentDownloadUrlResponse,
   MaintenanceRecord,
@@ -17,49 +17,66 @@ const FALLBACK_CATEGORIES = [
   'Cosmetic',
 ];
 
-@Injectable({
-  providedIn: 'root',
-})
+/**
+ * Owns maintenance-record server state for one vehicle. `load()` is fire-and-forget and safe to
+ * call repeatedly as the active vehicle changes: it is fed through `switchMap`, so a stale
+ * in-flight request for a previous vehicle is cancelled before it can overwrite newer results.
+ */
+@Injectable()
 export class MaintenanceStore {
   private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly load$ = new Subject<number>();
 
-  readonly records = signal<MaintenanceRecord[]>([]);
-  readonly categories = signal<string[]>([]);
-  readonly isLoading = signal(false);
-  readonly isSaving = signal(false);
-  readonly isDeleting = signal(false);
-  readonly error = signal<string | null>(null);
+  private readonly _records = signal<MaintenanceRecord[]>([]);
+  private readonly _categories = signal<string[]>([]);
+  private readonly _isLoading = signal(false);
+  private readonly _isSaving = signal(false);
+  private readonly _isDeleting = signal(false);
+  private readonly _error = signal<string | null>(null);
+
+  readonly records = this._records.asReadonly();
+  readonly categories = this._categories.asReadonly();
+  readonly isLoading = this._isLoading.asReadonly();
+  readonly isSaving = this._isSaving.asReadonly();
+  readonly isDeleting = this._isDeleting.asReadonly();
+  readonly error = this._error.asReadonly();
+
+  constructor() {
+    this.load$
+      .pipe(
+        tap(() => {
+          this._isLoading.set(true);
+          this._error.set(null);
+        }),
+        switchMap((vehicleId) =>
+          this.maintenanceApi.getMaintenance(vehicleId).pipe(
+            catchError(() => {
+              this._error.set('vehicle.maintenanceTab.errors.loadFailed');
+              return of<MaintenanceRecord[]>([]);
+            }),
+            finalize(() => this._isLoading.set(false))
+          )
+        )
+      )
+      .subscribe((records) => this._records.set(records));
+  }
 
   load(vehicleId: number): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.maintenanceApi
-      .getMaintenance(vehicleId)
-      .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe({
-        next: (data) => {
-          this.records.set(data);
-        },
-        error: () => {
-          this.records.set([]);
-          this.error.set('vehicle.maintenanceTab.errors.loadFailed');
-        },
-      });
+    this.load$.next(vehicleId);
   }
 
   clear(): void {
-    this.records.set([]);
-    this.error.set(null);
+    this._records.set([]);
+    this._error.set(null);
   }
 
   loadCategories(): void {
     this.maintenanceApi.getCategories().subscribe({
       next: (categories) => {
-        this.categories.set(categories);
+        this._categories.set(categories);
       },
       error: () => {
-        this.categories.set(FALLBACK_CATEGORIES);
+        this._categories.set(FALLBACK_CATEGORIES);
       },
     });
   }
@@ -69,23 +86,23 @@ export class MaintenanceStore {
     payload: MaintenanceRecordPayload,
     recordId?: number
   ): Observable<MaintenanceRecord> {
-    this.isSaving.set(true);
+    this._isSaving.set(true);
 
     const request$ = recordId
       ? this.maintenanceApi.updateMaintenance(vehicleId, recordId, payload)
       : this.maintenanceApi.createMaintenance(vehicleId, payload);
 
-    return request$.pipe(finalize(() => this.isSaving.set(false)));
+    return request$.pipe(finalize(() => this._isSaving.set(false)));
   }
 
   delete(vehicleId: number, recordId: number): Observable<void> {
-    this.isDeleting.set(true);
+    this._isDeleting.set(true);
 
     return this.maintenanceApi.deleteMaintenance(vehicleId, recordId).pipe(
       tap(() => {
-        this.records.update((records) => records.filter((record) => record.id !== recordId));
+        this._records.update((records) => records.filter((record) => record.id !== recordId));
       }),
-      finalize(() => this.isDeleting.set(false))
+      finalize(() => this._isDeleting.set(false))
     );
   }
 

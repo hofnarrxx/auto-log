@@ -1,7 +1,7 @@
 import { Component, inject, HostListener, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AuthApi } from '../../auth/auth-api';
+import { AuthStore } from '../../auth/auth-store';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrl: './app-layout.css',
 })
 export class AppLayout {
-  private authApi = inject(AuthApi);
+  private authStore = inject(AuthStore);
   private router = inject(Router);
   menuOpen = signal(false);
 
@@ -51,7 +51,7 @@ export class AppLayout {
   }
 
   logout() {
-    this.authApi.logout().subscribe({
+    this.authStore.logout().subscribe({
       next: () => {
         this.router.navigate(['/login'], { replaceUrl: true });
       },

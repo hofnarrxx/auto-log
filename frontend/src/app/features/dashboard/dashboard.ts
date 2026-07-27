@@ -17,6 +17,8 @@ export class Dashboard {
   showModal = signal(false);
 
   vehicles = this.vehicleStore.vehicles;
+  isLoading = this.vehicleStore.isLoading;
+  error = this.vehicleStore.error;
 
   ngOnInit() {
     this.vehicleStore.load();

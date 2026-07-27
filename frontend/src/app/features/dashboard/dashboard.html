@@ -1,4 +1,10 @@
 <div class="vehicle-grid">
+  @if (isLoading()) {
+    <p class="status-message">{{ 'common.loading' | translate }}</p>
+  } @else if (error()) {
+    <p class="status-message error">{{ error() | translate }}</p>
+  }
+
   @for (v of vehicles(); track v.id) {
     <div class="vehicle-card clickable" [routerLink]="['/vehicles', v.id]">
       <div class="image-wrapper">

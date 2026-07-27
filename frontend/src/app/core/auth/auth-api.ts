@@ -1,42 +1,36 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../config/api-base-url.token';
 
+/**
+ * Pure transport for the auth endpoints. This service holds no authentication state; see
+ * {@link AuthStore} for the single source of truth on whether the user is signed in.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AuthApi {
-  isAuthenticated = signal<boolean>(false);
+  private readonly http = inject(HttpClient);
   private readonly authApi = `${inject(API_BASE_URL)}/api/auth`;
 
-  constructor(private http: HttpClient) {}
-
-  login(email: string, password: string) {
-    return this.http
-      .post(`${this.authApi}/login`, { email, password })
-      .pipe(tap(() => this.isAuthenticated.set(true)));
+  login(email: string, password: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/login`, { email, password });
   }
 
-  register(email: string, password: string) {
-    return this.http
-      .post(`${this.authApi}/register`, { email, password })
-      .pipe(tap(() => this.isAuthenticated.set(true)));
+  register(email: string, password: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/register`, { email, password });
   }
 
-  refreshSession() {
-    return this.http
-      .post<void>(`${this.authApi}/refresh`, {})
-      .pipe(tap(() => this.isAuthenticated.set(true)));
+  refreshSession(): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/refresh`, {});
   }
 
-  logout() {
-    return this.http
-      .post(`${this.authApi}/logout`, {})
-      .pipe(tap(() => this.isAuthenticated.set(false)));
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/logout`, {});
   }
 
-  checkAuth() {
-    return this.http.get(`${this.authApi}/me`);
+  checkAuth(): Observable<void> {
+    return this.http.get<void>(`${this.authApi}/me`);
   }
 }

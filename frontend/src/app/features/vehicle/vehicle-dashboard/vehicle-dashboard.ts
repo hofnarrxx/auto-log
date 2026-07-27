@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ShareLinkResponse } from '../models';
 import { VehicleStore } from '../vehicle-store';
+import { FuelStore } from '../fuel-store';
+import { MaintenanceStore } from '../maintenance-store';
 import { VehicleForm } from '../vehicle-form/vehicle-form';
 import { Modal } from '../../../shared/ui/modal/modal';
 import { NotificationService } from '../../../shared/services/notification.service';
@@ -22,6 +24,7 @@ import { finalize } from 'rxjs';
     VehicleFuelTab,
     TranslateModule,
   ],
+  providers: [FuelStore, MaintenanceStore],
   templateUrl: './vehicle-dashboard.html',
   styleUrl: './vehicle-dashboard.css',
 })
