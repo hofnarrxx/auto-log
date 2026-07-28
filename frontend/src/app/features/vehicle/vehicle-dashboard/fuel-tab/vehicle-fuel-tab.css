@@ -3,6 +3,11 @@
   color: var(--text);
 }
 
+.fuel-tab h2 {
+  margin: 0 0 14px;
+  color: var(--text);
+}
+
 .status-message {
   margin: 0;
   color: var(--text-muted);
@@ -10,31 +15,6 @@
 
 .status-message.error {
   color: var(--danger);
-}
-
-.detail-warning {
-  color: var(--danger);
-  font-size: 12px;
-  margin-left: 6px;
-}
-
-.record-details {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 8px;
-}
-
-.label {
-  color: var(--text-muted);
-  font-weight: 600;
 }
 
 .record-form {
@@ -129,45 +109,6 @@
   font-size: 13px;
 }
 
-.fuel-modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(2, 6, 23, 0.7);
-  backdrop-filter: blur(3px);
-  z-index: 30;
-}
-
-.fuel-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--surface-1);
-  color: var(--text);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
-  width: min(460px, calc(100vw - 28px));
-  max-height: calc(100vh - 32px);
-  overflow: auto;
-  padding: 22px;
-  z-index: 31;
-}
-
-.fuel-modal .record-details,
-.fuel-modal .detail-row,
-.fuel-modal .detail-row span {
-  color: var(--text);
-}
-
-.fuel-modal h2 {
-  margin: 0 0 14px;
-  color: var(--text);
-}
-
 @media (max-width: 520px) {
   .cost-currency-row {
     grid-template-columns: 1fr;
@@ -181,35 +122,4 @@
   to {
     opacity: 1;
   }
-}
-
-.sort-control select {
-  width: 100%;
-}
-
-.add-record-btn {
-  width: 100%;
-}
-
-.timeline::before {
-  left: 97px;
-}
-
-.timeline-item {
-  grid-template-columns: 72px 40px auto auto;
-  column-gap: 10px;
-}
-
-.entry-date {
-  font-size: 12px;
-}
-
-.entry-point {
-  width: 28px;
-  height: 28px;
-  font-size: 13px;
-}
-
-.entry-content {
-  width: 100%;
 }

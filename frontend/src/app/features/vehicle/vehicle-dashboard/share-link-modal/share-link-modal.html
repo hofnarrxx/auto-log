@@ -1,0 +1,71 @@
+<app-modal (closed)="close()">
+  <div class="share-modal-content">
+    <h3>{{ 'vehicle.dashboard.share.title' | translate }}</h3>
+    <p>{{ 'vehicle.dashboard.share.description' | translate }}</p>
+
+    @if (isLoadingShareLinks()) {
+      <p class="share-status">{{ 'vehicle.dashboard.share.loadingLinks' | translate }}</p>
+    } @else if (!shareLinks().length) {
+      <p class="share-status">{{ 'vehicle.dashboard.share.noActiveLinks' | translate }}</p>
+    } @else {
+      <div class="share-links">
+        @for (link of shareLinks(); track link.id) {
+          <div class="share-link-item">
+            <div class="share-link-row">
+              <input
+                type="text"
+                [value]="shareUrl(link.token)"
+                readonly
+                [attr.aria-label]="'vehicle.dashboard.share.generatedLink' | translate"
+              />
+              <button type="button" class="copy-btn" (click)="copyShareLink(link.token)">
+                {{ 'vehicle.dashboard.share.copy' | translate }}
+              </button>
+              <button
+                type="button"
+                class="icon-btn delete-btn"
+                [attr.aria-label]="'vehicle.dashboard.share.delete' | translate"
+                [attr.title]="'vehicle.dashboard.share.delete' | translate"
+                [disabled]="deletingShareLinkId() === link.id"
+                (click)="deleteShareLink(link.id)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path
+                    d="M6 7h12l-1 14H7L6 7zm3 2v10h2V9H9zm4 0v10h2V9h-2zM9 4h6l1 2h4v2H4V6h4l1-2z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p class="share-link-meta">
+              {{ 'vehicle.dashboard.share.remainingTime' | translate }}:
+              {{ remainingTime(link.expiresAt) }}
+            </p>
+          </div>
+        }
+      </div>
+    }
+
+    <label class="share-toggle">
+      <input
+        type="checkbox"
+        [checked]="shareAttachments()"
+        (change)="onShareAttachmentsChange($event)"
+      />
+      <span>{{ 'vehicle.dashboard.share.includeAttachments' | translate }}</span>
+    </label>
+
+    <div class="share-modal-actions">
+      <button
+        type="button"
+        class="create-btn"
+        [disabled]="!canCreateShareLink() || isCreatingShareLink() || isLoadingShareLinks()"
+        (click)="createShareLink()"
+      >
+        {{ 'vehicle.dashboard.share.create' | translate }}
+      </button>
+      <button type="button" class="close-btn" (click)="close()">
+        {{ 'common.close' | translate }}
+      </button>
+    </div>
+  </div>
+</app-modal>

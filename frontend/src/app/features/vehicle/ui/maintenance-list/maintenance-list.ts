@@ -2,32 +2,38 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
-import { CategoryIconPipe, CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../pipes';
-import { CurrencyService } from '../../services/currency.service';
+import {
+  CategoryIconPipe,
+  CategoryLabelPipe,
+  DateFormatPipe,
+  MoneyPipe,
+} from '../../../../shared/pipes';
+import { CurrencyService } from '../../../../shared/services/currency.service';
+import { Modal } from '../../../../shared/ui/modal/modal';
 import {
   getMaintenanceTimelineEntries,
   type MaintenanceFilterState,
   type MaintenanceListRecord,
   type MaintenanceSortOption,
-} from '../../../shared/utils/maintenance-list.utils';
-import { findMileageWarningRecordIds } from '../../utils/mileage.utils';
+} from '../../../../shared/utils/maintenance-list.utils';
+import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 
 @Component({
   selector: 'app-maintenance-list',
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,
     LucideAngularModule,
+    Modal,
     CategoryIconPipe,
     CategoryLabelPipe,
     DateFormatPipe,
     MoneyPipe,
   ],
-  templateUrl: './maintenance-list.component.html',
-  styleUrl: './maintenance-list.component.css',
+  templateUrl: './maintenance-list.html',
+  styleUrl: './maintenance-list.css',
 })
-export class MaintenanceListComponent<T extends MaintenanceListRecord> {
+export class MaintenanceList<T extends MaintenanceListRecord> {
   private readonly currencyService = inject(CurrencyService);
 
   protected readonly allCurrenciesOption = 'All';
@@ -166,7 +172,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     this.isFilterModalOpen.set(false);
   }
 
-  protected toggleAllCategories(checked: boolean) {
+  protected toggleAllCategories(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
     if (checked) {
       this.selectedCategories.set([...this.availableFilterCategories()]);
       return;
@@ -179,7 +186,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     return this.selectedCategories().includes(category);
   }
 
-  protected toggleCategory(category: string, checked: boolean) {
+  protected toggleCategory(category: string, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
     if (checked) {
       this.selectedCategories.set([...this.selectedCategories(), category]);
       return;
@@ -190,8 +198,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     );
   }
 
-  protected onMinPriceLimitChange(rawValue: string) {
-    const parsed = Number(rawValue);
+  protected onMinPriceLimitChange(event: Event) {
+    const parsed = Number((event.target as HTMLInputElement).value);
     if (Number.isNaN(parsed)) {
       return;
     }
@@ -200,8 +208,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     this.minPriceLimit.set(Math.min(bounded, this.maxPriceLimit()));
   }
 
-  protected onMaxPriceLimitChange(rawValue: string) {
-    const parsed = Number(rawValue);
+  protected onMaxPriceLimitChange(event: Event) {
+    const parsed = Number((event.target as HTMLInputElement).value);
     if (Number.isNaN(parsed)) {
       return;
     }
@@ -210,7 +218,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     this.maxPriceLimit.set(Math.max(bounded, this.minPriceLimit()));
   }
 
-  protected onCurrencyFilterChange(rawValue: string) {
+  protected onCurrencyFilterChange(event: Event) {
+    const rawValue = (event.target as HTMLSelectElement).value;
     const available = this.availableFilterCurrencies();
     const selected =
       rawValue === this.allCurrenciesOption || available.includes(rawValue)
@@ -229,7 +238,8 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     this.maxPriceLimit.set(this.maxAvailablePrice());
   }
 
-  protected onSortChange(rawValue: string) {
+  protected onSortChange(event: Event) {
+    const rawValue = (event.target as HTMLSelectElement).value;
     if (
       rawValue !== 'newest' &&
       rawValue !== 'oldest' &&
@@ -242,8 +252,9 @@ export class MaintenanceListComponent<T extends MaintenanceListRecord> {
     this.selectedSort.set(rawValue);
   }
 
-  protected onTitleSearchChange(rawValue: string) {
-    this.titleSearch.set(rawValue.trimStart());
+  protected onTitleSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.titleSearch.set(value.trimStart());
   }
 
   protected hasMileageWarning(record: T): boolean {

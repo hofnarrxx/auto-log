@@ -58,13 +58,11 @@
     formControlName="licensePlate"
   />
 
-  <input type="file" accept="image/*" (change)="onFileSelected($event)" />
-
-  @if (selectedImagePreviewUrl) {
-    <div>
-      <img [src]="selectedImagePreviewUrl" width="200" />
-    </div>
-  }
+  <app-vehicle-image-picker
+    [currentImageUrl]="vehicle?.imageUrl"
+    (imageSelected)="onImageSelected($event)"
+  >
+  </app-vehicle-image-picker>
 
   <div class="buttons">
     <button type="button" class="cancel" (click)="cancel()">

@@ -2,14 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { LucideAngularModule } from 'lucide-angular';
-import { FuelListComponent } from '../../../../shared/ui/fuel-list/fuel-list.component';
-import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/fuel-record.utils';
-import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
+import { Modal } from '../../../../shared/ui/modal/modal';
+import { FuelList } from '../../ui/fuel-list/fuel-list';
+import { FuelRecordDetails } from '../../ui/fuel-record-details/fuel-record-details';
 import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
+import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
 import type { FuelRecord, FuelRecordPayload } from '../../models';
 import { FuelStore } from '../../fuel-store';
 
@@ -20,9 +20,9 @@ import { FuelStore } from '../../fuel-store';
     ReactiveFormsModule,
     TranslateModule,
     LucideAngularModule,
-    FuelListComponent,
-    DateFormatPipe,
-    MoneyPipe,
+    Modal,
+    FuelList,
+    FuelRecordDetails,
   ],
   templateUrl: './vehicle-fuel-tab.html',
   styleUrl: './vehicle-fuel-tab.css',
@@ -78,24 +78,6 @@ export class VehicleFuelTab {
   protected readonly mileageWarningRecordIds = computed(() =>
     findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
   );
-
-  protected formatFuelAmount(amount: number | null | undefined): string {
-    return formatFuelAmount(amount);
-  }
-
-  protected formatPricePerLitre(
-    cost: number | null | undefined,
-    amount: number | null | undefined,
-    currency?: string
-  ): string {
-    const pricePerLitre = getFuelPricePerUnit({ cost: cost ?? null, amount: amount ?? null });
-
-    if (pricePerLitre === null) {
-      return '-';
-    }
-
-    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
-  }
 
   protected hasMileageWarning(record: FuelRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);

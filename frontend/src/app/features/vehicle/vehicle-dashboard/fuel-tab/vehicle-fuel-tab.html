@@ -17,9 +17,7 @@
   }
 
   @if (isModalOpen()) {
-    <div class="fuel-modal-backdrop" (click)="closeModal()"></div>
-
-    <div class="fuel-modal" (click)="$event.stopPropagation()">
+    <app-modal [style.--modal-width]="'min(460px, calc(100vw - 28px))'" (closed)="closeModal()">
       <h2>{{ modalTitle() | translate }}</h2>
 
       @if (isCreateMode()) {
@@ -99,47 +97,8 @@
           </div>
         </form>
       } @else if (selectedRecord(); as record) {
-        <div class="record-details">
-          <div class="detail-row">
-            <span class="label">{{ 'common.date' | translate }}</span>
-            <span>{{ record.date | dateFormat }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.amount' | translate }}</span>
-            <span>{{ formatFuelAmount(record.amount) }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.cost' | translate }}</span>
-            <span>{{ record.cost | money: record.currency }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.pricePerLitre' | translate }}</span>
-            <span>{{ formatPricePerLitre(record.cost, record.amount, record.currency) }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.mileage' | translate }}</span>
-            <span>
-              {{ record.mileage ?? '-' }} km
-              @if (hasMileageWarning(record)) {
-                <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate"
-                  >▲</span
-                >
-              }
-            </span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.gasStation' | translate }}</span>
-            <span>{{ record.gasStation || '-' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.created' | translate }}</span>
-            <span>{{ record.createdAt | dateFormat: 'datetime' }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">{{ 'common.updated' | translate }}</span>
-            <span>{{ record.updatedAt | dateFormat: 'datetime' }}</span>
-          </div>
-        </div>
+        <app-fuel-record-details [record]="record" [hasMileageWarning]="hasMileageWarning(record)">
+        </app-fuel-record-details>
 
         <div class="modal-actions">
           <button type="button" class="secondary-btn" (click)="closeModal()">
@@ -158,6 +117,6 @@
           </button>
         </div>
       }
-    </div>
+    </app-modal>
   }
 </div>

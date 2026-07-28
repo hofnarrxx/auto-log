@@ -1,0 +1,29 @@
+.record-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.detail-row span {
+  color: var(--text);
+}
+
+.label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.detail-warning {
+  color: var(--danger);
+  font-size: 12px;
+  margin-left: 6px;
+}

@@ -1,0 +1,7 @@
+<input type="file" accept="image/*" (change)="onFileSelected($event)" />
+
+@if (previewUrl()) {
+  <div class="preview">
+    <img [src]="previewUrl()" width="200" />
+  </div>
+}

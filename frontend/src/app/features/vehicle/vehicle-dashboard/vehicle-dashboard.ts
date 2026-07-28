@@ -2,17 +2,15 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ShareLinkResponse } from '../models';
 import { VehicleStore } from '../vehicle-store';
 import { FuelStore } from '../fuel-store';
 import { MaintenanceStore } from '../maintenance-store';
 import { VehicleForm } from '../vehicle-form/vehicle-form';
 import { Modal } from '../../../shared/ui/modal/modal';
-import { NotificationService } from '../../../shared/services/notification.service';
 import { VehicleDetailsTab } from './details-tab/vehicle-details-tab';
 import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab';
 import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
-import { finalize } from 'rxjs';
+import { ShareLinkModal } from './share-link-modal/share-link-modal';
 
 @Component({
   selector: 'app-vehicle-dashboard',
@@ -22,6 +20,7 @@ import { finalize } from 'rxjs';
     VehicleDetailsTab,
     VehicleMaintenanceTab,
     VehicleFuelTab,
+    ShareLinkModal,
     TranslateModule,
   ],
   providers: [FuelStore, MaintenanceStore],
@@ -32,16 +31,8 @@ export class VehicleDashboard {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private vehicleStore = inject(VehicleStore);
-  private notifications = inject(NotificationService);
   showEditModal = signal(false);
   showShareModal = signal(false);
-  shareLinks = signal<ShareLinkResponse[]>([]);
-  isLoadingShareLinks = signal(false);
-  isCreatingShareLink = signal(false);
-  deletingShareLinkId = signal<number | null>(null);
-  shareAttachments = signal(true);
-  private readonly maxActiveShareLinks = 1;
-  readonly canCreateShareLink = computed(() => this.shareLinks().length < this.maxActiveShareLinks);
   private queryParamMap = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
@@ -80,151 +71,11 @@ export class VehicleDashboard {
   }
 
   openShareModal() {
-    const vehicle = this.vehicle();
-    if (!vehicle) return;
-
-    this.isLoadingShareLinks.set(true);
-    this.shareLinks.set([]);
-    this.shareAttachments.set(true);
-
-    this.vehicleStore
-      .listShareLinks(vehicle.id)
-      .pipe(finalize(() => this.isLoadingShareLinks.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.shareLinks.set(this.filterActiveLinks(response));
-          this.showShareModal.set(true);
-        },
-        error: () => {
-          this.notifications.notifyError('vehicle.dashboard.share.errors.load');
-          this.showShareModal.set(true);
-        },
-      });
+    this.showShareModal.set(true);
   }
 
   closeShareModal() {
     this.showShareModal.set(false);
-    this.shareLinks.set([]);
-    this.deletingShareLinkId.set(null);
-    this.shareAttachments.set(true);
-  }
-
-  async copyShareLink(token: string) {
-    const link = this.shareUrl(token);
-    if (!link) {
-      return;
-    }
-
-    let copied = false;
-
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(link);
-        copied = true;
-      } catch {
-        copied = false;
-      }
-    }
-
-    if (!copied) {
-      copied = this.copyWithFallback(link);
-    }
-
-    if (copied) {
-      this.notifications.notifySuccess('vehicle.dashboard.share.copySuccess');
-    }
-  }
-
-  deleteShareLink(linkId: number) {
-    if (this.deletingShareLinkId() === linkId) {
-      return;
-    }
-
-    this.deletingShareLinkId.set(linkId);
-
-    this.vehicleStore
-      .revokeShareLink(linkId)
-      .pipe(finalize(() => this.deletingShareLinkId.set(null)))
-      .subscribe({
-        next: () => {
-          this.shareLinks.update((links) => links.filter((link) => link.id !== linkId));
-        },
-        error: () => {
-          this.notifications.notifyError('vehicle.dashboard.share.errors.delete');
-        },
-      });
-  }
-
-  createShareLink() {
-    const vehicle = this.vehicle();
-    if (!vehicle || !this.canCreateShareLink()) {
-      return;
-    }
-
-    this.isCreatingShareLink.set(true);
-
-    this.vehicleStore
-      .createShareLink(vehicle.id, this.shareAttachments())
-      .pipe(finalize(() => this.isCreatingShareLink.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.shareLinks.update((links) =>
-            [response, ...links].slice(0, this.maxActiveShareLinks)
-          );
-        },
-        error: () => {
-          this.notifications.notifyError('vehicle.dashboard.share.errors.generate');
-        },
-      });
-  }
-
-  remainingTime(expiresAt: string | null): string {
-    if (!expiresAt) {
-      return '0 d 00 h';
-    }
-
-    const expiresAtMs = new Date(expiresAt).getTime();
-    const nowMs = Date.now();
-    const diffMs = Math.max(0, expiresAtMs - nowMs);
-    const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const days = Math.floor(totalHours / 24);
-    const hours = totalHours % 24;
-
-    return `${days} d ${hours.toString().padStart(2, '0')} h`;
-  }
-
-  shareUrl(token: string): string {
-    return token ? `${window.location.origin}/share/${token}` : '';
-  }
-
-  private filterActiveLinks(links: ShareLinkResponse[]): ShareLinkResponse[] {
-    const now = Date.now();
-    return links.filter((link) => {
-      if (link.revoked) {
-        return false;
-      }
-
-      if (!link.expiresAt) {
-        return true;
-      }
-
-      return new Date(link.expiresAt).getTime() > now;
-    });
-  }
-
-  private copyWithFallback(text: string): boolean {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-
-    try {
-      return document.execCommand('copy');
-    } finally {
-      document.body.removeChild(textarea);
-    }
   }
 
   deleteVehicle() {

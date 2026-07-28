@@ -1,22 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, computed, inject, signal } from '@angular/core';
+import { Component, Input, computed, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../shared/pipes';
-import { MaintenanceListComponent } from '../../shared/ui/maintenance-list/maintenance-list.component';
+import { Modal } from '../../shared/ui/modal/modal';
 import { findMileageWarningRecordIds } from '../../shared/utils/mileage.utils';
+import { MaintenanceList } from '../vehicle/ui/maintenance-list/maintenance-list';
+import { MaintenanceRecordDetails } from '../vehicle/ui/maintenance-record-details/maintenance-record-details';
 import type { MaintenanceRecord } from '../vehicle/models';
 
 @Component({
   selector: 'app-shared-vehicle-maintenance-tab',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TranslateModule,
-    MaintenanceListComponent,
-    CategoryLabelPipe,
-    DateFormatPipe,
-    MoneyPipe,
-  ],
+  imports: [CommonModule, TranslateModule, Modal, MaintenanceList, MaintenanceRecordDetails],
   templateUrl: './shared-vehicle-maintenance-tab.html',
   styleUrl: './shared-vehicle-maintenance-tab.css',
 })

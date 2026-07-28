@@ -15,13 +15,13 @@
           type="text"
           [placeholder]="getTitleTranslationKey('placeholders.search') | translate"
           [value]="gasStationSearch()"
-          (input)="onGasStationSearchChange($any($event.target).value)"
+          (input)="onGasStationSearchChange($event)"
         />
       </label>
 
       <label class="sort-control">
         <span>{{ 'common.sortBy' | translate }}</span>
-        <select [value]="selectedSort()" (change)="onSortChange($any($event.target).value)">
+        <select [value]="selectedSort()" (change)="onSortChange($event)">
           <option value="newest">{{ 'common.sort.newest' | translate }}</option>
           <option value="oldest">{{ 'common.sort.oldest' | translate }}</option>
           <option value="price-low-high">{{ 'common.sort.priceLowHigh' | translate }}</option>

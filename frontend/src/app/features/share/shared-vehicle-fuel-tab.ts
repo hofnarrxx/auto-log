@@ -1,17 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { DateFormatPipe, MoneyPipe } from '../../shared/pipes';
 import { CurrencyService } from '../../shared/services/currency.service';
-import { FuelListComponent } from '../../shared/ui/fuel-list/fuel-list.component';
-import { formatFuelAmount, getFuelPricePerUnit } from '../../shared/utils/fuel-record.utils';
+import { Modal } from '../../shared/ui/modal/modal';
 import { findMileageWarningRecordIds } from '../../shared/utils/mileage.utils';
+import { FuelList } from '../vehicle/ui/fuel-list/fuel-list';
+import { FuelRecordDetails } from '../vehicle/ui/fuel-record-details/fuel-record-details';
 import type { FuelRecord } from '../vehicle/models';
 
 @Component({
   selector: 'app-shared-vehicle-fuel-tab',
-  standalone: true,
-  imports: [CommonModule, TranslateModule, FuelListComponent, DateFormatPipe, MoneyPipe],
+  imports: [CommonModule, TranslateModule, Modal, FuelList, FuelRecordDetails],
   templateUrl: './shared-vehicle-fuel-tab.html',
   styleUrl: './shared-vehicle-fuel-tab.css',
 })
@@ -47,24 +46,6 @@ export class SharedVehicleFuelTab {
   protected readonly mileageWarningRecordIds = computed(() =>
     findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
   );
-
-  protected formatFuelAmount(amount: number | null | undefined): string {
-    return formatFuelAmount(amount);
-  }
-
-  protected formatPricePerLitre(
-    cost: number | null | undefined,
-    amount: number | null | undefined,
-    currency?: string
-  ): string {
-    const pricePerLitre = getFuelPricePerUnit({ cost: cost ?? null, amount: amount ?? null });
-
-    if (pricePerLitre === null) {
-      return '-';
-    }
-
-    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
-  }
 
   protected hasMileageWarning(record: FuelRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);

@@ -1,0 +1,56 @@
+<div class="record-details">
+  <div class="detail-row">
+    <span class="label">{{ 'common.title' | translate }}</span>
+    <span>{{ record.title || '-' }}</span>
+  </div>
+  <div class="detail-row">
+    <span class="label">{{ 'common.date' | translate }}</span>
+    <span>{{ record.serviceDate | dateFormat }}</span>
+  </div>
+  <div class="detail-row">
+    <span class="label">{{ 'common.category' | translate }}</span>
+    <span>{{ record.category | categoryLabel | translate }}</span>
+  </div>
+  <div class="detail-row">
+    <span class="label">{{ 'common.mileage' | translate }}</span>
+    <span>
+      {{ record.mileage ?? '-' }}
+      @if (hasMileageWarning) {
+        <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate">▲</span>
+      }
+    </span>
+  </div>
+  <div class="detail-row">
+    <span class="label">{{ 'common.cost' | translate }}</span>
+    <span>{{ record.cost | money: record.currency }}</span>
+  </div>
+  <div class="detail-row description">
+    <span class="label">{{ 'common.description' | translate }}</span>
+    <p>{{ record.description }}</p>
+  </div>
+  @if (record.attachments?.length) {
+    <div class="detail-row">
+      <span class="label">{{ 'common.attachments' | translate }}</span>
+      <ul class="attachments-list">
+        @for (attachment of record.attachments; track attachment.id) {
+          <li>
+            <span>{{ attachment.fileName }}</span>
+            @if (attachmentsOpenable) {
+              <button type="button" class="link-btn" (click)="openAttachment(attachment)">
+                {{ 'common.open' | translate }}
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+  <div class="detail-row">
+    <span class="label">{{ 'common.created' | translate }}</span>
+    <span>{{ record.createdAt | dateFormat: 'datetime' }}</span>
+  </div>
+  <div class="detail-row">
+    <span class="label">{{ 'common.updated' | translate }}</span>
+    <span>{{ record.updatedAt | dateFormat: 'datetime' }}</span>
+  </div>
+</div>

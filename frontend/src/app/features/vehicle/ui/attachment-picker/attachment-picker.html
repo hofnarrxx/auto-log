@@ -1,0 +1,22 @@
+<label class="attachments-field">
+  {{ 'common.attachments' | translate }}
+  <input
+    type="file"
+    accept="image/*,application/pdf"
+    multiple
+    (change)="onFileInputChange($event)"
+  />
+</label>
+
+@if (pendingFiles.length) {
+  <ul class="attachments-list pending">
+    @for (file of pendingFiles; track $index) {
+      <li>
+        <span>{{ file.name }}</span>
+        <button type="button" class="link-btn" (click)="removePending($index)">
+          {{ 'common.remove' | translate }}
+        </button>
+      </li>
+    }
+  </ul>
+}

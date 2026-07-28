@@ -3,13 +3,15 @@ import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, map, of, switchMap, throwError } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { LucideAngularModule } from 'lucide-angular';
-import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
+import { CategoryLabelPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
-import { MaintenanceListComponent } from '../../../../shared/ui/maintenance-list/maintenance-list.component';
+import { Modal } from '../../../../shared/ui/modal/modal';
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
 import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
+import { AttachmentPicker } from '../../ui/attachment-picker/attachment-picker';
+import { MaintenanceList } from '../../ui/maintenance-list/maintenance-list';
+import { MaintenanceRecordDetails } from '../../ui/maintenance-record-details/maintenance-record-details';
 import { MaintenanceStore } from '../../maintenance-store';
 import type {
   MaintenanceAttachment,
@@ -26,11 +28,11 @@ type ModalMode = 'closed' | 'create' | 'view' | 'edit';
     ReactiveFormsModule,
     CommonModule,
     TranslateModule,
-    LucideAngularModule,
-    MaintenanceListComponent,
+    Modal,
+    MaintenanceList,
+    MaintenanceRecordDetails,
+    AttachmentPicker,
     CategoryLabelPipe,
-    DateFormatPipe,
-    MoneyPipe,
   ],
   templateUrl: './vehicle-maintenance-tab.html',
   styleUrl: './vehicle-maintenance-tab.css',
@@ -218,13 +220,8 @@ export class VehicleMaintenanceTab {
     return this.mileageWarningRecordIds().has(record.id);
   }
 
-  protected onAttachmentSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
-
-    const selected = Array.from(input.files);
+  protected onAttachmentsSelected(files: FileList) {
+    const selected = Array.from(files);
     const valid = selected.filter((file) => this.attachmentService.isAllowedAttachment(file));
     if (valid.length !== selected.length) {
       this.notifications.notifyError('vehicle.maintenanceTab.errors.invalidAttachmentType');
@@ -239,7 +236,6 @@ export class VehicleMaintenanceTab {
     }
 
     this.pendingAttachments.set([...existing, ...withinLimit]);
-    input.value = '';
   }
 
   protected removePendingAttachment(index: number) {

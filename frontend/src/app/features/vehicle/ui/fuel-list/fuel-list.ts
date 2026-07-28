@@ -2,25 +2,24 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
-import { DateFormatPipe, MoneyPipe } from '../../pipes';
-import { CurrencyService } from '../../services/currency.service';
-import { formatFuelAmount, getFuelPricePerUnit } from '../../utils/fuel-record.utils';
+import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
+import { CurrencyService } from '../../../../shared/services/currency.service';
+import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/fuel-record.utils';
 import {
   type FuelListRecord,
   type FuelSortOption,
   filterFuelRecords,
   sortFuelRecords,
-} from '../../utils/fuel-list.utils';
-import { findMileageWarningRecordIds } from '../../utils/mileage.utils';
+} from '../../../../shared/utils/fuel-list.utils';
+import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 
 @Component({
   selector: 'app-fuel-list',
-  standalone: true,
   imports: [CommonModule, TranslateModule, LucideAngularModule, DateFormatPipe, MoneyPipe],
-  templateUrl: './fuel-list.component.html',
-  styleUrl: './fuel-list.component.css',
+  templateUrl: './fuel-list.html',
+  styleUrl: './fuel-list.css',
 })
-export class FuelListComponent<T extends FuelListRecord> {
+export class FuelList<T extends FuelListRecord> {
   private readonly currencyService = inject(CurrencyService);
 
   protected readonly fuelRecords = signal<T[]>([]);
@@ -96,11 +95,13 @@ export class FuelListComponent<T extends FuelListRecord> {
     return this.mileageWarningRecordIds().has(record.id);
   }
 
-  protected onGasStationSearchChange(rawValue: string) {
-    this.gasStationSearch.set(rawValue.trimStart());
+  protected onGasStationSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.gasStationSearch.set(value.trimStart());
   }
 
-  protected onSortChange(rawValue: string) {
+  protected onSortChange(event: Event) {
+    const rawValue = (event.target as HTMLSelectElement).value;
     if (
       rawValue !== 'newest' &&
       rawValue !== 'oldest' &&

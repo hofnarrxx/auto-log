@@ -10,29 +10,23 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
 import type { UpdateVehicleCommand, Vehicle as VehicleModel } from '../models';
-import { of, switchMap, map } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { FUEL_TYPES, getFuelTypeLabelKey } from '../../../shared/utils/fuel-type.utils';
 import { toCreateVehicleCommand, toUpdateVehicleCommand } from './vehicle-form.mapper';
-import { VehicleApi } from '../services/vehicle-api';
-import { ObjectStorageApi } from '../../../shared/services/object-storage-api';
+import { VehicleImageService } from '../services/vehicle-image.service';
+import { VehicleImagePicker } from '../ui/vehicle-image-picker/vehicle-image-picker';
 
 @Component({
   selector: 'app-vehicle-form',
-  imports: [ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslateModule, VehicleImagePicker],
   templateUrl: './vehicle-form.html',
   styleUrl: './vehicle-form.css',
 })
 export class VehicleForm {
   private vehicleStore = inject(VehicleStore);
-  private vehicleApi = inject(VehicleApi);
-  private objectStorageApi = inject(ObjectStorageApi);
-  private static readonly MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-  private static readonly MAX_IMAGE_DIMENSION = 1600;
-  private static readonly IMAGE_QUALITY = 0.75;
+  private vehicleImageService = inject(VehicleImageService);
   @Input() vehicle?: VehicleModel;
   @Output() closed = new EventEmitter<void>();
-  selectedImagePreviewUrl: string | null = null;
-  private previewObjectUrl: string | null = null;
   private selectedImageFile: File | null = null;
   private currentImageKey: string | null = null;
 
@@ -66,7 +60,6 @@ export class VehicleForm {
   ngOnInit() {
     if (this.vehicle) {
       this.form.patchValue(this.vehicle);
-      this.selectedImagePreviewUrl = this.vehicle.imageUrl ?? null;
       this.currentImageKey = this.vehicle.imageKey ?? null;
     }
   }
@@ -86,31 +79,8 @@ export class VehicleForm {
     this.closed.emit();
   }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-
-    if (!input.files || input.files.length === 0) return;
-
-    const file = input.files[0];
-
-    this.prepareImage(file)
-      .then((prepared) => {
-        if (prepared.size > VehicleForm.MAX_IMAGE_BYTES) {
-          return;
-        }
-
-        this.selectedImageFile = prepared;
-
-        if (this.previewObjectUrl) {
-          URL.revokeObjectURL(this.previewObjectUrl);
-        }
-
-        this.previewObjectUrl = URL.createObjectURL(prepared);
-        this.selectedImagePreviewUrl = this.previewObjectUrl;
-      })
-      .catch(() => {
-        // Skip preview if compression fails; selection remains unchanged.
-      });
+  protected onImageSelected(file: File) {
+    this.selectedImageFile = file;
   }
 
   private saveExistingVehicle() {
@@ -126,7 +96,7 @@ export class VehicleForm {
     }
 
     const update$ = this.selectedImageFile
-      ? this.uploadSelectedImage(vehicleId, this.selectedImageFile).pipe(
+      ? this.vehicleImageService.upload(vehicleId, this.selectedImageFile).pipe(
           switchMap((objectKey) => {
             this.currentImageKey = objectKey;
             return this.vehicleStore.update({ ...command, imageKey: objectKey });
@@ -154,7 +124,7 @@ export class VehicleForm {
             return of(created);
           }
 
-          return this.uploadSelectedImage(created.id, this.selectedImageFile).pipe(
+          return this.vehicleImageService.upload(created.id, this.selectedImageFile).pipe(
             switchMap((objectKey) => {
               const update: UpdateVehicleCommand = {
                 ...command,
@@ -170,48 +140,5 @@ export class VehicleForm {
       .subscribe(() => {
         this.closed.emit();
       });
-  }
-
-  private uploadSelectedImage(vehicleId: number, file: File) {
-    return this.vehicleApi
-      .requestImageUploadUrl(vehicleId, file)
-      .pipe(
-        switchMap((response) =>
-          this.objectStorageApi.upload(response.uploadUrl, file).pipe(map(() => response.objectKey))
-        )
-      );
-  }
-
-  private async prepareImage(file: File): Promise<File> {
-    if (!file.type.startsWith('image/')) {
-      return file;
-    }
-
-    const maxSize = VehicleForm.MAX_IMAGE_DIMENSION;
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
-    const width = Math.max(1, Math.round(bitmap.width * scale));
-    const height = Math.max(1, Math.round(bitmap.height * scale));
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return file;
-    }
-
-    ctx.drawImage(bitmap, 0, 0, width, height);
-
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, 'image/jpeg', VehicleForm.IMAGE_QUALITY)
-    );
-
-    if (!blob) {
-      return file;
-    }
-
-    const name = file.name.replace(/\.[^.]+$/, '.jpg');
-    return new File([blob], name, { type: 'image/jpeg' });
   }
 }

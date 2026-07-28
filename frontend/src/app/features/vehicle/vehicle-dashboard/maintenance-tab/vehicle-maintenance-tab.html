@@ -15,225 +15,152 @@
   }
 
   @if (isModalOpen()) {
-    <div class="service-modal-backdrop" (click)="closeModal()"></div>
+    <app-modal [style.--modal-width]="'min(560px, calc(100vw - 32px))'" (closed)="closeModal()">
+      @if (isFormMode()) {
+        <h2>{{ modalTitle() | translate }}</h2>
 
-    <div class="service-modal" (click)="$event.stopPropagation()">
-      <div class="record-modal-content">
-        @if (isFormMode()) {
-          <h2>{{ modalTitle() | translate }}</h2>
+        <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
+          <label>
+            {{ 'common.title' | translate }}
+            <input
+              type="text"
+              formControlName="title"
+              maxlength="50"
+              [placeholder]="'vehicle.maintenanceTab.placeholders.title' | translate"
+            />
+          </label>
 
-          <form class="record-form" [formGroup]="form" (ngSubmit)="saveRecord()">
-            <label>
-              {{ 'common.title' | translate }}
-              <input
-                type="text"
-                formControlName="title"
-                maxlength="50"
-                [placeholder]="'vehicle.maintenanceTab.placeholders.title' | translate"
-              />
-            </label>
+          @if (form.controls.title.invalid && form.controls.title.touched) {
+            <p class="error-text">
+              {{ 'vehicle.maintenanceTab.errors.titleRequired' | translate }}
+            </p>
+          }
 
-            @if (form.controls.title.invalid && form.controls.title.touched) {
-              <p class="error-text">
-                {{ 'vehicle.maintenanceTab.errors.titleRequired' | translate }}
-              </p>
-            }
+          <label>
+            {{ 'common.date' | translate }}
+            <input type="date" formControlName="serviceDate" />
+          </label>
 
-            <label>
-              {{ 'common.date' | translate }}
-              <input type="date" formControlName="serviceDate" />
-            </label>
+          @if (form.controls.serviceDate.invalid && form.controls.serviceDate.touched) {
+            <p class="error-text">
+              {{ 'vehicle.maintenanceTab.errors.serviceDateRequired' | translate }}
+            </p>
+          }
 
-            @if (form.controls.serviceDate.invalid && form.controls.serviceDate.touched) {
-              <p class="error-text">
-                {{ 'vehicle.maintenanceTab.errors.serviceDateRequired' | translate }}
-              </p>
-            }
+          <label>
+            {{ 'common.category' | translate }}
+            <select formControlName="category">
+              <option value="" disabled>{{ 'common.selectCategory' | translate }}</option>
+              @for (category of categories(); track category) {
+                <option [value]="category">{{ category | categoryLabel | translate }}</option>
+              }
+            </select>
+          </label>
 
-            <label>
-              {{ 'common.category' | translate }}
-              <select formControlName="category">
-                <option value="" disabled>{{ 'common.selectCategory' | translate }}</option>
-                @for (category of categories(); track category) {
-                  <option [value]="category">{{ category | categoryLabel | translate }}</option>
-                }
-              </select>
-            </label>
+          @if (form.controls.category.invalid && form.controls.category.touched) {
+            <p class="error-text">
+              {{ 'vehicle.maintenanceTab.errors.categoryRequired' | translate }}
+            </p>
+          }
 
-            @if (form.controls.category.invalid && form.controls.category.touched) {
-              <p class="error-text">
-                {{ 'vehicle.maintenanceTab.errors.categoryRequired' | translate }}
-              </p>
-            }
+          <div class="cost-currency-row">
+            <div class="field-group">
+              <label>
+                {{ 'common.cost' | translate }}
+                <input type="number" formControlName="cost" min="0" step="0.01" />
+              </label>
 
-            <div class="cost-currency-row">
-              <div class="field-group">
-                <label>
-                  {{ 'common.cost' | translate }}
-                  <input type="number" formControlName="cost" min="0" step="0.01" />
-                </label>
-
-                @if (form.controls.cost.invalid && form.controls.cost.touched) {
-                  <p class="error-text">
-                    {{ 'vehicle.maintenanceTab.errors.costRequired' | translate }}
-                  </p>
-                }
-              </div>
-
-              <div class="field-group">
-                <label>
-                  {{ 'common.currency' | translate }}
-                  <select formControlName="currency">
-                    <option value="EUR">EUR</option>
-                    <option value="USD">USD</option>
-                    <option value="PLN">PLN</option>
-                  </select>
-                </label>
-
-                @if (form.controls.currency.invalid && form.controls.currency.touched) {
-                  <p class="error-text">
-                    {{ 'vehicle.maintenanceTab.errors.currencyRequired' | translate }}
-                  </p>
-                }
-              </div>
+              @if (form.controls.cost.invalid && form.controls.cost.touched) {
+                <p class="error-text">
+                  {{ 'vehicle.maintenanceTab.errors.costRequired' | translate }}
+                </p>
+              }
             </div>
 
-            <label>
-              {{ 'common.mileage' | translate }} (km)
-              <input type="number" formControlName="mileage" min="0" step="1" />
-            </label>
+            <div class="field-group">
+              <label>
+                {{ 'common.currency' | translate }}
+                <select formControlName="currency">
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                  <option value="PLN">PLN</option>
+                </select>
+              </label>
 
-            @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-              <p class="error-text">
-                {{ 'vehicle.maintenanceTab.errors.mileageRequired' | translate }}
-              </p>
-            }
-
-            <label>
-              {{ 'common.description' | translate }}
-              <textarea formControlName="description" rows="4"></textarea>
-            </label>
-
-            @if (form.controls.description.invalid && form.controls.description.touched) {
-              <p class="error-text">
-                {{ 'vehicle.maintenanceTab.errors.descriptionMaxLength' | translate }}
-              </p>
-            }
-
-            <label class="attachments-field">
-              {{ 'common.attachments' | translate }}
-              <input
-                type="file"
-                accept="image/*,application/pdf"
-                multiple
-                (change)="onAttachmentSelected($event)"
-              />
-            </label>
-
-            @if (pendingAttachments().length) {
-              <ul class="attachments-list pending">
-                @for (file of pendingAttachments(); track $index) {
-                  <li>
-                    <span>{{ file.name }}</span>
-                    <button
-                      type="button"
-                      class="link-btn"
-                      (click)="removePendingAttachment($index)"
-                    >
-                      {{ 'common.remove' | translate }}
-                    </button>
-                  </li>
-                }
-              </ul>
-            }
-
-            <div class="modal-actions">
-              <button type="button" class="secondary-btn" (click)="closeModal()">
-                {{ 'common.cancel' | translate }}
-              </button>
-              <button type="submit" class="primary-btn" [disabled]="isSaving()">
-                {{ isSaving() ? ('common.saving' | translate) : ('common.save' | translate) }}
-              </button>
-            </div>
-          </form>
-        } @else if (selectedRecord(); as record) {
-          <h2>{{ 'vehicle.maintenanceTab.detailsTitle' | translate }}</h2>
-
-          <div class="record-details">
-            <div class="detail-row">
-              <span class="label">{{ 'common.title' | translate }}</span>
-              <span>{{ record.title || '-' }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">{{ 'common.date' | translate }}</span>
-              <span>{{ record.serviceDate | dateFormat }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">{{ 'common.category' | translate }}</span>
-              <span>{{ record.category | categoryLabel | translate }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">{{ 'common.mileage' | translate }}</span>
-              <span>
-                {{ record.mileage ?? '-' }}
-                @if (hasMileageWarning(record)) {
-                  <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate"
-                    >▲</span
-                  >
-                }
-              </span>
-            </div>
-            <div class="detail-row">
-              <span class="label">{{ 'common.cost' | translate }}</span>
-              <span>{{ record.cost | money: record.currency }}</span>
-            </div>
-            <div class="detail-row description">
-              <span class="label">{{ 'common.description' | translate }}</span>
-              <p>{{ record.description }}</p>
-            </div>
-            @if (record.attachments?.length) {
-              <div class="detail-row">
-                <span class="label">{{ 'common.attachments' | translate }}</span>
-                <ul class="attachments-list">
-                  @for (attachment of record.attachments; track attachment.id) {
-                    <li>
-                      <span>{{ attachment.fileName }}</span>
-                      <button type="button" class="link-btn" (click)="openAttachment(attachment)">
-                        {{ 'common.open' | translate }}
-                      </button>
-                    </li>
-                  }
-                </ul>
-              </div>
-            }
-            <div class="detail-row">
-              <span class="label">{{ 'common.created' | translate }}</span>
-              <span>{{ record.createdAt | dateFormat: 'datetime' }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">{{ 'common.updated' | translate }}</span>
-              <span>{{ record.updatedAt | dateFormat: 'datetime' }}</span>
+              @if (form.controls.currency.invalid && form.controls.currency.touched) {
+                <p class="error-text">
+                  {{ 'vehicle.maintenanceTab.errors.currencyRequired' | translate }}
+                </p>
+              }
             </div>
           </div>
+
+          <label>
+            {{ 'common.mileage' | translate }} (km)
+            <input type="number" formControlName="mileage" min="0" step="1" />
+          </label>
+
+          @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+            <p class="error-text">
+              {{ 'vehicle.maintenanceTab.errors.mileageRequired' | translate }}
+            </p>
+          }
+
+          <label>
+            {{ 'common.description' | translate }}
+            <textarea formControlName="description" rows="4"></textarea>
+          </label>
+
+          @if (form.controls.description.invalid && form.controls.description.touched) {
+            <p class="error-text">
+              {{ 'vehicle.maintenanceTab.errors.descriptionMaxLength' | translate }}
+            </p>
+          }
+
+          <app-attachment-picker
+            [pendingFiles]="pendingAttachments()"
+            (filesSelected)="onAttachmentsSelected($event)"
+            (pendingRemoved)="removePendingAttachment($event)"
+          >
+          </app-attachment-picker>
 
           <div class="modal-actions">
             <button type="button" class="secondary-btn" (click)="closeModal()">
-              {{ 'common.close' | translate }}
+              {{ 'common.cancel' | translate }}
             </button>
-            <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">
-              {{ 'common.edit' | translate }}
-            </button>
-            <button
-              type="button"
-              class="danger-btn"
-              (click)="deleteSelectedRecord()"
-              [disabled]="isDeleting()"
-            >
-              {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
+            <button type="submit" class="primary-btn" [disabled]="isSaving()">
+              {{ isSaving() ? ('common.saving' | translate) : ('common.save' | translate) }}
             </button>
           </div>
-        }
-      </div>
-    </div>
+        </form>
+      } @else if (selectedRecord(); as record) {
+        <h2>{{ 'vehicle.maintenanceTab.detailsTitle' | translate }}</h2>
+
+        <app-maintenance-record-details
+          [record]="record"
+          [hasMileageWarning]="hasMileageWarning(record)"
+          [attachmentsOpenable]="true"
+          (attachmentOpened)="openAttachment($event)"
+        >
+        </app-maintenance-record-details>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" (click)="closeModal()">
+            {{ 'common.close' | translate }}
+          </button>
+          <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">
+            {{ 'common.edit' | translate }}
+          </button>
+          <button
+            type="button"
+            class="danger-btn"
+            (click)="deleteSelectedRecord()"
+            [disabled]="isDeleting()"
+          >
+            {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
+          </button>
+        </div>
+      }
+    </app-modal>
   }
 </div>
