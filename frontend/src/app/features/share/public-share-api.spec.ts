@@ -46,4 +46,18 @@ describe('PublicShareApi', () => {
     expect(req.request.method).toBe('GET');
     req.flush(response);
   });
+
+  it('requests a maintenance attachment download url for a shared vehicle', () => {
+    const response = { downloadUrl: 'https://files.test/attachment.pdf' };
+
+    api
+      .getMaintenanceAttachmentDownloadUrl('token-123', 5, 9)
+      .subscribe((result) => expect(result).toEqual(response));
+
+    const req = httpMock.expectOne(
+      `${BASE_URL}/share/token-123/maintenance/5/attachments/9/download-url`
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush(response);
+  });
 });

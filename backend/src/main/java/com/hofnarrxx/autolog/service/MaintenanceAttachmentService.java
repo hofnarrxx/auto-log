@@ -7,9 +7,11 @@ import com.hofnarrxx.autolog.dto.MaintenanceDownloadUrlResponse;
 import com.hofnarrxx.autolog.dto.MaintenanceUploadUrlRequest;
 import com.hofnarrxx.autolog.dto.MaintenanceUploadUrlResponse;
 import com.hofnarrxx.autolog.exception.MaintenanceNotFoundException;
+import com.hofnarrxx.autolog.exception.ShareLinkNotFoundException;
 import com.hofnarrxx.autolog.exception.VehicleNotFoundException;
 import com.hofnarrxx.autolog.model.Maintenance;
 import com.hofnarrxx.autolog.model.MaintenanceAttachment;
+import com.hofnarrxx.autolog.model.ShareLink;
 import com.hofnarrxx.autolog.repository.MaintenanceAttachmentRepository;
 import com.hofnarrxx.autolog.repository.MaintenanceRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
@@ -35,6 +37,7 @@ public class MaintenanceAttachmentService {
     private final MaintenanceAttachmentRepository attachmentRepository;
     private final VehicleRepository vehicleRepository;
     private final AuthService authService;
+    private final ShareLinkService shareLinkService;
     private final S3Presigner presigner;
     private final R2Properties properties;
 
@@ -42,12 +45,14 @@ public class MaintenanceAttachmentService {
                                         MaintenanceAttachmentRepository attachmentRepository,
                                         VehicleRepository vehicleRepository,
                                         AuthService authService,
+                                        ShareLinkService shareLinkService,
                                         S3Presigner presigner,
                                         R2Properties properties) {
         this.maintenanceRepository = maintenanceRepository;
         this.attachmentRepository = attachmentRepository;
         this.vehicleRepository = vehicleRepository;
         this.authService = authService;
+        this.shareLinkService = shareLinkService;
         this.presigner = presigner;
         this.properties = properties;
     }
@@ -101,6 +106,31 @@ public class MaintenanceAttachmentService {
             .findByIdAndMaintenanceId(attachmentId, maintenanceId)
             .orElseThrow(MaintenanceNotFoundException::new);
 
+        return presignDownload(attachment);
+        }
+
+    public MaintenanceDownloadUrlResponse createPublicDownloadUrl(String token,
+                                                                  Long maintenanceId,
+                                                                  Long attachmentId) {
+        ShareLink shareLink = shareLinkService.resolveActive(token)
+                .orElseThrow(ShareLinkNotFoundException::new);
+
+        if (!shareLink.isIncludeAttachments()) {
+            throw new MaintenanceNotFoundException();
+        }
+
+        Maintenance maintenance = maintenanceRepository
+                .findByIdAndVehicleId(maintenanceId, shareLink.getCarId())
+                .orElseThrow(MaintenanceNotFoundException::new);
+
+        MaintenanceAttachment attachment = attachmentRepository
+                .findByIdAndMaintenanceId(attachmentId, maintenance.getId())
+                .orElseThrow(MaintenanceNotFoundException::new);
+
+        return presignDownload(attachment);
+    }
+
+    private MaintenanceDownloadUrlResponse presignDownload(MaintenanceAttachment attachment) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
             .bucket(properties.bucket())
             .key(attachment.getObjectKey())
@@ -114,7 +144,7 @@ public class MaintenanceAttachmentService {
         );
 
         return new MaintenanceDownloadUrlResponse(presignedRequest.url().toString());
-        }
+    }
 
     public MaintenanceAttachmentResponse saveAttachment(Long vehicleId,
                                                         Long maintenanceId,

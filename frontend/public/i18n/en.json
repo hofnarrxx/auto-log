@@ -306,6 +306,9 @@
         "title": "Filter records",
         "categories": "Categories",
         "allCategories": "All categories"
+      },
+      "errors": {
+        "downloadFailed": "Unable to get a download link for the attachment."
       }
     }
   }

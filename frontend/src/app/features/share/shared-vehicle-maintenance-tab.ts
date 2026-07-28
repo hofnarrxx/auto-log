@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, computed, signal } from '@angular/core';
+import { Component, Input, computed, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { NotificationService } from '../../shared/services/notification.service';
 import { Modal } from '../../shared/ui/modal/modal';
 import { findMileageWarningRecordIds } from '../../shared/utils/mileage.utils';
 import { MaintenanceList } from '../vehicle/ui/maintenance-list/maintenance-list';
 import { MaintenanceRecordDetails } from '../vehicle/ui/maintenance-record-details/maintenance-record-details';
-import type { MaintenanceRecord } from '../vehicle/models';
+import type { MaintenanceAttachment, MaintenanceRecord } from '../vehicle/models';
+import { PublicShareApi } from './public-share-api';
 
 @Component({
   selector: 'app-shared-vehicle-maintenance-tab',
@@ -14,6 +16,11 @@ import type { MaintenanceRecord } from '../vehicle/models';
   styleUrl: './shared-vehicle-maintenance-tab.css',
 })
 export class SharedVehicleMaintenanceTab {
+  private readonly publicShareApi = inject(PublicShareApi);
+  private readonly notifications = inject(NotificationService);
+
+  @Input({ required: true }) token!: string;
+
   @Input({ required: true })
   set records(value: MaintenanceRecord[]) {
     this.serviceRecords.set(value ?? []);
@@ -41,5 +48,25 @@ export class SharedVehicleMaintenanceTab {
 
   protected hasMileageWarning(record: MaintenanceRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
+  }
+
+  protected openAttachment(attachment: MaintenanceAttachment) {
+    const record = this.selectedRecord();
+    if (!record) {
+      return;
+    }
+
+    this.publicShareApi
+      .getMaintenanceAttachmentDownloadUrl(this.token, record.id, attachment.id)
+      .subscribe({
+        next: (response) => {
+          if (response.downloadUrl) {
+            window.open(response.downloadUrl, '_blank', 'noopener');
+          }
+        },
+        error: () => {
+          this.notifications.notifyError('sharedVehicle.maintenanceTab.errors.downloadFailed');
+        },
+      });
   }
 }

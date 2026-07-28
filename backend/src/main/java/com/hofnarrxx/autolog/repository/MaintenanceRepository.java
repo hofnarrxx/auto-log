@@ -17,6 +17,8 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
 
     Optional<Maintenance> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 
+    Optional<Maintenance> findByIdAndVehicleId(Long id, Long vehicleId);
+
     @EntityGraph(attributePaths = "attachments")
     Optional<Maintenance> findWithAttachmentsByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 

@@ -306,6 +306,9 @@
         "title": "Filtruj wpisy",
         "categories": "Kategorie",
         "allCategories": "Wszystkie kategorie"
+      },
+      "errors": {
+        "downloadFailed": "Nie udało się pobrać linku do załącznika."
       }
     }
   }

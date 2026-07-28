@@ -80,7 +80,10 @@
 
       @if (activeTab() === 'maintenance') {
         <section class="section" role="tabpanel">
-          <app-shared-vehicle-maintenance-tab [records]="data()!.maintenanceEntries">
+          <app-shared-vehicle-maintenance-tab
+            [records]="data()!.maintenanceEntries"
+            [token]="token()"
+          >
           </app-shared-vehicle-maintenance-tab>
         </section>
       }

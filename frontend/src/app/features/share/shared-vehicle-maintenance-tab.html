@@ -19,6 +19,8 @@
         <app-maintenance-record-details
           [record]="record"
           [hasMileageWarning]="hasMileageWarning(record)"
+          [attachmentsOpenable]="true"
+          (attachmentOpened)="openAttachment($event)"
         >
         </app-maintenance-record-details>
 
