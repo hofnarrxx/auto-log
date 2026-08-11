@@ -5,7 +5,7 @@ import type {
   MaintenanceRecord,
   MaintenanceRecordPayload,
 } from './models';
-import { MaintenanceApiService } from './services/maintenance-api.service';
+import { MaintenanceApi } from './services/maintenance-api';
 
 const FALLBACK_CATEGORIES = [
   'Inspection',
@@ -24,7 +24,7 @@ const FALLBACK_CATEGORIES = [
  */
 @Injectable()
 export class MaintenanceStore {
-  private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly maintenanceApi = inject(MaintenanceApi);
   private readonly load$ = new Subject<number>();
 
   private readonly _records = signal<MaintenanceRecord[]>([]);

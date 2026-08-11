@@ -21,7 +21,7 @@ export type {
 @Injectable({
   providedIn: 'root',
 })
-export class MaintenanceApiService {
+export class MaintenanceApi {
   private readonly http = inject(HttpClient);
   private readonly apiBaseUrl = inject(API_BASE_URL);
   private readonly vehicleApi = `${this.apiBaseUrl}/vehicles`;

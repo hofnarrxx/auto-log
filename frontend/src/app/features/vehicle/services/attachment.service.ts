@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, concatMap, from, map, switchMap, toArray } from 'rxjs';
 import { ObjectStorageApi } from '../../../shared/services/object-storage-api';
-import { MaintenanceApiService } from './maintenance-api.service';
+import { MaintenanceApi } from './maintenance-api';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class AttachmentService {
   private static readonly IMAGE_QUALITY = 0.75;
 
   private readonly objectStorageApi = inject(ObjectStorageApi);
-  private readonly maintenanceApiService = inject(MaintenanceApiService);
+  private readonly maintenanceApi = inject(MaintenanceApi);
 
   isAllowedAttachment(file: File): boolean {
     return file.type === 'application/pdf' || file.type.startsWith('image/');
@@ -87,7 +87,7 @@ export class AttachmentService {
   }
 
   private requestUploadUrl(vehicleId: number, maintenanceId: number, file: File) {
-    return this.maintenanceApiService.getAttachmentUploadUrl(vehicleId, maintenanceId, file);
+    return this.maintenanceApi.getAttachmentUploadUrl(vehicleId, maintenanceId, file);
   }
 
   private uploadToR2(uploadUrl: string, file: File) {
@@ -100,11 +100,6 @@ export class AttachmentService {
     file: File,
     objectKey: string
   ) {
-    return this.maintenanceApiService.saveAttachmentMetadata(
-      vehicleId,
-      maintenanceId,
-      file,
-      objectKey
-    );
+    return this.maintenanceApi.saveAttachmentMetadata(vehicleId, maintenanceId, file, objectKey);
   }
 }

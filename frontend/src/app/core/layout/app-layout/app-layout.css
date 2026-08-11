@@ -17,33 +17,6 @@
   letter-spacing: 0.3px;
 }
 
-.vehicle-navbar-tabs {
-  display: flex;
-  gap: 10px;
-}
-
-.vehicle-navbar-tabs a {
-  color: var(--text-muted);
-  text-decoration: none;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 7px 14px;
-  background: rgba(10, 18, 32, 0.45);
-  transition: all 0.2s ease;
-}
-
-.vehicle-navbar-tabs a:hover {
-  color: var(--text);
-  border-color: rgba(34, 211, 238, 0.5);
-  background: rgba(34, 211, 238, 0.08);
-}
-
-.vehicle-navbar-tabs a.active {
-  color: #051018;
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
 .links a {
   color: var(--text);
   text-decoration: none;

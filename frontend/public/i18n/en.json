@@ -75,6 +75,11 @@
       "loadFailed": "Unable to load vehicles right now."
     }
   },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has moved.",
+    "backHome": "Back to my cars"
+  },
   "settings": {
     "title": "Settings",
     "selectCurrency": "Select currency",

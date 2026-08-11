@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import type { MaintenanceRecord, MaintenanceRecordPayload } from './models';
 import { MaintenanceStore } from './maintenance-store';
-import { MaintenanceApiService } from './services/maintenance-api.service';
+import { MaintenanceApi } from './services/maintenance-api';
 
 const RECORD: MaintenanceRecord = {
   id: 1,
@@ -30,10 +30,10 @@ const PAYLOAD: MaintenanceRecordPayload = {
 
 describe('MaintenanceStore', () => {
   let store: MaintenanceStore;
-  let maintenanceApi: jasmine.SpyObj<MaintenanceApiService>;
+  let maintenanceApi: jasmine.SpyObj<MaintenanceApi>;
 
   beforeEach(() => {
-    maintenanceApi = jasmine.createSpyObj<MaintenanceApiService>('MaintenanceApiService', [
+    maintenanceApi = jasmine.createSpyObj<MaintenanceApi>('MaintenanceApi', [
       'getCategories',
       'getMaintenance',
       'createMaintenance',
@@ -43,7 +43,7 @@ describe('MaintenanceStore', () => {
     ]);
 
     TestBed.configureTestingModule({
-      providers: [MaintenanceStore, { provide: MaintenanceApiService, useValue: maintenanceApi }],
+      providers: [MaintenanceStore, { provide: MaintenanceApi, useValue: maintenanceApi }],
     });
 
     store = TestBed.inject(MaintenanceStore);

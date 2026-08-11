@@ -38,17 +38,28 @@ There is no end-to-end test runner configured yet.
 ```text
 src/app/
   core/       App-wide infrastructure: authentication, configuration, layout
-  features/   Route-level product features
+  features/   Route-level product features, each with a *.routes.ts entry point
   shared/     Reusable UI, pipes, services, and pure utilities
 ```
 
-Current dependency rules:
+Path aliases `@core/*`, `@shared/*`, `@features/*` (configured in `tsconfig.json`) point at
+`src/app/core/*`, `src/app/shared/*`, and `src/app/features/*`. Prefer them for new code that
+crosses one of those layers; same-feature relative imports stay relative.
 
-- Feature code may depend on `core` and `shared`.
-- `core` and `shared` must not import feature internals.
-- Components should delegate HTTP transport to focused API services.
-- Stores/facades own server-backed feature state; pure calculations belong in utilities.
+Current dependency rules, enforced by `eslint.config.mjs` where practical:
+
+- Feature code may depend on `core` and `shared`. `core` and `shared` must not import feature
+  internals.
+- A feature must not import another feature's internal component, store, or API service. The
+  exceptions are `features/vehicle/models/**` (shared record contracts) and
+  `features/vehicle/ui/**` (domain-specific reusable UI, consumed as-is by `features/share`), plus
+  a feature's own `index.ts` barrel where one exists (see `features/vehicle/index.ts`) as its
+  declared public API.
+- Components should delegate HTTP transport to focused `*-api.ts` services.
+- Stores (`*-store.ts`) own server-backed feature state; pure calculations belong in `*.utils.ts`.
+  There is no separate facade layer.
 - Generic UI belongs in `shared/ui`; vehicle-specific reusable UI remains in the vehicle feature.
+- Top-level pages are lazy-loaded through a `*.routes.ts` file colocated with the feature.
 - Tests are colocated with source as `*.spec.ts`.
 
 ## Internationalization

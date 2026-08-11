@@ -3,12 +3,12 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 import type { MaintenanceRecordPayload } from '../models';
-import { MaintenanceApiService } from './maintenance-api.service';
+import { MaintenanceApi } from './maintenance-api';
 
 const BASE_URL = 'https://api.test';
 
-describe('MaintenanceApiService', () => {
-  let api: MaintenanceApiService;
+describe('MaintenanceApi', () => {
+  let api: MaintenanceApi;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('MaintenanceApiService', () => {
       ],
     });
 
-    api = TestBed.inject(MaintenanceApiService);
+    api = TestBed.inject(MaintenanceApi);
     httpMock = TestBed.inject(HttpTestingController);
   });
 

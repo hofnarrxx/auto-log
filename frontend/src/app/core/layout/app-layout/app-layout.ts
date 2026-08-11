@@ -15,27 +15,6 @@ export class AppLayout {
   private router = inject(Router);
   menuOpen = signal(false);
 
-  isVehicleDashboardPage() {
-    return /^\/vehicles\/\d+(\?.*)?$/.test(this.router.url);
-  }
-
-  currentVehicleId() {
-    const match = this.router.url.match(/^\/vehicles\/(\d+)/);
-    return match?.[1] ?? null;
-  }
-
-  isVehicleTabActive(tab: 'details' | 'maintenance' | 'fuel') {
-    if (!this.isVehicleDashboardPage()) {
-      return false;
-    }
-
-    const queryTab = this.router.parseUrl(this.router.url).queryParams['tab'];
-    if (!queryTab) {
-      return tab === 'details';
-    }
-    return queryTab === tab;
-  }
-
   toggleMenu(event: Event) {
     event.stopPropagation();
     this.menuOpen.update((v) => !v);

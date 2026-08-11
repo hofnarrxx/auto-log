@@ -75,6 +75,11 @@
       "loadFailed": "Nie można teraz wczytać pojazdów."
     }
   },
+  "notFound": {
+    "title": "Strona nie znaleziona",
+    "message": "Strona, której szukasz, nie istnieje lub została przeniesiona.",
+    "backHome": "Wróć do moich samochodów"
+  },
   "settings": {
     "title": "Ustawienia",
     "selectCurrency": "Wybierz walutę",

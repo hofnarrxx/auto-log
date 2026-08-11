@@ -1,32 +1,6 @@
 <nav class="navbar">
   <div class="logo">{{ 'common.appName' | translate }}</div>
 
-  @if (isVehicleDashboardPage() && currentVehicleId()) {
-    <div class="vehicle-navbar-tabs">
-      <a
-        [routerLink]="['/vehicles', currentVehicleId()]"
-        [queryParams]="{ tab: 'details' }"
-        [class.active]="isVehicleTabActive('details')"
-      >
-        {{ 'nav.details' | translate }}
-      </a>
-      <a
-        [routerLink]="['/vehicles', currentVehicleId()]"
-        [queryParams]="{ tab: 'maintenance' }"
-        [class.active]="isVehicleTabActive('maintenance')"
-      >
-        {{ 'nav.maintenance' | translate }}
-      </a>
-      <a
-        [routerLink]="['/vehicles', currentVehicleId()]"
-        [queryParams]="{ tab: 'fuel' }"
-        [class.active]="isVehicleTabActive('fuel')"
-      >
-        {{ 'nav.fuel' | translate }}
-      </a>
-    </div>
-  }
-
   <div class="profile" (click)="toggleMenu($event)">
     <button type="button" class="profile-btn" [attr.aria-expanded]="menuOpen()">
       {{ 'nav.profile' | translate }}

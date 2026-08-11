@@ -1,25 +1,20 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './features/dashboard/dashboard';
-import { VehicleForm } from './features/vehicle/vehicle-form/vehicle-form';
-import { Settings } from './features/settings/settings';
 import { authGuard } from './core/auth/auth-guard';
 import { AppLayout } from './core/layout/app-layout/app-layout';
+import { authRoutes } from './features/auth/auth.routes';
 
+// `authRoutes` is spread here rather than mounted via `loadChildren` under a `path: ''`
+// parent: a second top-level `path: ''` route whose children (`login`/`register`) don't
+// match the root URL leaves the router with nothing to activate instead of falling
+// through to the next sibling route, so `/` never reaches the `AppLayout` redirect below.
 export const routes: Routes = [
   {
-    path: 'share/:token',
-    loadComponent: () => import('./features/share/shared-vehicle').then((m) => m.SharedVehicle),
+    path: 'share',
+    loadChildren: () => import('./features/share/share.routes').then((m) => m.shareRoutes),
   },
 
-  {
-    path: 'login',
-    loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
-  },
+  ...authRoutes,
 
-  {
-    path: 'register',
-    loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
-  },
   {
     path: '',
     component: AppLayout,
@@ -33,25 +28,32 @@ export const routes: Routes = [
 
       {
         path: 'dashboard',
-        component: Dashboard,
+        loadChildren: () =>
+          import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
       },
 
       {
         path: 'settings',
-        component: Settings,
+        loadChildren: () =>
+          import('./features/settings/settings.routes').then((m) => m.settingsRoutes),
       },
 
       {
         path: 'add-vehicle',
-        component: VehicleForm,
+        loadComponent: () =>
+          import('./features/vehicle/vehicle-form/vehicle-form').then((m) => m.VehicleForm),
       },
 
       {
         path: 'vehicles',
-        canActivate: [authGuard],
         loadChildren: () =>
           import('./features/vehicle/vehicle.routes').then((m) => m.vehicleRoutes),
       },
     ],
+  },
+
+  {
+    path: '**',
+    loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound),
   },
 ];

@@ -6,7 +6,8 @@ import { VehicleStore } from '../vehicle-store';
 import { FuelStore } from '../fuel-store';
 import { MaintenanceStore } from '../maintenance-store';
 import { VehicleForm } from '../vehicle-form/vehicle-form';
-import { Modal } from '../../../shared/ui/modal/modal';
+import { Modal } from '@shared/ui/modal/modal';
+import { parseVehicleTab } from '../utils/vehicle-tab.utils';
 import { VehicleDetailsTab } from './details-tab/vehicle-details-tab';
 import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab';
 import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
@@ -40,18 +41,7 @@ export class VehicleDashboard {
     initialValue: this.route.snapshot.paramMap,
   });
 
-  activeTab = computed<'details' | 'maintenance' | 'fuel'>(() => {
-    const tab = this.queryParamMap().get('tab');
-    if (tab === 'maintenance') {
-      return 'maintenance';
-    }
-
-    if (tab === 'fuel') {
-      return 'fuel';
-    }
-
-    return 'details';
-  });
+  activeTab = computed(() => parseVehicleTab(this.queryParamMap().get('tab')));
 
   ngOnInit() {
     this.vehicleStore.load();

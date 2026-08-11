@@ -1,9 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { VehicleForm } from '../vehicle/vehicle-form/vehicle-form';
-import { VehicleStore } from '../vehicle/vehicle-store';
-import { Modal } from '../../shared/ui/modal/modal';
+import { VehicleForm, VehicleStore } from '@features/vehicle';
+import { Modal } from '@shared/ui/modal/modal';
 
 @Component({
   selector: 'app-dashboard',

@@ -1,0 +1,25 @@
+<div class="vehicle-tabs-bar">
+  <a
+    [routerLink]="['/vehicles', vehicleId()]"
+    [queryParams]="{ tab: 'details' }"
+    [class.active]="isTabActive('details')"
+  >
+    {{ 'nav.details' | translate }}
+  </a>
+  <a
+    [routerLink]="['/vehicles', vehicleId()]"
+    [queryParams]="{ tab: 'maintenance' }"
+    [class.active]="isTabActive('maintenance')"
+  >
+    {{ 'nav.maintenance' | translate }}
+  </a>
+  <a
+    [routerLink]="['/vehicles', vehicleId()]"
+    [queryParams]="{ tab: 'fuel' }"
+    [class.active]="isTabActive('fuel')"
+  >
+    {{ 'nav.fuel' | translate }}
+  </a>
+</div>
+
+<router-outlet></router-outlet>
