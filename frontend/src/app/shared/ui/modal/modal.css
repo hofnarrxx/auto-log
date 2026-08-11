@@ -12,6 +12,8 @@
   margin: auto;
   width: var(--modal-width, min(420px, calc(100vw - 32px)));
   max-height: var(--modal-max-height, min(90vh, 900px));
+  display: flex;
+  flex-direction: column;
   overflow: auto;
   background: var(--surface-1);
   padding: 24px;

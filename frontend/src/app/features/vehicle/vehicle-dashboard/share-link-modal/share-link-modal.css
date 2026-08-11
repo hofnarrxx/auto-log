@@ -1,3 +1,10 @@
+.share-modal-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .share-status {
   margin: 0 0 16px;
   font-size: 14px;
@@ -123,10 +130,11 @@
 }
 
 .share-modal-actions {
-  margin-top: 16px;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
 }
 
 .share-toggle {

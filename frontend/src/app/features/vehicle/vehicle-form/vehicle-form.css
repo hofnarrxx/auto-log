@@ -2,7 +2,8 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: auto;
+  padding-top: 10px;
 }
 
 .cancel {
@@ -25,10 +26,19 @@ h3 {
   margin-top: 0;
 }
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 form {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  min-height: 0;
 }
 
 input,
