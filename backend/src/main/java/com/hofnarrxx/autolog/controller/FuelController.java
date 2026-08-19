@@ -5,7 +5,7 @@ import com.hofnarrxx.autolog.dto.FuelResponse;
 import com.hofnarrxx.autolog.service.FuelService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.hofnarrxx.autolog.dto.PageResponse;
 
 @RestController
 @RequestMapping("/vehicles/{vehicleId}/fuel")
@@ -17,8 +17,12 @@ public class FuelController {
     }
 
     @GetMapping
-    public List<FuelResponse> getAll(@PathVariable Long vehicleId) {
-        return fuelService.getAll(vehicleId);
+    public PageResponse<FuelResponse> getPage(@PathVariable Long vehicleId,
+    @RequestParam(required = false) Integer page,
+    @RequestParam(required = false) Integer size,
+    @RequestParam(required = false) String sort,
+    @RequestParam(required = false) String gasStation) {
+        return fuelService.getPage(vehicleId, page, size, sort, gasStation);
     }
 
     @GetMapping("/{fuelId}")

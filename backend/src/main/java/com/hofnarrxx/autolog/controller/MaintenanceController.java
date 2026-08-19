@@ -11,7 +11,10 @@ import com.hofnarrxx.autolog.service.MaintenanceAttachmentService;
 import com.hofnarrxx.autolog.service.MaintenanceService;
 import org.springframework.web.bind.annotation.*;
 
+import com.hofnarrxx.autolog.dto.PageResponse;
 import java.util.List;
+import java.math.BigDecimal;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/vehicles/{vehicleId}/maintenance")
@@ -20,60 +23,78 @@ public class MaintenanceController {
     private final MaintenanceAttachmentService attachmentService;
 
     public MaintenanceController(MaintenanceService maintenanceService,
-                                 MaintenanceAttachmentService attachmentService) {
+            MaintenanceAttachmentService attachmentService) {
         this.maintenanceService = maintenanceService;
         this.attachmentService = attachmentService;
     }
 
     @GetMapping
-    public List<MaintenanceResponse> getAll(@PathVariable Long vehicleId) {
-        return maintenanceService.getAll(vehicleId);
+    public PageResponse<MaintenanceResponse> getPage(@PathVariable Long vehicleId,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String categoriesCsv,
+            @RequestParam(required = false) String currency,
+            @RequestParam(required = false) BigDecimal minCost,
+            @RequestParam(required = false) BigDecimal maxCost) {
+        List<String> categories;
+        if (categoriesCsv == null) {
+            categories = null;
+        } else if (categoriesCsv.isEmpty()) {
+            categories = List.of();
+        } else {
+            categories = Arrays.stream(categoriesCsv.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+        }
+        return maintenanceService.getPage(vehicleId, page, size, sort, title, categories, currency, minCost, maxCost);
     }
 
     @GetMapping("/{maintenanceId}")
     public MaintenanceResponse getById(@PathVariable Long vehicleId,
-                                       @PathVariable Long maintenanceId) {
+            @PathVariable Long maintenanceId) {
         return maintenanceService.getById(vehicleId, maintenanceId);
     }
 
     @PostMapping
     public MaintenanceResponse create(@PathVariable Long vehicleId,
-                                      @RequestBody MaintenanceRequest request) {
+            @RequestBody MaintenanceRequest request) {
         return maintenanceService.create(vehicleId, request);
     }
 
     @PutMapping("/{maintenanceId}")
     public MaintenanceResponse update(@PathVariable Long vehicleId,
-                                      @PathVariable Long maintenanceId,
-                                      @RequestBody MaintenanceRequest request) {
+            @PathVariable Long maintenanceId,
+            @RequestBody MaintenanceRequest request) {
         return maintenanceService.update(vehicleId, maintenanceId, request);
     }
 
     @DeleteMapping("/{maintenanceId}")
     public void delete(@PathVariable Long vehicleId,
-                       @PathVariable Long maintenanceId) {
+            @PathVariable Long maintenanceId) {
         maintenanceService.delete(vehicleId, maintenanceId);
     }
 
     @PostMapping("/{maintenanceId}/attachments/upload-url")
     public MaintenanceUploadUrlResponse createUploadUrl(@PathVariable Long vehicleId,
-                                                        @PathVariable Long maintenanceId,
-                                                        @RequestBody MaintenanceUploadUrlRequest request) {
+            @PathVariable Long maintenanceId,
+            @RequestBody MaintenanceUploadUrlRequest request) {
         return attachmentService.createUploadUrl(vehicleId, maintenanceId, request);
     }
 
     @PostMapping("/{maintenanceId}/attachments")
     public MaintenanceAttachmentResponse saveAttachment(@PathVariable Long vehicleId,
-                                                        @PathVariable Long maintenanceId,
-                                                        @RequestBody MaintenanceAttachmentRequest request) {
+            @PathVariable Long maintenanceId,
+            @RequestBody MaintenanceAttachmentRequest request) {
         return attachmentService.saveAttachment(vehicleId, maintenanceId, request);
     }
 
     @GetMapping("/{maintenanceId}/attachments/{attachmentId}/download-url")
     public MaintenanceDownloadUrlResponse createDownloadUrl(@PathVariable Long vehicleId,
-                                                            @PathVariable Long maintenanceId,
-                                                            @PathVariable Long attachmentId) {
+            @PathVariable Long maintenanceId,
+            @PathVariable Long attachmentId) {
         return attachmentService.createDownloadUrl(vehicleId, maintenanceId, attachmentId);
     }
 }
-

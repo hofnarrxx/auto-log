@@ -7,12 +7,18 @@ import com.hofnarrxx.autolog.exception.InvalidCurrencyException;
 import com.hofnarrxx.autolog.exception.VehicleNotFoundException;
 import com.hofnarrxx.autolog.model.Currency;
 import com.hofnarrxx.autolog.model.Fuel;
+import com.hofnarrxx.autolog.model.FuelSort;
 import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.FuelRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import com.hofnarrxx.autolog.dto.PageRequestParams;
+import com.hofnarrxx.autolog.dto.PageResponse;
 
 @Service
 public class FuelService {
@@ -21,21 +27,21 @@ public class FuelService {
     private final AuthService authService;
 
     public FuelService(FuelRepository fuelRepository,
-                       VehicleRepository vehicleRepository,
-                       AuthService authService) {
+            VehicleRepository vehicleRepository,
+            AuthService authService) {
         this.fuelRepository = fuelRepository;
         this.vehicleRepository = vehicleRepository;
         this.authService = authService;
     }
 
-    public List<FuelResponse> getAll(Long vehicleId) {
+    public PageResponse<FuelResponse> getPage(Long vehicleId, Integer page, Integer size, String sortParam,
+            String gasStation) {
         Long userId = authService.getCurrentUser().getId();
-        ensureVehicleOwnedByCurrentUser(vehicleId, userId);
-
-        return fuelRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
+        Sort fuelSort = FuelSort.fromParam(sortParam).toSort();
+        PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), fuelSort);
+        Page<Fuel> fuelPage = fuelRepository.findPageForOwner(vehicleId, userId, gasStation, pageRequest);
+        return PageResponse.from(fuelPage, this::toResponse);        
     }
 
     public FuelResponse getById(Long vehicleId, Long fuelId) {
@@ -92,8 +98,7 @@ public class FuelService {
         Currency currency = Currency.fromDisplayName(request.currency())
                 .orElseThrow(() -> new InvalidCurrencyException(
                         request.currency(),
-                        Currency.allowedValues()
-                ));
+                        Currency.allowedValues()));
 
         fuel.setDate(request.date());
         fuel.setMileage(request.mileage());
@@ -114,8 +119,7 @@ public class FuelService {
                 fuel.getGasStation(),
                 fuel.getCurrency() == null ? null : fuel.getCurrency().getDisplayName(),
                 fuel.getCreatedAt(),
-                fuel.getUpdatedAt()
-        );
+                fuel.getUpdatedAt());
     }
 
     private void updateVehicleMileageIfNeeded(Vehicle vehicle, Integer fuelMileage) {
