@@ -1,7 +1,23 @@
 package com.hofnarrxx.autolog.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import com.hofnarrxx.autolog.dto.FuelRequest;
 import com.hofnarrxx.autolog.dto.FuelResponse;
+import com.hofnarrxx.autolog.dto.FuelSummaryResponse;
+import com.hofnarrxx.autolog.dto.LatestOdometerResponse;
+import com.hofnarrxx.autolog.dto.PageRequestParams;
+import com.hofnarrxx.autolog.dto.PageResponse;
 import com.hofnarrxx.autolog.exception.FuelNotFoundException;
 import com.hofnarrxx.autolog.exception.InvalidCurrencyException;
 import com.hofnarrxx.autolog.exception.VehicleNotFoundException;
@@ -10,15 +26,7 @@ import com.hofnarrxx.autolog.model.Fuel;
 import com.hofnarrxx.autolog.model.FuelSort;
 import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.FuelRepository;
-import com.hofnarrxx.autolog.repository.VehicleRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import com.hofnarrxx.autolog.dto.PageRequestParams;
-import com.hofnarrxx.autolog.dto.PageResponse;
+import com.hofnarrxx.autolog.repository.VehicleRepository; 
 
 @Service
 public class FuelService {
@@ -41,7 +49,58 @@ public class FuelService {
         Sort fuelSort = FuelSort.fromParam(sortParam).toSort();
         PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), fuelSort);
         Page<Fuel> fuelPage = fuelRepository.findPageForOwner(vehicleId, userId, gasStation, pageRequest);
-        return PageResponse.from(fuelPage, this::toResponse);        
+        return PageResponse.from(fuelPage, this::toResponse);
+    }
+
+    public FuelSummaryResponse getSummary(Long vehicleId) {
+        Long userId = authService.getCurrentUser().getId();
+        ensureVehicleOwnedByCurrentUser(vehicleId, userId);
+
+        List<Fuel> fuelList = fuelRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId);
+        fuelList.sort((f1, f2) -> f1.getDate().compareTo(f2.getDate()));
+        long totalRecords = fuelList.size();
+
+        Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
+        LatestOdometerResponse latestOdometerRecord = null;
+        List<Long> mileageWarningRecordIds = new ArrayList<>();
+        int maxMileageSeen = Integer.MIN_VALUE;
+        Fuel prevUsable = null;
+        BigDecimal totalLitres = BigDecimal.ZERO;
+        int totalKm = 0;
+        Double averageConsumptionPer100km = null;
+
+        for (Fuel fuel : fuelList) {
+            if (fuel.getCurrency() != null && fuel.getCost() != null) {
+                totalCostByCurrency.put(fuel.getCurrency().getDisplayName(),
+                        totalCostByCurrency.getOrDefault(fuel.getCurrency().getDisplayName(), BigDecimal.ZERO)
+                                .add(fuel.getCost()));
+            }
+            if (fuel.getMileage() == null)
+                continue;
+
+            latestOdometerRecord = new LatestOdometerResponse(fuel.getMileage(),
+                    fuel.getDate());
+            if (fuel.getMileage() > maxMileageSeen) {
+                maxMileageSeen = fuel.getMileage();
+            }
+            if (fuel.getMileage() < maxMileageSeen) {
+                mileageWarningRecordIds.add(fuel.getId());
+            }
+            if (fuel.getAmount() != null && fuel.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                if(prevUsable != null){
+                    int distance = fuel.getMileage() - prevUsable.getMileage();
+                    if(distance > 0){
+                        totalKm += distance;
+                        totalLitres = totalLitres.add(fuel.getAmount());
+                    }
+                }
+                prevUsable = fuel;
+            }
+        }
+        if(totalKm > 0 && totalLitres.compareTo(BigDecimal.ZERO) > 0){
+            averageConsumptionPer100km = totalLitres.divide(new BigDecimal(totalKm), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).doubleValue();
+        }
+        return new FuelSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds, averageConsumptionPer100km);
     }
 
     public FuelResponse getById(Long vehicleId, Long fuelId) {

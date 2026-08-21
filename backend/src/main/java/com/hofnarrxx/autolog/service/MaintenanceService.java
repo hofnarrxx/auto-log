@@ -1,8 +1,10 @@
 package com.hofnarrxx.autolog.service;
 
+import com.hofnarrxx.autolog.dto.LatestOdometerResponse;
 import com.hofnarrxx.autolog.dto.MaintenanceAttachmentResponse;
 import com.hofnarrxx.autolog.dto.MaintenanceRequest;
 import com.hofnarrxx.autolog.dto.MaintenanceResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceSummaryResponse;
 import com.hofnarrxx.autolog.exception.InvalidCurrencyException;
 import com.hofnarrxx.autolog.exception.InvalidMaintenanceCategoryException;
 import com.hofnarrxx.autolog.exception.MaintenanceNotFoundException;
@@ -15,6 +17,7 @@ import com.hofnarrxx.autolog.repository.MaintenanceRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+
 import com.hofnarrxx.autolog.dto.PageResponse;
 import com.hofnarrxx.autolog.dto.PageRequestParams;
 import org.springframework.data.domain.Sort;
@@ -23,6 +26,9 @@ import org.springframework.data.domain.Page;
 import com.hofnarrxx.autolog.model.MaintenanceSort;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
 
 @Service
 public class MaintenanceService {
@@ -61,6 +67,47 @@ public class MaintenanceService {
         Long userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
         return toResponse(maintenance);
+    }
+
+    public MaintenanceSummaryResponse getSummary(Long vehicleId) {
+        Long userId = authService.getCurrentUser().getId();
+        ensureVehicleOwnedByCurrentUser(vehicleId, userId);
+
+        List<Maintenance> maintenanceList = maintenanceRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId);
+        maintenanceList.sort((m1, m2) -> m1.getServiceDate().compareTo(m2.getServiceDate()));
+        long totalRecords = maintenanceList.size();
+
+        Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
+        LatestOdometerResponse latestOdometerRecord = null;
+        List<Long> mileageWarningRecordIds = new ArrayList<>();
+        BigDecimal maxCost = BigDecimal.ZERO;
+        int maxMileageSeen = Integer.MIN_VALUE;
+
+        for (Maintenance maintenance : maintenanceList) {
+            if (maintenance.getCurrency() != null && maintenance.getCost() != null) {
+                totalCostByCurrency.put(maintenance.getCurrency().getDisplayName(),
+                        totalCostByCurrency.getOrDefault(maintenance.getCurrency().getDisplayName(), BigDecimal.ZERO)
+                                .add(maintenance.getCost()));
+            }
+            if (maintenance.getMileage() != null) {
+                latestOdometerRecord = new LatestOdometerResponse(maintenance.getMileage(),
+                        maintenance.getServiceDate());
+            }
+            if (maintenance.getMileage() != null) {
+                if (maintenance.getMileage() > maxMileageSeen) {
+                    maxMileageSeen = maintenance.getMileage();
+                }
+                if (maintenance.getMileage() < maxMileageSeen) {
+                    mileageWarningRecordIds.add(maintenance.getId());
+                }
+            }
+            if (maintenance.getCost() != null && maintenance.getCost().compareTo(maxCost) > 0) {
+                maxCost = maintenance.getCost();
+            }
+        }
+
+        return new MaintenanceSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds,
+                maxCost);
     }
 
     public MaintenanceResponse create(Long vehicleId, MaintenanceRequest request) {

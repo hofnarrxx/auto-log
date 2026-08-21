@@ -14,6 +14,8 @@ import java.util.Optional;
 @Repository
 public interface FuelRepository extends JpaRepository<Fuel, Long> {
 
+    List<Fuel> findByVehicleIdAndVehicleUserId(Long vehicleId, Long userId);
+
     Optional<Fuel> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 
     List<Fuel> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);

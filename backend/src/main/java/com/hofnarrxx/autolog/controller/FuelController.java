@@ -2,6 +2,7 @@ package com.hofnarrxx.autolog.controller;
 
 import com.hofnarrxx.autolog.dto.FuelRequest;
 import com.hofnarrxx.autolog.dto.FuelResponse;
+import com.hofnarrxx.autolog.dto.FuelSummaryResponse;
 import com.hofnarrxx.autolog.service.FuelService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,11 @@ public class FuelController {
     @RequestParam(required = false) String sort,
     @RequestParam(required = false) String gasStation) {
         return fuelService.getPage(vehicleId, page, size, sort, gasStation);
+    }
+
+    @GetMapping("/summary")
+    public FuelSummaryResponse getSummary(@PathVariable Long vehicleId) {
+        return fuelService.getSummary(vehicleId);
     }
 
     @GetMapping("/{fuelId}")

@@ -12,6 +12,7 @@ import com.hofnarrxx.autolog.service.MaintenanceService;
 import org.springframework.web.bind.annotation.*;
 
 import com.hofnarrxx.autolog.dto.PageResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceSummaryResponse;
 import java.util.List;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -50,6 +51,11 @@ public class MaintenanceController {
                     .toList();
         }
         return maintenanceService.getPage(vehicleId, page, size, sort, title, categories, currency, minCost, maxCost);
+    }
+
+    @GetMapping("/summary")
+    public MaintenanceSummaryResponse getSummary(@PathVariable Long vehicleId) {
+        return maintenanceService.getSummary(vehicleId);
     }
 
     @GetMapping("/{maintenanceId}")
