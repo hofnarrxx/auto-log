@@ -1,20 +1,18 @@
 package com.hofnarrxx.autolog.service;
 
-import com.hofnarrxx.autolog.dto.FuelResponse;
-import com.hofnarrxx.autolog.dto.MaintenanceAttachmentResponse;
-import com.hofnarrxx.autolog.dto.MaintenanceResponse;
 import com.hofnarrxx.autolog.dto.PublicVehicleAccessResponse;
 import com.hofnarrxx.autolog.exception.ShareLinkNotFoundException;
-import com.hofnarrxx.autolog.model.Fuel;
-import com.hofnarrxx.autolog.model.Maintenance;
 import com.hofnarrxx.autolog.model.ShareLink;
 import com.hofnarrxx.autolog.model.Vehicle;
-import com.hofnarrxx.autolog.repository.FuelRepository;
-import com.hofnarrxx.autolog.repository.MaintenanceRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.hofnarrxx.autolog.dto.FuelSummaryResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceSummaryResponse;
+import com.hofnarrxx.autolog.dto.PageResponse;
+import com.hofnarrxx.autolog.dto.FuelResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceResponse;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -22,37 +20,39 @@ public class PublicVehicleAccessService {
 
     private final ShareLinkService shareLinkService;
     private final VehicleRepository vehicleRepository;
-    private final FuelRepository fuelRepository;
-    private final MaintenanceRepository maintenanceRepository;
+    private final FuelService fuelService;
+    private final MaintenanceService maintenanceService;
 
-    public PublicVehicleAccessService(ShareLinkService shareLinkService,
-                            VehicleRepository vehicleRepository,
-                            FuelRepository fuelRepository,
-                            MaintenanceRepository maintenanceRepository) {
-        this.shareLinkService = shareLinkService;
-        this.vehicleRepository = vehicleRepository;
-        this.fuelRepository = fuelRepository;
-        this.maintenanceRepository = maintenanceRepository;
+    private record ResolvedShare(ShareLink shareLink, Vehicle vehicle) {
     }
 
-    @Transactional(readOnly = true)
-    public PublicVehicleAccessResponse getByToken(String token) {
+    public PublicVehicleAccessService(ShareLinkService shareLinkService,
+            VehicleRepository vehicleRepository,
+            FuelService fuelService,
+            MaintenanceService maintenanceService) {
+        this.shareLinkService = shareLinkService;
+        this.vehicleRepository = vehicleRepository;
+        this.fuelService = fuelService;
+        this.maintenanceService = maintenanceService;
+    }
+
+    private ResolvedShare resolveShare(String token) {
         ShareLink shareLink = shareLinkService.resolveActive(token)
                 .orElseThrow(ShareLinkNotFoundException::new);
 
         Vehicle vehicle = vehicleRepository.findById(shareLink.getCarId())
                 .orElseThrow(ShareLinkNotFoundException::new);
 
-        List<FuelResponse> fuelEntries = fuelRepository.findByVehicleIdOrderByCreatedAtDesc(vehicle.getId())
-                .stream()
-                .map(this::toFuelResponse)
-                .toList();
+        return new ResolvedShare(shareLink, vehicle);
+    }
 
-        List<MaintenanceResponse> maintenanceEntries = maintenanceRepository
-                .findWithAttachmentsByVehicleIdOrderByCreatedAtDesc(vehicle.getId())
-                .stream()
-                .map(maintenance -> toMaintenanceResponse(maintenance, shareLink.isIncludeAttachments()))
-                .toList();
+    @Transactional(readOnly = true)
+    public PublicVehicleAccessResponse getByToken(String token) {
+        ResolvedShare resolved = resolveShare(token);
+        Vehicle vehicle = resolved.vehicle();
+
+        FuelSummaryResponse fuelSummary = fuelService.getSummaryForPublicAccess(vehicle.getId());
+        MaintenanceSummaryResponse maintenanceSummary = maintenanceService.getSummaryForPublicAccess(vehicle.getId());
 
         return new PublicVehicleAccessResponse(
                 vehicle.getId(),
@@ -61,54 +61,21 @@ public class PublicVehicleAccessService {
                 vehicle.getFuelType(),
                 vehicle.getMileage(),
                 vehicle.getYear(),
-                fuelEntries,
-                maintenanceEntries
-        );
+                fuelSummary,
+                maintenanceSummary);
     }
 
-    private FuelResponse toFuelResponse(Fuel fuel) {
-        return new FuelResponse(
-                fuel.getId(),
-                fuel.getVehicle().getId(),
-                fuel.getDate(),
-                fuel.getMileage(),
-                fuel.getCost(),
-                fuel.getAmount(),
-                fuel.getGasStation(),
-                fuel.getCurrency() == null ? null : fuel.getCurrency().getDisplayName(),
-                fuel.getCreatedAt(),
-                fuel.getUpdatedAt()
-        );
+    public PageResponse<FuelResponse> getFuelPage(String token, Integer page, Integer size,
+            String sort, String gasStation) {
+        Long vehicleId = resolveShare(token).vehicle().getId();
+        return fuelService.getPageForPublicAccess(vehicleId, page, size, sort, gasStation);
     }
 
-    private MaintenanceResponse toMaintenanceResponse(Maintenance maintenance, boolean includeAttachments) {
-        List<MaintenanceAttachmentResponse> attachments = includeAttachments
-                ? maintenance.getAttachments()
-                    .stream()
-                    .map(attachment -> new MaintenanceAttachmentResponse(
-                            attachment.getId(),
-                            attachment.getFileName(),
-                            attachment.getContentType(),
-                            attachment.getSizeBytes(),
-                            attachment.getUrl(),
-                            attachment.getCreatedAt()
-                    ))
-                    .toList()
-                : List.of();
-
-        return new MaintenanceResponse(
-                maintenance.getId(),
-                maintenance.getVehicle().getId(),
-                maintenance.getServiceDate(),
-                maintenance.getTitle(),
-                maintenance.getMileage(),
-                maintenance.getCategory(),
-                maintenance.getDescription(),
-                maintenance.getCost(),
-                maintenance.getCurrency() == null ? null : maintenance.getCurrency().getDisplayName(),
-                attachments,
-                maintenance.getCreatedAt(),
-                maintenance.getUpdatedAt()
-        );
+    public PageResponse<MaintenanceResponse> getMaintenancePage(String token, Integer page, Integer size,
+            String sort, String title, List<String> categories, String currency,
+            BigDecimal minCost, BigDecimal maxCost) {
+        Long vehicleId = resolveShare(token).vehicle().getId();
+        return maintenanceService.getPageForPublicAccess(
+                vehicleId, page, size, sort, title, categories, currency, minCost, maxCost);
     }
 }

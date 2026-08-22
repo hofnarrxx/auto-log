@@ -17,7 +17,7 @@ import java.util.Optional;
 @Repository
 public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> {
     List<Maintenance> findByVehicleIdAndVehicleUserId(Long vehicleId, Long userId);
-    
+
     Optional<Maintenance> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 
     Optional<Maintenance> findByIdAndVehicleId(Long id, Long vehicleId);
@@ -26,9 +26,6 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
     Optional<Maintenance> findWithAttachmentsByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 
     List<Maintenance> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
-
-    @EntityGraph(attributePaths = "attachments")
-    List<Maintenance> findWithAttachmentsByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
 
     @Query("""
             select m from Maintenance m
@@ -42,6 +39,24 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
             """)
     Page<Maintenance> findPageForOwner(@Param("vehicleId") Long vehicleId,
             @Param("userId") Long userId,
+            @Param("hasCategories") Boolean hasCategories,
+            @Param("categories") List<String> categories,
+            @Param("currency") Currency currency,
+            @Param("minCost") BigDecimal minCost,
+            @Param("maxCost") BigDecimal maxCost,
+            @Param("title") String title,
+            Pageable pageable);
+
+    @Query("""
+            select m from Maintenance m
+            where m.vehicle.id = :vehicleId
+                and (:hasCategories = false or m.category in :categories)
+                and (:currency is null or m.currency = :currency)
+                and (:minCost is null or m.cost >= :minCost)
+                and (:maxCost is null or m.cost <= :maxCost)
+                and (:title is null or lower(m.title) like lower(concat('%', :title, '%')))
+            """)
+    Page<Maintenance> findPageForPublicAccess(@Param("vehicleId") Long vehicleId,
             @Param("hasCategories") Boolean hasCategories,
             @Param("categories") List<String> categories,
             @Param("currency") Currency currency,

@@ -9,12 +9,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.Table;  
+import jakarta.persistence.Index;
 
 import java.time.Instant;
 
 @Entity
-@Table(name = "maintenance_attachments")
+@Table(name = "maintenance_attachments", indexes = {
+        @Index(name = "idx_maintenance_attachment_maintenance_id", columnList = "maintenance_id")
+})
 public class MaintenanceAttachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

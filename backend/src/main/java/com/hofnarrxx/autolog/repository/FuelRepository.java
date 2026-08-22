@@ -14,21 +14,31 @@ import java.util.Optional;
 @Repository
 public interface FuelRepository extends JpaRepository<Fuel, Long> {
 
-    List<Fuel> findByVehicleIdAndVehicleUserId(Long vehicleId, Long userId);
+        List<Fuel> findByVehicleIdAndVehicleUserId(Long vehicleId, Long userId);
 
-    Optional<Fuel> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
+        Optional<Fuel> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 
-    List<Fuel> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
+        List<Fuel> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
 
-    @Query("""
-            select f from Fuel f
-            where f.vehicle.id = :vehicleId
-              and f.vehicle.user.id = :userId
-              and (:gasStation is null
-                   or lower(f.gasStation) like lower(concat('%', :gasStation, '%')))
-            """)
-    Page<Fuel> findPageForOwner(@Param("vehicleId") Long vehicleId,
-            @Param("userId") Long userId,
-            @Param("gasStation") String gasStation,
-            Pageable pageable);
+        @Query("""
+                        select f from Fuel f
+                        where f.vehicle.id = :vehicleId
+                          and f.vehicle.user.id = :userId
+                          and (:gasStation is null
+                               or lower(f.gasStation) like lower(concat('%', :gasStation, '%')))
+                        """)
+        Page<Fuel> findPageForOwner(@Param("vehicleId") Long vehicleId,
+                        @Param("userId") Long userId,
+                        @Param("gasStation") String gasStation,
+                        Pageable pageable);
+
+        @Query("""
+                        select f from Fuel f
+                        where f.vehicle.id = :vehicleId
+                          and (:gasStation is null
+                               or lower(f.gasStation) like lower(concat('%', :gasStation, '%')))
+                        """)
+        Page<Fuel> findPageForPublicAccess(@Param("vehicleId") Long vehicleId,
+                        @Param("gasStation") String gasStation,
+                        Pageable pageable);
 }

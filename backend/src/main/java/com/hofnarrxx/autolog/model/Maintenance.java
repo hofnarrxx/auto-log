@@ -1,6 +1,21 @@
 package com.hofnarrxx.autolog.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Index;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -9,7 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "maintenance")
+@Table(name = "maintenance", indexes = {
+        @Index(name = "idx_maintenance_vehicle_date", columnList = "vehicle_id, service_date"),
+        @Index(name = "idx_maintenance_vehicle_cost", columnList = "vehicle_id, cost")
+})
 public class Maintenance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

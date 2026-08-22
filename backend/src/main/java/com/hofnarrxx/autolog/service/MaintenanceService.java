@@ -63,6 +63,24 @@ public class MaintenanceService {
         return PageResponse.from(maintenancePage, this::toListResponse);
     }
 
+    PageResponse<MaintenanceResponse> getPageForPublicAccess(Long vehicleId, Integer page, Integer size, String sort,
+        String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost) {
+    boolean hasCategories = true;
+    PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
+    Sort maintenanceSort = MaintenanceSort.fromParam(sort).toSort();
+    PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), maintenanceSort);
+    if (categories == null) {
+        hasCategories = false;
+        categories = List.of("_");
+    }
+    if (categories != null && categories.isEmpty()) {
+        return PageResponse.from(Page.empty(pageRequest), this::toListResponse);
+    }
+    Page<Maintenance> maintenancePage = maintenanceRepository.findPageForPublicAccess(vehicleId, hasCategories,
+            categories, Currency.fromDisplayName(currency).orElse(null), minCost, maxCost, title, pageRequest);
+    return PageResponse.from(maintenancePage, this::toListResponse);
+}
+
     public MaintenanceResponse getById(Long vehicleId, Long maintenanceId) {
         Long userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
@@ -74,40 +92,12 @@ public class MaintenanceService {
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
 
         List<Maintenance> maintenanceList = maintenanceRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId);
-        maintenanceList.sort((m1, m2) -> m1.getServiceDate().compareTo(m2.getServiceDate()));
-        long totalRecords = maintenanceList.size();
+        return buildSummary(maintenanceList);
+    }
 
-        Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
-        LatestOdometerResponse latestOdometerRecord = null;
-        List<Long> mileageWarningRecordIds = new ArrayList<>();
-        BigDecimal maxCost = BigDecimal.ZERO;
-        int maxMileageSeen = Integer.MIN_VALUE;
-
-        for (Maintenance maintenance : maintenanceList) {
-            if (maintenance.getCurrency() != null && maintenance.getCost() != null) {
-                totalCostByCurrency.put(maintenance.getCurrency().getDisplayName(),
-                        totalCostByCurrency.getOrDefault(maintenance.getCurrency().getDisplayName(), BigDecimal.ZERO)
-                                .add(maintenance.getCost()));
-            }
-            if (maintenance.getMileage() != null) {
-                latestOdometerRecord = new LatestOdometerResponse(maintenance.getMileage(),
-                        maintenance.getServiceDate());
-            }
-            if (maintenance.getMileage() != null) {
-                if (maintenance.getMileage() > maxMileageSeen) {
-                    maxMileageSeen = maintenance.getMileage();
-                }
-                if (maintenance.getMileage() < maxMileageSeen) {
-                    mileageWarningRecordIds.add(maintenance.getId());
-                }
-            }
-            if (maintenance.getCost() != null && maintenance.getCost().compareTo(maxCost) > 0) {
-                maxCost = maintenance.getCost();
-            }
-        }
-
-        return new MaintenanceSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds,
-                maxCost);
+    MaintenanceSummaryResponse getSummaryForPublicAccess(Long vehicleId){
+        List<Maintenance> maintenanceList = maintenanceRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
+        return buildSummary(maintenanceList);
     }
 
     public MaintenanceResponse create(Long vehicleId, MaintenanceRequest request) {
@@ -147,6 +137,44 @@ public class MaintenanceService {
         vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
+
+    private MaintenanceSummaryResponse buildSummary(List<Maintenance> maintenanceList) {
+        maintenanceList.sort((m1, m2) -> m1.getServiceDate().compareTo(m2.getServiceDate()));
+        long totalRecords = maintenanceList.size();
+
+        Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
+        LatestOdometerResponse latestOdometerRecord = null;
+        List<Long> mileageWarningRecordIds = new ArrayList<>();
+        BigDecimal maxCost = BigDecimal.ZERO;
+        int maxMileageSeen = Integer.MIN_VALUE;
+
+        for (Maintenance maintenance : maintenanceList) {
+            if (maintenance.getCurrency() != null && maintenance.getCost() != null) {
+                totalCostByCurrency.put(maintenance.getCurrency().getDisplayName(),
+                        totalCostByCurrency.getOrDefault(maintenance.getCurrency().getDisplayName(), BigDecimal.ZERO)
+                                .add(maintenance.getCost()));
+            }
+            if (maintenance.getMileage() != null) {
+                latestOdometerRecord = new LatestOdometerResponse(maintenance.getMileage(),
+                        maintenance.getServiceDate());
+            }
+            if (maintenance.getMileage() != null) {
+                if (maintenance.getMileage() > maxMileageSeen) {
+                    maxMileageSeen = maintenance.getMileage();
+                }
+                if (maintenance.getMileage() < maxMileageSeen) {
+                    mileageWarningRecordIds.add(maintenance.getId());
+                }
+            }
+            if (maintenance.getCost() != null && maintenance.getCost().compareTo(maxCost) > 0) {
+                maxCost = maintenance.getCost();
+            }
+        }
+
+        return new MaintenanceSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds,
+                maxCost);
+    }
+
 
     private Maintenance findOwnedMaintenance(Long vehicleId, Long maintenanceId, Long userId) {
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);

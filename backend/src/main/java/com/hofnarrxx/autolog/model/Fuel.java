@@ -13,13 +13,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Index;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "fuel")
+@Table(name = "fuel", indexes = {
+        @Index(name = "idx_fuel_vehicle_date", columnList = "vehicle_id, date"),
+        @Index(name = "idx_fuel_vehicle_cost", columnList = "vehicle_id, cost")
+})
 public class Fuel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

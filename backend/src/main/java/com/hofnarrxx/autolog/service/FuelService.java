@@ -52,55 +52,27 @@ public class FuelService {
         return PageResponse.from(fuelPage, this::toResponse);
     }
 
+    PageResponse<FuelResponse> getPageForPublicAccess(Long vehicleId, Integer page, Integer size, String sortParam,
+        String gasStation) {
+    PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
+    Sort fuelSort = FuelSort.fromParam(sortParam).toSort();
+    PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), fuelSort);
+    Page<Fuel> fuelPage = fuelRepository.findPageForPublicAccess(vehicleId, gasStation, pageRequest);
+    return PageResponse.from(fuelPage, this::toResponse);
+}
+
+
     public FuelSummaryResponse getSummary(Long vehicleId) {
         Long userId = authService.getCurrentUser().getId();
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
 
         List<Fuel> fuelList = fuelRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId);
-        fuelList.sort((f1, f2) -> f1.getDate().compareTo(f2.getDate()));
-        long totalRecords = fuelList.size();
+        return buildSummary(fuelList);
+    }
 
-        Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
-        LatestOdometerResponse latestOdometerRecord = null;
-        List<Long> mileageWarningRecordIds = new ArrayList<>();
-        int maxMileageSeen = Integer.MIN_VALUE;
-        Fuel prevUsable = null;
-        BigDecimal totalLitres = BigDecimal.ZERO;
-        int totalKm = 0;
-        Double averageConsumptionPer100km = null;
-
-        for (Fuel fuel : fuelList) {
-            if (fuel.getCurrency() != null && fuel.getCost() != null) {
-                totalCostByCurrency.put(fuel.getCurrency().getDisplayName(),
-                        totalCostByCurrency.getOrDefault(fuel.getCurrency().getDisplayName(), BigDecimal.ZERO)
-                                .add(fuel.getCost()));
-            }
-            if (fuel.getMileage() == null)
-                continue;
-
-            latestOdometerRecord = new LatestOdometerResponse(fuel.getMileage(),
-                    fuel.getDate());
-            if (fuel.getMileage() > maxMileageSeen) {
-                maxMileageSeen = fuel.getMileage();
-            }
-            if (fuel.getMileage() < maxMileageSeen) {
-                mileageWarningRecordIds.add(fuel.getId());
-            }
-            if (fuel.getAmount() != null && fuel.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                if(prevUsable != null){
-                    int distance = fuel.getMileage() - prevUsable.getMileage();
-                    if(distance > 0){
-                        totalKm += distance;
-                        totalLitres = totalLitres.add(fuel.getAmount());
-                    }
-                }
-                prevUsable = fuel;
-            }
-        }
-        if(totalKm > 0 && totalLitres.compareTo(BigDecimal.ZERO) > 0){
-            averageConsumptionPer100km = totalLitres.divide(new BigDecimal(totalKm), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).doubleValue();
-        }
-        return new FuelSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds, averageConsumptionPer100km);
+    FuelSummaryResponse getSummaryForPublicAccess(Long vehicleId){
+        List<Fuel> fuelList = fuelRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
+        return buildSummary(fuelList);
     }
 
     public FuelResponse getById(Long vehicleId, Long fuelId) {
@@ -145,6 +117,53 @@ public class FuelService {
     private void ensureVehicleOwnedByCurrentUser(Long vehicleId, Long userId) {
         vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
+    }
+
+    private FuelSummaryResponse buildSummary(List<Fuel> fuelList) {
+        fuelList.sort((f1, f2) -> f1.getDate().compareTo(f2.getDate()));
+        long totalRecords = fuelList.size();
+
+        Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
+        LatestOdometerResponse latestOdometerRecord = null;
+        List<Long> mileageWarningRecordIds = new ArrayList<>();
+        int maxMileageSeen = Integer.MIN_VALUE;
+        Fuel prevUsable = null;
+        BigDecimal totalLitres = BigDecimal.ZERO;
+        int totalKm = 0;
+        Double averageConsumptionPer100km = null;
+
+        for (Fuel fuel : fuelList) {
+            if (fuel.getCurrency() != null && fuel.getCost() != null) {
+                totalCostByCurrency.put(fuel.getCurrency().getDisplayName(),
+                        totalCostByCurrency.getOrDefault(fuel.getCurrency().getDisplayName(), BigDecimal.ZERO)
+                                .add(fuel.getCost()));
+            }
+            if (fuel.getMileage() == null)
+                continue;
+
+            latestOdometerRecord = new LatestOdometerResponse(fuel.getMileage(),
+                    fuel.getDate());
+            if (fuel.getMileage() > maxMileageSeen) {
+                maxMileageSeen = fuel.getMileage();
+            }
+            if (fuel.getMileage() < maxMileageSeen) {
+                mileageWarningRecordIds.add(fuel.getId());
+            }
+            if (fuel.getAmount() != null && fuel.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                if(prevUsable != null){
+                    int distance = fuel.getMileage() - prevUsable.getMileage();
+                    if(distance > 0){
+                        totalKm += distance;
+                        totalLitres = totalLitres.add(fuel.getAmount());
+                    }
+                }
+                prevUsable = fuel;
+            }
+        }
+        if(totalKm > 0 && totalLitres.compareTo(BigDecimal.ZERO) > 0){
+            averageConsumptionPer100km = totalLitres.divide(new BigDecimal(totalKm), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).doubleValue();
+        }
+        return new FuelSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds, averageConsumptionPer100km);
     }
 
     private Fuel findOwnedFuel(Long vehicleId, Long fuelId, Long userId) {
