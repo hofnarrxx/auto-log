@@ -6,9 +6,9 @@ import { CurrencyService } from '../../../../shared/services/currency.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { LucideAngularModule } from 'lucide-angular';
 import { Modal } from '../../../../shared/ui/modal/modal';
-import { FuelList } from '../../ui/fuel-list/fuel-list';
+import { formatCurrencyTotals } from '../../../../shared/utils/currency-totals.utils';
+import { FuelList, type FuelQueryChange } from '../../ui/fuel-list/fuel-list';
 import { FuelRecordDetails } from '../../ui/fuel-record-details/fuel-record-details';
-import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
 import type { FuelRecord, FuelRecordPayload } from '../../models';
 import { FuelStore } from '../../fuel-store';
@@ -45,42 +45,52 @@ export class VehicleFuelTab {
   set vehicleId(value: number) {
     this.currentVehicleId = value;
     this.fuelStore.load(value);
+    this.fuelStore.loadSummary(value);
   }
 
   private currentVehicleId: number | null = null;
 
   protected readonly isLoading = this.fuelStore.isLoading;
+  protected readonly hasLoadedOnce = this.fuelStore.hasLoadedOnce;
   protected readonly error = this.fuelStore.error;
   protected readonly isSaving = this.fuelStore.isSaving;
   protected readonly isDeleting = this.fuelStore.isDeleting;
   protected readonly fuelRecords = this.fuelStore.records;
+  protected readonly query = this.fuelStore.query;
+  protected readonly page = this.fuelStore.page;
+  protected readonly size = this.fuelStore.size;
+  protected readonly totalPages = this.fuelStore.totalPages;
+  protected readonly totalElements = this.fuelStore.totalElements;
+  protected readonly summary = this.fuelStore.summary;
+
   protected readonly isModalOpen = signal(false);
   protected readonly isCreateMode = signal(false);
   protected readonly isEditMode = signal(false);
   protected readonly selectedRecord = signal<FuelRecord | null>(null);
-  protected readonly totalFuelCostByCurrency = computed(() => {
-    const totals = new Map<string, number>();
 
-    this.fuelRecords().forEach((record) => {
-      if (record.cost === null) {
-        return;
-      }
-
-      const currency = this.getRecordCurrency(record);
-      totals.set(currency, (totals.get(currency) ?? 0) + record.cost);
-    });
-
-    return Array.from(totals.entries())
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([currency, total]) => this.currencyService.formatCurrency(total, currency))
-      .join(' | ');
-  });
-  protected readonly mileageWarningRecordIds = computed(() =>
-    findMileageWarningRecordIds(this.fuelRecords(), (record) => record.date)
+  protected readonly totalFuelCostByCurrency = computed(() =>
+    formatCurrencyTotals(this.summary()?.totalCostByCurrency, (value, currency) =>
+      this.currencyService.formatCurrency(value, currency)
+    )
+  );
+  protected readonly mileageWarningRecordIds = computed(
+    () => new Set(this.summary()?.mileageWarningRecordIds ?? [])
   );
 
   protected hasMileageWarning(record: FuelRecord): boolean {
     return this.mileageWarningRecordIds().has(record.id);
+  }
+
+  protected onQueryChange(change: FuelQueryChange) {
+    this.fuelStore.setQuery(change);
+  }
+
+  protected onPageChange(page: number) {
+    this.fuelStore.setPage(page);
+  }
+
+  protected onSizeChange(size: number) {
+    this.fuelStore.setSize(size);
   }
 
   protected modalTitle(): string {
@@ -221,10 +231,5 @@ export class VehicleFuelTab {
       gasStation: gasStation || null,
       currency,
     };
-  }
-
-  private getRecordCurrency(record: FuelRecord): string {
-    const fallbackCurrency = this.currencyService.selectedCurrency();
-    return (record.currency || fallbackCurrency).trim().toUpperCase();
   }
 }

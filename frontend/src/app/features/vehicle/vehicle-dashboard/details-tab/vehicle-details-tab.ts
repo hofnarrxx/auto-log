@@ -2,13 +2,8 @@ import { Component, EventEmitter, Input, Output, computed, inject } from '@angul
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatAppDate } from '../../../../shared/utils/date-format.utils';
 import { getFuelTypeLabelKey } from '../../../../shared/utils/fuel-type.utils';
-import {
-  getLatestOdometerMileage,
-  getLatestOdometerRecord,
-  getOdometerRecordDate,
-} from '../../../../shared/utils/odometer.utils';
-import type { FuelRecord, MaintenanceRecord, Vehicle } from '../../models';
-import { getAverageFuelConsumptionPer100Km } from '../../utils/vehicle-statistics';
+import { pickLatestOdometer } from '../../../../shared/utils/odometer.utils';
+import type { Vehicle } from '../../models';
 import { FuelStore } from '../../fuel-store';
 import { MaintenanceStore } from '../../maintenance-store';
 
@@ -28,39 +23,46 @@ export class VehicleDetailsTab {
   @Output() deleteRequested = new EventEmitter<void>();
   @Output() shareRequested = new EventEmitter<void>();
 
-  protected readonly fuelRecords: () => FuelRecord[] = this.fuelStore.records;
-  protected readonly maintenanceRecords: () => MaintenanceRecord[] = this.maintenanceStore.records;
+  private readonly fuelSummary = this.fuelStore.summary;
+  private readonly maintenanceSummary = this.maintenanceStore.summary;
+
+  protected readonly latestOdometer = computed(() =>
+    pickLatestOdometer(
+      this.fuelSummary()?.latestOdometerRecord ?? null,
+      this.maintenanceSummary()?.latestOdometer ?? null
+    )
+  );
 
   protected readonly avgFuelEfficiency = computed(() => {
-    const litresPer100Km = getAverageFuelConsumptionPer100Km(this.fuelRecords());
+    const litresPer100Km = this.fuelSummary()?.averageConsumptionPer100km ?? null;
     return litresPer100Km === null ? '-' : `${litresPer100Km.toFixed(2)} L/100km`;
   });
 
   ngOnInit() {
     if (this.vehicle?.id) {
-      this.fuelStore.load(this.vehicle.id);
-      this.maintenanceStore.load(this.vehicle.id);
+      this.fuelStore.loadSummary(this.vehicle.id);
+      this.maintenanceStore.loadSummary(this.vehicle.id);
     }
   }
 
   protected lastOdometerReading(): string {
-    const mileage = getLatestOdometerMileage(this.odometerRecords(), this.vehicle.mileage);
+    const mileage = this.latestOdometer()?.mileage ?? this.vehicle.mileage;
 
-    if (mileage === null) {
+    if (mileage === null || mileage === undefined) {
       return '-';
     }
 
-    return `${mileage.toLocaleString()} km`;
+    return `${Math.trunc(mileage).toLocaleString()} km`;
   }
 
   protected lastOdometerDate(): string {
-    const latest = getLatestOdometerRecord(this.odometerRecords());
+    const latest = this.latestOdometer();
 
     if (!latest) {
       return '-';
     }
 
-    return formatAppDate(getOdometerRecordDate(latest));
+    return formatAppDate(latest.date);
   }
 
   protected vehicleInfoTitle(): string {
@@ -102,9 +104,5 @@ export class VehicleDetailsTab {
 
   protected vehicleThumbnailAlt(): string {
     return this.translate.instant('vehicle.details.thumbnailAlt');
-  }
-
-  private odometerRecords(): (FuelRecord | MaintenanceRecord)[] {
-    return [...this.fuelRecords(), ...this.maintenanceRecords()];
   }
 }

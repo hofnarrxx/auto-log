@@ -1,12 +1,25 @@
 <div class="maintenance-tab">
   @if (error()) {
-    <p class="status-message error">{{ error() }}</p>
+    <p class="status-message error">{{ error() | translate }}</p>
   } @else {
     <app-maintenance-list
       [records]="serviceRecords()"
       titleKeyPrefix="sharedVehicle.maintenanceTab"
       [showAddButton]="false"
+      [totalRecords]="summaryValue()?.totalRecords ?? 0"
+      [totalCostText]="totalCostByCurrency()"
+      [mileageWarningRecordIds]="mileageWarningRecordIds()"
+      [maxAvailablePrice]="maxAvailablePrice()"
+      [search]="query().title"
+      [sort]="query().sort"
+      [page]="page()"
+      [size]="size()"
+      [totalPages]="totalPages()"
+      [totalElements]="totalElements()"
       (recordSelected)="openRecordDetails($event)"
+      (queryChange)="onQueryChange($event)"
+      (pageChange)="onPageChange($event)"
+      (sizeChange)="onSizeChange($event)"
     >
     </app-maintenance-list>
   }

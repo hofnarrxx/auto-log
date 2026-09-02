@@ -57,6 +57,14 @@
       "priceHighLow": "Cena: od najwyższej do najniższej",
       "pricePerUnitLowHigh": "Cena za litr: od najniższej do najwyższej",
       "pricePerUnitHighLow": "Cena za litr: od najwyższej do najniższej"
+    },
+    "pagination": {
+      "previous": "Poprzednia",
+      "next": "Następna",
+      "page": "Strona",
+      "perPage": "Na stronę",
+      "showing": "Pozycje {{from}}-{{to}} z {{total}}",
+      "goToPage": "Przejdź do strony {{page}}"
     }
   },
   "nav": {
@@ -294,7 +302,10 @@
         "filtered": "Brak wpisów tankowania pasujących do bieżących filtrów.",
         "none": "Brak wpisów tankowania."
       },
-      "detailsTitle": "Szczegóły wpisu tankowania"
+      "detailsTitle": "Szczegóły wpisu tankowania",
+      "errors": {
+        "loadFailed": "Nie udało się wczytać wpisów tankowania."
+      }
     },
     "maintenanceTab": {
       "title": "Wpisy serwisowe",
@@ -313,6 +324,7 @@
         "allCategories": "Wszystkie kategorie"
       },
       "errors": {
+        "loadFailed": "Nie można teraz wczytać wpisów serwisowych.",
         "downloadFailed": "Nie udało się pobrać linku do załącznika."
       }
     }

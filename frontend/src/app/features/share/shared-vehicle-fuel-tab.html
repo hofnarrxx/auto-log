@@ -1,14 +1,24 @@
 <div class="fuel-tab">
   @if (error()) {
-    <p class="status-message error">{{ error() }}</p>
+    <p class="status-message error">{{ error() | translate }}</p>
   } @else {
     <app-fuel-list
       [records]="fuelRecords()"
       titleKeyPrefix="sharedVehicle.fuelTab"
       [showAddButton]="false"
-      [totalRecords]="fuelRecords().length"
+      [totalRecords]="summaryValue()?.totalRecords ?? 0"
       [totalCostText]="totalFuelCostByCurrency()"
+      [mileageWarningRecordIds]="mileageWarningRecordIds()"
+      [sort]="query().sort"
+      [search]="query().gasStation"
+      [page]="page()"
+      [size]="size()"
+      [totalPages]="totalPages()"
+      [totalElements]="totalElements()"
       (recordSelected)="openRecordDetails($event)"
+      (queryChange)="onQueryChange($event)"
+      (pageChange)="onPageChange($event)"
+      (sizeChange)="onSizeChange($event)"
     >
     </app-fuel-list>
   }

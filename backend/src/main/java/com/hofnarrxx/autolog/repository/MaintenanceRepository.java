@@ -35,7 +35,7 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
                 and (:currency is null or m.currency = :currency)
                 and (:minCost is null or m.cost >= :minCost)
                 and (:maxCost is null or m.cost <= :maxCost)
-                and (:title is null or lower(m.title) like lower(concat('%', :title, '%')))
+                and (:title is null or lower(m.title) like lower(concat('%', cast(:title as string), '%')))
             """)
     Page<Maintenance> findPageForOwner(@Param("vehicleId") Long vehicleId,
             @Param("userId") Long userId,
@@ -54,7 +54,7 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
                 and (:currency is null or m.currency = :currency)
                 and (:minCost is null or m.cost >= :minCost)
                 and (:maxCost is null or m.cost <= :maxCost)
-                and (:title is null or lower(m.title) like lower(concat('%', :title, '%')))
+                and (:title is null or lower(m.title) like lower(concat('%', cast(:title as string), '%')))
             """)
     Page<Maintenance> findPageForPublicAccess(@Param("vehicleId") Long vehicleId,
             @Param("hasCategories") Boolean hasCategories,

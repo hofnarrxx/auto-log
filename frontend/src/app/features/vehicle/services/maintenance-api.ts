@@ -2,12 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
+import type { Page } from '../../../shared/models';
+import { buildMaintenancePageParams } from '../../../shared/utils/http-params.utils';
 import type {
   MaintenanceAttachment,
   MaintenanceAttachmentDownloadUrlResponse,
   MaintenanceAttachmentUploadUrlResponse,
+  MaintenanceQuery,
   MaintenanceRecord,
   MaintenanceRecordPayload,
+  MaintenanceSummary,
 } from '../models';
 
 export type {
@@ -31,8 +35,20 @@ export class MaintenanceApi {
     return this.http.get<string[]>(this.metadataApi);
   }
 
-  getMaintenance(vehicleId: number): Observable<MaintenanceRecord[]> {
-    return this.http.get<MaintenanceRecord[]>(`${this.vehicleApi}/${vehicleId}/maintenance`);
+  getPage(vehicleId: number, query: MaintenanceQuery): Observable<Page<MaintenanceRecord>> {
+    return this.http.get<Page<MaintenanceRecord>>(`${this.vehicleApi}/${vehicleId}/maintenance`, {
+      params: buildMaintenancePageParams(query),
+    });
+  }
+
+  getSummary(vehicleId: number): Observable<MaintenanceSummary> {
+    return this.http.get<MaintenanceSummary>(`${this.vehicleApi}/${vehicleId}/maintenance/summary`);
+  }
+
+  getById(vehicleId: number, maintenanceId: number): Observable<MaintenanceRecord> {
+    return this.http.get<MaintenanceRecord>(
+      `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}`
+    );
   }
 
   createMaintenance(

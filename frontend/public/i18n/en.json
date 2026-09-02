@@ -57,6 +57,14 @@
       "priceHighLow": "Price: High to Low",
       "pricePerUnitLowHigh": "Price per litre: Low to High",
       "pricePerUnitHighLow": "Price per litre: High to Low"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "perPage": "Per page",
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "goToPage": "Go to page {{page}}"
     }
   },
   "nav": {
@@ -294,7 +302,10 @@
         "filtered": "No fuel records match the current filters.",
         "none": "No fuel records yet."
       },
-      "detailsTitle": "Fuel Record Details"
+      "detailsTitle": "Fuel Record Details",
+      "errors": {
+        "loadFailed": "Failed to load fuel records."
+      }
     },
     "maintenanceTab": {
       "title": "Service Records",
@@ -313,6 +324,7 @@
         "allCategories": "All categories"
       },
       "errors": {
+        "loadFailed": "Unable to load service records right now.",
         "downloadFailed": "Unable to get a download link for the attachment."
       }
     }

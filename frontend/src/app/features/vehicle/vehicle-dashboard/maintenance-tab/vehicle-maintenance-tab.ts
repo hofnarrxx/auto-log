@@ -7,10 +7,13 @@ import { CategoryLabelPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
 import { Modal } from '../../../../shared/ui/modal/modal';
+import { formatCurrencyTotals } from '../../../../shared/utils/currency-totals.utils';
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
-import { findMileageWarningRecordIds } from '../../../../shared/utils/mileage.utils';
 import { AttachmentPicker } from '../../ui/attachment-picker/attachment-picker';
-import { MaintenanceList } from '../../ui/maintenance-list/maintenance-list';
+import {
+  MaintenanceList,
+  type MaintenanceQueryChange,
+} from '../../ui/maintenance-list/maintenance-list';
 import { MaintenanceRecordDetails } from '../../ui/maintenance-record-details/maintenance-record-details';
 import { MaintenanceStore } from '../../maintenance-store';
 import type {
@@ -57,16 +60,24 @@ export class VehicleMaintenanceTab {
   set vehicleId(value: number) {
     this.currentVehicleId = value;
     this.maintenanceStore.load(value);
+    this.maintenanceStore.loadSummary(value);
   }
 
   private currentVehicleId: number | null = null;
 
   protected readonly categories = this.maintenanceStore.categories;
   protected readonly isLoading = this.maintenanceStore.isLoading;
+  protected readonly hasLoadedOnce = this.maintenanceStore.hasLoadedOnce;
   protected readonly error = this.maintenanceStore.error;
   protected readonly isSaving = this.maintenanceStore.isSaving;
   protected readonly isDeleting = this.maintenanceStore.isDeleting;
   protected readonly serviceRecords = this.maintenanceStore.records;
+  protected readonly query = this.maintenanceStore.query;
+  protected readonly page = this.maintenanceStore.page;
+  protected readonly size = this.maintenanceStore.size;
+  protected readonly totalPages = this.maintenanceStore.totalPages;
+  protected readonly totalElements = this.maintenanceStore.totalElements;
+  protected readonly summary = this.maintenanceStore.summary;
 
   protected readonly modalMode = signal<ModalMode>('closed');
   protected readonly selectedRecord = signal<MaintenanceRecord | null>(null);
@@ -77,12 +88,30 @@ export class VehicleMaintenanceTab {
     const mode = this.modalMode();
     return mode === 'create' || mode === 'edit';
   });
-  protected readonly mileageWarningRecordIds = computed(() =>
-    findMileageWarningRecordIds(this.serviceRecords(), (record) => record.serviceDate)
+  protected readonly totalServiceCostByCurrency = computed(() =>
+    formatCurrencyTotals(this.summary()?.totalCostByCurrency, (value, currency) =>
+      this.currencyService.formatCurrency(value, currency)
+    )
   );
+  protected readonly mileageWarningRecordIds = computed(
+    () => new Set(this.summary()?.mileageWarningRecordIds ?? [])
+  );
+  protected readonly maxAvailablePrice = computed(() => this.summary()?.maxCost ?? 0);
 
   constructor() {
     this.maintenanceStore.loadCategories();
+  }
+
+  protected onQueryChange(change: MaintenanceQueryChange) {
+    this.maintenanceStore.setQuery(change);
+  }
+
+  protected onPageChange(page: number) {
+    this.maintenanceStore.setPage(page);
+  }
+
+  protected onSizeChange(size: number) {
+    this.maintenanceStore.setSize(size);
   }
 
   protected openCreateModal() {
@@ -103,6 +132,21 @@ export class VehicleMaintenanceTab {
   protected openRecordDetails(record: MaintenanceRecord) {
     this.selectedRecord.set(record);
     this.modalMode.set('view');
+
+    if (!this.currentVehicleId) {
+      return;
+    }
+
+    this.maintenanceStore.getById(this.currentVehicleId, record.id).subscribe({
+      next: (fullRecord) => {
+        if (this.selectedRecord()?.id === record.id) {
+          this.selectedRecord.set(fullRecord);
+        }
+      },
+      error: () => {
+        // Keep showing the list item (without attachments) if the detail fetch fails.
+      },
+    });
   }
 
   protected startEditSelectedRecord() {
@@ -149,7 +193,6 @@ export class VehicleMaintenanceTab {
       .subscribe({
         next: () => {
           this.closeModal();
-          this.maintenanceStore.load(this.currentVehicleId!);
         },
         error: (err) => {
           this.notifications.notifyError(

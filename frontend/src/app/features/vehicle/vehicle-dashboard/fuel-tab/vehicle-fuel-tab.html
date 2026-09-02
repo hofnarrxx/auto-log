@@ -1,17 +1,27 @@
 <div class="fuel-tab">
-  @if (isLoading()) {
+  @if (isLoading() && !hasLoadedOnce()) {
     <p class="status-message">{{ 'vehicle.fuelTab.loading' | translate }}</p>
-  } @else if (error()) {
+  } @else if (error() && !hasLoadedOnce()) {
     <p class="status-message error">{{ error() | translate }}</p>
   } @else {
     <app-fuel-list
       [records]="fuelRecords()"
       titleKeyPrefix="vehicle.fuelTab"
       [showAddButton]="true"
-      [totalRecords]="fuelRecords().length"
+      [totalRecords]="summary()?.totalRecords ?? 0"
       [totalCostText]="totalFuelCostByCurrency()"
+      [mileageWarningRecordIds]="mileageWarningRecordIds()"
+      [search]="query().gasStation"
+      [sort]="query().sort"
+      [page]="page()"
+      [size]="size()"
+      [totalPages]="totalPages()"
+      [totalElements]="totalElements()"
       (recordSelected)="openRecordDetails($event)"
       (addRequested)="openCreateModal()"
+      (queryChange)="onQueryChange($event)"
+      (pageChange)="onPageChange($event)"
+      (sizeChange)="onSizeChange($event)"
     >
     </app-fuel-list>
   }

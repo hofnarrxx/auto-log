@@ -5,12 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatAppDate } from '../../shared/utils/date-format.utils';
 import { getFuelTypeLabelKey } from '../../shared/utils/fuel-type.utils';
-import {
-  getLatestOdometerMileage,
-  getLatestOdometerRecord,
-  getOdometerRecordDate,
-} from '../../shared/utils/odometer.utils';
-import type { FuelRecord, MaintenanceRecord } from '../vehicle/models';
+import { pickLatestOdometer } from '../../shared/utils/odometer.utils';
 import { SharedVehicleMaintenanceTab } from './shared-vehicle-maintenance-tab';
 import { SharedVehicleFuelTab } from './shared-vehicle-fuel-tab';
 import type { SharedVehicleResponse } from './shared-vehicle-model';
@@ -39,6 +34,13 @@ export class SharedVehicle {
   readonly error = signal<string | null>(null);
   readonly data = signal<SharedVehicleResponse | null>(null);
   readonly activeTab = signal<SharedTab>('details');
+
+  readonly latestOdometer = computed(() =>
+    pickLatestOdometer(
+      this.data()?.fuelSummary.latestOdometerRecord ?? null,
+      this.data()?.maintenanceSummary.latestOdometer ?? null
+    )
+  );
 
   fuelTypeLabel(fuelType: string | null | undefined): string {
     const labelKey = getFuelTypeLabelKey(fuelType);
@@ -73,36 +75,26 @@ export class SharedVehicle {
   }
 
   lastOdometerReading(): string {
-    const mileage = getLatestOdometerMileage(this.odometerRecords(), this.data()?.mileage);
+    const mileage = this.latestOdometer()?.mileage ?? this.data()?.mileage;
 
-    if (mileage === null) {
+    if (mileage === null || mileage === undefined) {
       return '-';
     }
 
-    return `${mileage.toLocaleString()} km`;
+    return `${Math.trunc(mileage).toLocaleString()} km`;
   }
 
   lastOdometerDate(): string {
-    const latest = getLatestOdometerRecord(this.odometerRecords());
+    const latest = this.latestOdometer();
 
     if (!latest) {
       return '-';
     }
 
-    return formatAppDate(getOdometerRecordDate(latest));
+    return formatAppDate(latest.date);
   }
 
   setTab(tab: SharedTab) {
     this.activeTab.set(tab);
-  }
-
-  private odometerRecords(): (FuelRecord | MaintenanceRecord)[] {
-    const response = this.data();
-
-    if (!response) {
-      return [];
-    }
-
-    return [...(response.fuelEntries ?? []), ...(response.maintenanceEntries ?? [])];
   }
 }

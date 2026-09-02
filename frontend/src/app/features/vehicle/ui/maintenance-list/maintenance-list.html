@@ -3,8 +3,8 @@
     <div class="header-main">
       <h3>{{ getTitleTranslationKey('title') | translate }}</h3>
       <p class="header-summary">
-        {{ 'common.records' | translate }}: {{ totalRecords() }} |
-        {{ 'common.totalCost' | translate }}: {{ totalServiceCostByCurrency() || '-' }}
+        {{ 'common.records' | translate }}: {{ totalRecordsValue() }} |
+        {{ 'common.totalCost' | translate }}: {{ totalCostTextValue() || '-' }}
       </p>
     </div>
     <div class="header-actions">
@@ -32,7 +32,7 @@
         {{ 'common.filter' | translate }}
       </button>
 
-      @if (showAddButton) {
+      @if (showAddButtonValue()) {
         <button type="button" class="add-record-btn" (click)="requestAdd()">
           {{ getTitleTranslationKey('addRecord') | translate }}
         </button>
@@ -40,19 +40,17 @@
     </div>
   </div>
 
-  @if (!showEmptyState && !serviceRecords().length) {
-    <p class="status-message">{{ getTitleTranslationKey('empty.none') | translate }}</p>
-  } @else if (!timelineEntries().length) {
+  @if (isEmpty()) {
     <p class="status-message">
       {{
-        hasAnyRecords()
+        hasAnyRecordsAtAll()
           ? (getTitleTranslationKey('empty.filtered') | translate)
           : (getTitleTranslationKey('empty.none') | translate)
       }}
     </p>
   } @else {
     <div class="timeline">
-      @for (entry of timelineEntries(); track entry.id) {
+      @for (entry of serviceRecords(); track entry.id) {
         <button type="button" class="timeline-item" (click)="openRecordDetails(entry)">
           <div class="entry-date">{{ entry.serviceDate | dateFormat }}</div>
 
@@ -84,6 +82,16 @@
         </button>
       }
     </div>
+
+    <app-pagination
+      [page]="pageValue()"
+      [totalPages]="totalPagesValue()"
+      [totalElements]="totalElementsValue()"
+      [size]="sizeValue()"
+      (pageChange)="onPageChange($event)"
+      (sizeChange)="onSizeChange($event)"
+    >
+    </app-pagination>
   }
 
   @if (isFilterModalOpen()) {
@@ -106,7 +114,7 @@
         </label>
 
         <div class="category-options">
-          @for (category of availableFilterCategories(); track category) {
+          @for (category of availableCategoriesValue(); track category) {
             <label class="filter-option">
               <input
                 type="checkbox"
@@ -135,20 +143,20 @@
               type="range"
               class="slider-min"
               [min]="0"
-              [max]="maxAvailablePrice()"
+              [max]="maxAvailablePriceValue()"
               [value]="minPriceLimit()"
               [step]="1"
-              [disabled]="maxAvailablePrice() === 0"
+              [disabled]="maxAvailablePriceValue() === 0"
               (input)="onMinPriceLimitChange($event)"
             />
             <input
               type="range"
               class="slider-max"
               [min]="0"
-              [max]="maxAvailablePrice()"
+              [max]="maxAvailablePriceValue()"
               [value]="maxPriceLimit()"
               [step]="1"
-              [disabled]="maxAvailablePrice() === 0"
+              [disabled]="maxAvailablePriceValue() === 0"
               (input)="onMaxPriceLimitChange($event)"
             />
             <div class="slider-track" [ngStyle]="sliderTrackStyle()"></div>
@@ -167,7 +175,7 @@
             >
               {{ 'common.all' | translate }}
             </option>
-            @for (currency of availableFilterCurrencies(); track currency) {
+            @for (currency of availableCurrencies; track currency) {
               <option [value]="currency" [selected]="selectedCurrencyFilter() === currency">
                 {{ currency }}
               </option>

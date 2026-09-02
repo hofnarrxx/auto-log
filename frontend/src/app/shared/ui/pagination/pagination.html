@@ -1,0 +1,58 @@
+@if (totalPagesValue() > 0) {
+  <nav class="pagination" [attr.aria-label]="'common.pagination.page' | translate">
+    <p class="pagination-info">
+      {{
+        'common.pagination.showing'
+          | translate: { from: rangeStart(), to: rangeEnd(), total: totalElementsValue() }
+      }}
+    </p>
+
+    <div class="pagination-controls">
+      <button
+        type="button"
+        class="pager-btn"
+        [disabled]="isFirstPage()"
+        [attr.aria-label]="'common.pagination.previous' | translate"
+        (click)="goToPrevious()"
+      >
+        {{ 'common.pagination.previous' | translate }}
+      </button>
+
+      @for (entry of pageNumbers(); track $index) {
+        @if (entry === 'ellipsis') {
+          <span class="pager-ellipsis" aria-hidden="true">&hellip;</span>
+        } @else {
+          <button
+            type="button"
+            class="pager-btn pager-number"
+            [class.active]="entry === currentPage()"
+            [attr.aria-current]="entry === currentPage() ? 'page' : null"
+            [attr.aria-label]="'common.pagination.goToPage' | translate: { page: entry + 1 }"
+            (click)="goToPage(entry)"
+          >
+            {{ entry + 1 }}
+          </button>
+        }
+      }
+
+      <button
+        type="button"
+        class="pager-btn"
+        [disabled]="isLastPage()"
+        [attr.aria-label]="'common.pagination.next' | translate"
+        (click)="goToNext()"
+      >
+        {{ 'common.pagination.next' | translate }}
+      </button>
+    </div>
+
+    <label class="pagination-size">
+      <span>{{ 'common.pagination.perPage' | translate }}</span>
+      <select [value]="sizeValue()" (change)="onSizeChange($event)">
+        @for (option of pageSizeOptionsValue(); track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </label>
+  </nav>
+}

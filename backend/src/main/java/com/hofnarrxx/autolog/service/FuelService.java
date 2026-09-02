@@ -1,7 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -161,7 +160,7 @@ public class FuelService {
             }
         }
         if(totalKm > 0 && totalLitres.compareTo(BigDecimal.ZERO) > 0){
-            averageConsumptionPer100km = totalLitres.divide(new BigDecimal(totalKm), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)).doubleValue();
+            averageConsumptionPer100km = (totalLitres.doubleValue() / totalKm) * 100;
         }
         return new FuelSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds, averageConsumptionPer100km);
     }

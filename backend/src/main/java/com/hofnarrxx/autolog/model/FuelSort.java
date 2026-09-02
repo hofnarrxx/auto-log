@@ -25,8 +25,8 @@ public enum FuelSort {
                 .orElse(NEWEST);
     }
 
-    private static final String pricePerUnitFlag = "case when f.amount is null or f.amount = 0 or f.cost is null then 1 else 0 end";
-    private static final String pricePerUnitExpression = "case when f.amount is null or f.amount = 0 then null else f.cost / f.amount end";
+    private static final String pricePerUnitFlag = "(case when f.amount is null or f.amount = 0 or f.cost is null then 1 else 0 end)";
+    private static final String pricePerUnitExpression = "(case when f.amount is null or f.amount = 0 then null else f.cost / f.amount end)";
 
     public Sort toSort() {
         switch (this) {

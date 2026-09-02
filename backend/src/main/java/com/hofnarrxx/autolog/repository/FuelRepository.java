@@ -25,7 +25,7 @@ public interface FuelRepository extends JpaRepository<Fuel, Long> {
                         where f.vehicle.id = :vehicleId
                           and f.vehicle.user.id = :userId
                           and (:gasStation is null
-                               or lower(f.gasStation) like lower(concat('%', :gasStation, '%')))
+                               or lower(f.gasStation) like lower(concat('%', cast(:gasStation as string), '%')))
                         """)
         Page<Fuel> findPageForOwner(@Param("vehicleId") Long vehicleId,
                         @Param("userId") Long userId,
@@ -36,7 +36,7 @@ public interface FuelRepository extends JpaRepository<Fuel, Long> {
                         select f from Fuel f
                         where f.vehicle.id = :vehicleId
                           and (:gasStation is null
-                               or lower(f.gasStation) like lower(concat('%', :gasStation, '%')))
+                               or lower(f.gasStation) like lower(concat('%', cast(:gasStation as string), '%')))
                         """)
         Page<Fuel> findPageForPublicAccess(@Param("vehicleId") Long vehicleId,
                         @Param("gasStation") String gasStation,
