@@ -11,45 +11,53 @@
     <div class="error">{{ 'vehicle.form.errors.modelRequired' | translate }}</div>
   }
 
-  <select formControlName="fuelType">
-    <option [ngValue]="null" disabled>
-      {{ 'vehicle.form.placeholders.selectFuelType' | translate }}
-    </option>
-    @for (fuel of fuelTypes; track fuel) {
-      <option [value]="fuel">{{ fuelTypeLabel(fuel) | translate }}</option>
-    }
-  </select>
-  @if (form.controls.fuelType.invalid && form.controls.fuelType.touched) {
-    <div class="error">{{ 'vehicle.form.errors.fuelTypeRequired' | translate }}</div>
-  }
+  <div class="form-row">
+    <div class="field-group">
+      <input
+        type="number"
+        [placeholder]="'vehicle.form.placeholders.year' | translate"
+        formControlName="year"
+        min="1886"
+        [max]="currentYear"
+        step="1"
+      />
 
-  <input
-    type="number"
-    [placeholder]="'vehicle.form.placeholders.year' | translate"
-    formControlName="year"
-    min="1886"
-    [max]="currentYear"
-    step="1"
-  />
-
-  @if (form.controls.year.hasError('integer') && form.controls.year.touched) {
-    <div class="error">{{ 'vehicle.form.errors.yearInteger' | translate }}</div>
-  } @else if (form.controls.year.invalid && form.controls.year.touched) {
-    <div class="error">
-      {{ 'vehicle.form.errors.yearRange' | translate: { currentYear: currentYear } }}
+      @if (form.controls.year.hasError('integer') && form.controls.year.touched) {
+        <div class="error">{{ 'vehicle.form.errors.yearInteger' | translate }}</div>
+      } @else if (form.controls.year.invalid && form.controls.year.touched) {
+        <div class="error">
+          {{ 'vehicle.form.errors.yearRange' | translate: { currentYear: currentYear } }}
+        </div>
+      }
     </div>
-  }
 
-  <input
-    type="number"
-    [placeholder]="'vehicle.form.placeholders.mileage' | translate"
-    formControlName="mileage"
-    min="0"
-    step="0.1"
-  />
+    <div class="field-group">
+      <select formControlName="fuelType">
+        <option [ngValue]="null" disabled>
+          {{ 'vehicle.form.placeholders.selectFuelType' | translate }}
+        </option>
+        @for (fuel of fuelTypes; track fuel) {
+          <option [value]="fuel">{{ fuelTypeLabel(fuel) | translate }}</option>
+        }
+      </select>
+      @if (form.controls.fuelType.invalid && form.controls.fuelType.touched) {
+        <div class="error">{{ 'vehicle.form.errors.fuelTypeRequired' | translate }}</div>
+      }
+    </div>
+  </div>
 
-  @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-    <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
+  @if (!vehicle) {
+    <input
+      type="number"
+      [placeholder]="'vehicle.form.placeholders.mileage' | translate"
+      formControlName="mileage"
+      min="0"
+      step="0.1"
+    />
+
+    @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+      <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
+    }
   }
 
   <input
@@ -64,10 +72,10 @@
   >
   </app-vehicle-image-picker>
 
-  <div class="buttons">
-    <button type="button" class="cancel" (click)="cancel()">
+  <div class="modal-actions">
+    <button type="button" class="secondary-btn" (click)="cancel()">
       {{ 'common.cancel' | translate }}
     </button>
-    <button type="submit" class="save">{{ 'common.save' | translate }}</button>
+    <button type="submit" class="primary-btn">{{ 'common.save' | translate }}</button>
   </div>
 </form>

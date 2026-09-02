@@ -34,6 +34,8 @@ export class VehicleDashboard {
   private vehicleStore = inject(VehicleStore);
   showEditModal = signal(false);
   showShareModal = signal(false);
+  showDeleteConfirmModal = signal(false);
+  isDeletingVehicle = signal(false);
   private queryParamMap = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
@@ -68,12 +70,23 @@ export class VehicleDashboard {
     this.showShareModal.set(false);
   }
 
-  deleteVehicle() {
-    const vehicle = this.vehicle();
-    if (!vehicle) return;
+  openDeleteConfirm() {
+    this.showDeleteConfirmModal.set(true);
+  }
 
+  closeDeleteConfirm() {
+    if (this.isDeletingVehicle()) return;
+    this.showDeleteConfirmModal.set(false);
+  }
+
+  confirmDeleteVehicle() {
+    const vehicle = this.vehicle();
+    if (!vehicle || this.isDeletingVehicle()) return;
+
+    this.isDeletingVehicle.set(true);
     this.vehicleStore.remove(vehicle.id).subscribe({
       next: () => this.router.navigate(['/dashboard'], { replaceUrl: true }),
+      error: () => this.isDeletingVehicle.set(false),
     });
   }
 }

@@ -6,7 +6,7 @@
           [vehicle]="vehicle()!"
           (editRequested)="openEdit()"
           (shareRequested)="openShareModal()"
-          (deleteRequested)="deleteVehicle()"
+          (deleteRequested)="openDeleteConfirm()"
         >
         </app-vehicle-details-tab>
       }
@@ -30,6 +30,32 @@
   @if (showShareModal()) {
     <app-share-link-modal [vehicleId]="vehicle()!.id" (closed)="closeShareModal()">
     </app-share-link-modal>
+  }
+
+  @if (showDeleteConfirmModal()) {
+    <app-modal (closed)="closeDeleteConfirm()">
+      <h2>{{ 'vehicle.details.deleteConfirmTitle' | translate }}</h2>
+      <p>{{ 'vehicle.details.deleteConfirmMessage' | translate }}</p>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="secondary-btn"
+          [disabled]="isDeletingVehicle()"
+          (click)="closeDeleteConfirm()"
+        >
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          class="danger-btn"
+          [disabled]="isDeletingVehicle()"
+          (click)="confirmDeleteVehicle()"
+        >
+          {{ isDeletingVehicle() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
+        </button>
+      </div>
+    </app-modal>
   }
 } @else {
   <p>{{ 'common.vehicleNotFound' | translate }}</p>

@@ -145,6 +145,8 @@
       "shareVehicle": "Udostępnij pojazd",
       "editVehicle": "Edytuj pojazd",
       "deleteVehicle": "Usuń pojazd",
+      "deleteConfirmTitle": "Usunąć pojazd?",
+      "deleteConfirmMessage": "Spowoduje to trwałe usunięcie tego pojazdu wraz z wszystkimi wpisami paliwowymi i serwisowymi. Tej operacji nie można odwrócić.",
       "thumbnailAlt": "Miniatura pojazdu",
       "avgEfficiency": "Średnie zużycie paliwa",
       "lastOdometerReading": "Ostatni odczyt licznika",

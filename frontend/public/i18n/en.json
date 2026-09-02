@@ -145,6 +145,8 @@
       "shareVehicle": "Share vehicle",
       "editVehicle": "Edit vehicle",
       "deleteVehicle": "Delete vehicle",
+      "deleteConfirmTitle": "Delete vehicle?",
+      "deleteConfirmMessage": "This will permanently delete this vehicle along with all of its fuel and maintenance records. This action cannot be undone.",
       "thumbnailAlt": "Vehicle thumbnail",
       "avgEfficiency": "Average fuel efficiency",
       "lastOdometerReading": "Last odometer reading",
