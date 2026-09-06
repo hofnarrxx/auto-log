@@ -20,6 +20,26 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(WeakPasswordException.class)
+    public ResponseEntity<?> handleWeakPassword(WeakPasswordException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "error", "WEAK_PASSWORD",
+                        "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InvalidPasswordResetTokenException.class)
+    public ResponseEntity<?> handleInvalidPasswordResetToken(InvalidPasswordResetTokenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "error", "INVALID_PASSWORD_RESET_TOKEN",
+                        "message", ex.getMessage()
+                    ));
+    }
+    
     @ExceptionHandler(VehicleNotFoundException.class)
     public ResponseEntity<?> handleVehicleNotFound(VehicleNotFoundException ex) {
         return ResponseEntity

@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { PASSWORD_MIN_LENGTH, passwordStrengthValidator } from '../../../shared/utils/password.validator';
 
 @Component({
   selector: 'app-register',
@@ -17,9 +18,14 @@ export class Register {
   private fb = inject(FormBuilder);
   private notifications = inject(NotificationService);
 
+  readonly passwordMinLength = PASSWORD_MIN_LENGTH;
+
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH), passwordStrengthValidator],
+    ],
     confirmPassword: ['', Validators.required],
   });
 
@@ -36,6 +42,7 @@ export class Register {
           fallback: 'auth.register.errors.registrationFailed',
           byStatus: {
             409: 'auth.register.errors.emailExists',
+            400: 'auth.register.errors.passwordWeak',
           },
         });
       },

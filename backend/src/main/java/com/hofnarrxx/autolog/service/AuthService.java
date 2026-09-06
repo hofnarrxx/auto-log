@@ -1,5 +1,14 @@
 package com.hofnarrxx.autolog.service;
 
+import java.util.Optional;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthTokens;
 import com.hofnarrxx.autolog.exception.EmailAlreadyExistsException;
@@ -8,14 +17,7 @@ import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
 import com.hofnarrxx.autolog.repository.UserRepository;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
+import com.hofnarrxx.autolog.utils.PasswordPolicy;
 
 @Service
 public class AuthService {
@@ -25,23 +27,28 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordPolicy passwordPolicy;
 
     public AuthService(UserRepository userRepository,
                        AuthProviderRepository providerRepository,
                        PasswordEncoder encoder,
                        JwtService jwtService,
                        AuthenticationManager authManager,
-                       RefreshTokenService refreshTokenService) {
+                       RefreshTokenService refreshTokenService,
+                       PasswordPolicy passwordPolicy) {
         this.userRepository = userRepository;
         this.providerRepository = providerRepository;
         this.encoder = encoder;
         this.jwtService = jwtService;
         this.authManager = authManager;
         this.refreshTokenService = refreshTokenService;
+        this.passwordPolicy = passwordPolicy;
     }
 
     @Transactional
     public AuthTokens register(AuthRequest request) {
+
+        passwordPolicy.validate(request.password());
 
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new EmailAlreadyExistsException();

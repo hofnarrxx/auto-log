@@ -122,6 +122,7 @@
       "emailPlaceholder": "Wpisz e-mail",
       "passwordLabel": "Hasło",
       "passwordPlaceholder": "Utwórz hasło",
+      "passwordHint": "Co najmniej {{minLength}} znaków, w tym jedna wielka litera i jeden znak specjalny.",
       "confirmPasswordLabel": "Potwierdź hasło",
       "confirmPasswordPlaceholder": "Powtórz hasło",
       "submit": "Zarejestruj się",
@@ -131,10 +132,13 @@
         "emailRequired": "E-mail jest wymagany.",
         "emailInvalid": "Wpisz prawidłowy adres e-mail.",
         "passwordRequired": "Hasło jest wymagane.",
-        "passwordMinLength": "Hasło musi mieć co najmniej 6 znaków.",
+        "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
+        "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",
+        "passwordSpecialChar": "Hasło musi zawierać co najmniej jeden znak specjalny.",
         "confirmPasswordRequired": "Potwierdź swoje hasło.",
         "passwordMismatch": "Hasła nie są zgodne.",
         "emailExists": "Ten adres e-mail jest już zarejestrowany.",
+        "passwordWeak": "Hasło musi mieć co najmniej 8 znaków oraz zawierać jedną wielką literę i jeden znak specjalny.",
         "registrationFailed": "Rejestracja nie powiodła się."
       }
     }

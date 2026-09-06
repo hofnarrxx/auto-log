@@ -34,6 +34,10 @@
           formControlName="password"
         />
 
+        <div class="hint">
+          {{ 'auth.register.passwordHint' | translate: { minLength: passwordMinLength } }}
+        </div>
+
         @if (form.controls.password.touched && form.controls.password.invalid) {
           <div class="error">
             @if (form.controls.password.errors?.['required']) {
@@ -41,7 +45,20 @@
             }
 
             @if (form.controls.password.errors?.['minlength']) {
-              <span>{{ 'auth.register.errors.passwordMinLength' | translate }}</span>
+              <span>
+                {{
+                  'auth.register.errors.passwordMinLength'
+                    | translate: { minLength: passwordMinLength }
+                }}
+              </span>
+            }
+
+            @if (form.controls.password.errors?.['passwordUppercase']) {
+              <span>{{ 'auth.register.errors.passwordUppercase' | translate }}</span>
+            }
+
+            @if (form.controls.password.errors?.['passwordSpecialChar']) {
+              <span>{{ 'auth.register.errors.passwordSpecialChar' | translate }}</span>
             }
           </div>
         }

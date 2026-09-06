@@ -21,73 +21,69 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
-    private final JwtAuthenticationFilter jwtFilter;
-    private final CustomOAuth2UserService oauth2UserService;
-    private final OAuth2JwtSuccessHandler oauth2JwtSuccessHandler;
+        private final AppProperties appProperties;
+        private final JwtAuthenticationFilter jwtFilter;
+        private final CustomOAuth2UserService oauth2UserService;
+        private final OAuth2JwtSuccessHandler oauth2JwtSuccessHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter,
-                          CustomOAuth2UserService oauth2UserService,
-                          OAuth2JwtSuccessHandler oauth2JwtSuccessHandler){
-        this.jwtFilter = jwtFilter;
-        this.oauth2UserService = oauth2UserService;
-        this.oauth2JwtSuccessHandler = oauth2JwtSuccessHandler;
-    }
+        public SecurityConfig(AppProperties appProperties, JwtAuthenticationFilter jwtFilter,
+                        CustomOAuth2UserService oauth2UserService,
+                        OAuth2JwtSuccessHandler oauth2JwtSuccessHandler) {
+                this.appProperties = appProperties;
+                this.jwtFilter = jwtFilter;
+                this.oauth2UserService = oauth2UserService;
+                this.oauth2JwtSuccessHandler = oauth2JwtSuccessHandler;
+        }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
-                .cors(cors ->{})
-                .sessionManagement(sm ->
-                        sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**", "/oauth2/**", "/share/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        })
-                )
-                .addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(user ->
-                                user.userService(oauth2UserService)
-                        )
-                        .successHandler(oauth2JwtSuccessHandler)
-                );
+                http.csrf(csrf -> csrf.disable())
+                                .cors(cors -> {
+                                })
+                                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                                .requestMatchers("/api/auth/**", "/oauth2/**", "/share/**").permitAll()
+                                                .anyRequest().authenticated())
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint((request, response, authException) -> {
+                                                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                                                }))
+                                .addFilterBefore(jwtFilter,
+                                                UsernamePasswordAuthenticationFilter.class)
+                                .oauth2Login(oauth -> oauth
+                                                .userInfoEndpoint(user -> user.userService(oauth2UserService))
+                                                .successHandler(oauth2JwtSuccessHandler));
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(
+                        AuthenticationConfiguration config) throws Exception {
+                return config.getAuthenticationManager();
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+        @Bean
+        CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration config = new CorsConfiguration();
+                CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+                config.setAllowedOrigins(List.of(appProperties.frontendUrl()));
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                config.setAllowedHeaders(List.of("*"));
+                config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", config);
+                source.registerCorsConfiguration("/**", config);
 
-        return source;
-    }
+                return source;
+        }
 }

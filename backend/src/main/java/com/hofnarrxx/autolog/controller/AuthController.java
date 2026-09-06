@@ -3,11 +3,18 @@ package com.hofnarrxx.autolog.controller;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.dto.AuthTokens;
+import com.hofnarrxx.autolog.dto.ForgotPasswordRequest;
+import com.hofnarrxx.autolog.dto.ResetPasswordRequest;
+import com.hofnarrxx.autolog.exception.InvalidPasswordResetTokenException;
 import com.hofnarrxx.autolog.service.AuthService;
+import com.hofnarrxx.autolog.service.PasswordResetService;
 import com.hofnarrxx.autolog.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -23,6 +30,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
+    private final PasswordResetService passwordResetService;
 
     @Value("${jwt.expiration}")
     private long accessTokenExpirationMs;
@@ -31,9 +39,10 @@ public class AuthController {
     private long refreshTokenExpirationMs;
 
     public AuthController(AuthService authService,
-                          RefreshTokenService refreshTokenService) {
+            RefreshTokenService refreshTokenService, PasswordResetService passwordResetService) {
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
+        this.passwordResetService = passwordResetService;
     }
 
     @PostMapping("/register")
@@ -88,6 +97,28 @@ public class AuthController {
         clearAuthCookies(response);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        Locale locale = Locale
+                .forLanguageTag(request.lang() != null && !request.lang().isBlank() ? request.lang() : "en");
+        passwordResetService.requestReset(request.email(), locale);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/reset-password/validate")
+    public ResponseEntity<Void> validateRequest(@RequestParam String token){
+        if(!passwordResetService.validateToken(token)){
+            throw new InvalidPasswordResetTokenException();
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request){
+        passwordResetService.resetPassword(request.token(), request.password());
+        return ResponseEntity.noContent().build();
     }
 
     private void setAuthCookies(HttpServletResponse response, AuthTokens tokens) {

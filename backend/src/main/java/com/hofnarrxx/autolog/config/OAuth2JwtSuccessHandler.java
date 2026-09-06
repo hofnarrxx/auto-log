@@ -1,12 +1,7 @@
 package com.hofnarrxx.autolog.config;
 
-import com.hofnarrxx.autolog.model.User;
-import com.hofnarrxx.autolog.repository.UserRepository;
-import com.hofnarrxx.autolog.service.JwtService;
-import com.hofnarrxx.autolog.service.RefreshTokenService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -15,7 +10,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import com.hofnarrxx.autolog.model.User;
+import com.hofnarrxx.autolog.repository.UserRepository;
+import com.hofnarrxx.autolog.service.JwtService;
+import com.hofnarrxx.autolog.service.RefreshTokenService;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
@@ -23,6 +25,7 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final AppProperties appProperties;
 
     @Value("${jwt.expiration}")
     private long accessTokenExpirationMs;
@@ -32,10 +35,11 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
 
     public OAuth2JwtSuccessHandler(UserRepository userRepository,
                                    JwtService jwtService,
-                                   RefreshTokenService refreshTokenService) {
+                                   RefreshTokenService refreshTokenService, AppProperties appProperties) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
+        this.appProperties = appProperties;
     }
 
     @Override
@@ -66,7 +70,7 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE,
                 buildCookie("refresh_token", refreshToken, refreshTokenExpirationMs).toString());
 
-        response.sendRedirect("http://localhost:4200/dashboard");
+        response.sendRedirect(appProperties.frontendUrl() + "/dashboard");
     }
 
     private ResponseCookie buildCookie(String name, String value, long maxAgeMs) {
