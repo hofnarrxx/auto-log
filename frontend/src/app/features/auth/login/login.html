@@ -40,7 +40,8 @@
             @if (form.controls.password.errors?.['minlength']) {
               <span>
                 {{
-                  'auth.login.errors.passwordMinLength' | translate: { minLength: passwordMinLength }
+                  'auth.login.errors.passwordMinLength'
+                    | translate: { minLength: passwordMinLength }
                 }}
               </span>
             }

@@ -114,9 +114,7 @@ describe('PublicShareApi', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    api
-      .getMaintenanceById('token-123', 5)
-      .subscribe((result) => expect(result).toEqual(response));
+    api.getMaintenanceById('token-123', 5).subscribe((result) => expect(result).toEqual(response));
 
     const req = httpMock.expectOne(`${BASE_URL}/share/token-123/maintenance/5`);
     expect(req.request.method).toBe('GET');

@@ -4,7 +4,10 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
-import { PASSWORD_MIN_LENGTH, passwordStrengthValidator } from '../../../shared/utils/password.validator';
+import {
+  PASSWORD_MIN_LENGTH,
+  passwordStrengthValidator,
+} from '../../../shared/utils/password.validator';
 
 @Component({
   selector: 'app-register',

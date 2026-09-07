@@ -52,7 +52,9 @@
           [disabled]="isDeletingVehicle()"
           (click)="confirmDeleteVehicle()"
         >
-          {{ isDeletingVehicle() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
+          {{
+            isDeletingVehicle() ? ('common.deleting' | translate) : ('common.delete' | translate)
+          }}
         </button>
       </div>
     </app-modal>
