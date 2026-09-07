@@ -30,7 +30,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     !req.url.includes('/api/auth/login') &&
     !req.url.includes('/api/auth/register') &&
     !req.url.includes('/api/auth/logout') &&
-    !req.url.includes('/api/auth/refresh');
+    !req.url.includes('/api/auth/refresh') &&
+    !req.url.includes('/api/auth/forgot-password') &&
+    !req.url.includes('/api/auth/reset-password');
 
   return next(authReq).pipe(
     catchError((err) => {

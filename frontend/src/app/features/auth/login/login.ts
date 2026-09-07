@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
+import { PASSWORD_MIN_LENGTH } from '../../../shared/utils/password.validator';
 
 @Component({
   selector: 'app-login',
@@ -19,9 +20,11 @@ export class Login {
   private notifications = inject(NotificationService);
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
+  readonly passwordMinLength = PASSWORD_MIN_LENGTH;
+
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)]],
   });
 
   login() {

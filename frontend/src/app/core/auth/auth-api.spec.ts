@@ -67,4 +67,30 @@ describe('AuthApi', () => {
     expect(req.request.method).toBe('GET');
     req.flush(null);
   });
+
+  it('posts to the forgot-password endpoint', () => {
+    api.requestPasswordReset('a@b.com', 'en').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/forgot-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'a@b.com', lang: 'en' });
+    req.flush(null);
+  });
+
+  it('validates a reset token via the validate endpoint', () => {
+    api.validateResetToken('raw-token').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/reset-password/validate?token=raw-token`);
+    expect(req.request.method).toBe('GET');
+    req.flush(null);
+  });
+
+  it('posts to the reset-password endpoint', () => {
+    api.resetPassword('raw-token', 'NewPass1!').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/reset-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ token: 'raw-token', password: 'NewPass1!' });
+    req.flush(null);
+  });
 });

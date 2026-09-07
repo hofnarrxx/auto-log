@@ -108,12 +108,48 @@
       "google": "Kontynuuj z Google",
       "switchPrompt": "Nie masz konta?",
       "switchLink": "Zarejestruj się",
+      "forgotPassword": "Nie pamiętasz hasła?",
       "errors": {
         "emailRequired": "E-mail jest wymagany.",
         "emailInvalid": "Wpisz prawidłowy adres e-mail.",
         "passwordRequired": "Hasło jest wymagane.",
-        "passwordMinLength": "Hasło musi mieć co najmniej 6 znaków.",
+        "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
         "invalidCredentials": "Nieprawidłowe dane logowania."
+      }
+    },
+    "forgotPassword": {
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "Wpisz e-mail",
+      "submit": "Wyślij link resetujący",
+      "checkEmail": "Jeśli konto o tym adresie e-mail istnieje, wysłaliśmy link do zresetowania hasła.",
+      "backToLogin": "Powrót do logowania",
+      "errors": {
+        "emailRequired": "E-mail jest wymagany.",
+        "emailInvalid": "Wpisz prawidłowy adres e-mail.",
+        "requestFailed": "Nie udało się teraz wysłać wiadomości resetującej hasło."
+      }
+    },
+    "resetPassword": {
+      "checking": "Sprawdzanie linku resetującego...",
+      "invalidLink": "Ten link resetujący jest nieprawidłowy lub wygasł.",
+      "requestNewLink": "Poproś o nowy link resetujący",
+      "passwordLabel": "Nowe hasło",
+      "passwordPlaceholder": "Utwórz nowe hasło",
+      "passwordHint": "Co najmniej {{minLength}} znaków, w tym jedna wielka litera i jeden znak specjalny.",
+      "confirmPasswordLabel": "Potwierdź nowe hasło",
+      "confirmPasswordPlaceholder": "Powtórz nowe hasło",
+      "submit": "Zresetuj hasło",
+      "backToLogin": "Powrót do logowania",
+      "success": "Twoje hasło zostało zresetowane. Zaloguj się.",
+      "errors": {
+        "passwordRequired": "Hasło jest wymagane.",
+        "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
+        "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",
+        "passwordSpecialChar": "Hasło musi zawierać co najmniej jeden znak specjalny.",
+        "confirmPasswordRequired": "Potwierdź swoje hasło.",
+        "passwordMismatch": "Hasła nie są zgodne.",
+        "invalidToken": "Ten link resetujący jest nieprawidłowy lub wygasł.",
+        "resetFailed": "Nie udało się teraz zresetować hasła."
       }
     },
     "register": {

@@ -38,7 +38,11 @@
             }
 
             @if (form.controls.password.errors?.['minlength']) {
-              <span>{{ 'auth.login.errors.passwordMinLength' | translate }}</span>
+              <span>
+                {{
+                  'auth.login.errors.passwordMinLength' | translate: { minLength: passwordMinLength }
+                }}
+              </span>
             }
           </div>
         }
@@ -48,6 +52,10 @@
         {{ 'auth.login.submit' | translate }}
       </button>
     </form>
+
+    <p class="auth-switch">
+      <a routerLink="/forgot-password">{{ 'auth.login.forgotPassword' | translate }}</a>
+    </p>
 
     <button class="google-btn" (click)="googleLogin()">
       {{ 'auth.login.google' | translate }}

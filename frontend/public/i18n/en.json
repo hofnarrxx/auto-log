@@ -108,12 +108,48 @@
       "google": "Continue with Google",
       "switchPrompt": "Don't have an account?",
       "switchLink": "Register",
+      "forgotPassword": "Forgot password?",
       "errors": {
         "emailRequired": "Email is required.",
         "emailInvalid": "Enter a valid email address.",
         "passwordRequired": "Password is required.",
-        "passwordMinLength": "Password must be at least 6 characters.",
+        "passwordMinLength": "Password must be at least {{minLength}} characters.",
         "invalidCredentials": "Invalid credentials."
+      }
+    },
+    "forgotPassword": {
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "submit": "Send reset link",
+      "checkEmail": "If an account exists for that email, we've sent a link to reset your password.",
+      "backToLogin": "Back to log in",
+      "errors": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "requestFailed": "Unable to send the reset email right now."
+      }
+    },
+    "resetPassword": {
+      "checking": "Checking your reset link...",
+      "invalidLink": "This reset link is invalid or has expired.",
+      "requestNewLink": "Request a new reset link",
+      "passwordLabel": "New password",
+      "passwordPlaceholder": "Create a new password",
+      "passwordHint": "At least {{minLength}} characters, with one uppercase letter and one special character.",
+      "confirmPasswordLabel": "Confirm new password",
+      "confirmPasswordPlaceholder": "Repeat your new password",
+      "submit": "Reset password",
+      "backToLogin": "Back to log in",
+      "success": "Your password has been reset. Please log in.",
+      "errors": {
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password must be at least {{minLength}} characters.",
+        "passwordUppercase": "Password must include at least one uppercase letter.",
+        "passwordSpecialChar": "Password must include at least one special character.",
+        "confirmPasswordRequired": "Please confirm your password.",
+        "passwordMismatch": "Passwords do not match.",
+        "invalidToken": "This reset link is invalid or has expired.",
+        "resetFailed": "Unable to reset your password right now."
       }
     },
     "register": {

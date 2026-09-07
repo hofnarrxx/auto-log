@@ -33,4 +33,16 @@ export class AuthApi {
   checkAuth(): Observable<void> {
     return this.http.get<void>(`${this.authApi}/me`);
   }
+
+  requestPasswordReset(email: string, lang: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/forgot-password`, { email, lang });
+  }
+
+  validateResetToken(token: string): Observable<void> {
+    return this.http.get<void>(`${this.authApi}/reset-password/validate`, { params: { token } });
+  }
+
+  resetPassword(token: string, password: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/reset-password`, { token, password });
+  }
 }

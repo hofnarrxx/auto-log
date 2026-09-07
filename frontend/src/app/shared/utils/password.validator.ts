@@ -26,3 +26,24 @@ export function passwordStrengthValidator(control: AbstractControl): ValidationE
 
   return Object.keys(errors).length ? errors : null;
 }
+
+/**
+ * Group-level validator that compares a `password` and `confirmPassword` control and
+ * surfaces a `passwordMismatch` error on the `confirmPassword` control, matching the
+ * convention used for the other field-level errors on this form.
+ */
+export function passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password');
+  const confirmPassword = group.get('confirmPassword');
+  if (!password || !confirmPassword) return null;
+
+  if (confirmPassword.value && password.value !== confirmPassword.value) {
+    confirmPassword.setErrors({ ...confirmPassword.errors, passwordMismatch: true });
+  } else if (confirmPassword.errors) {
+    const remaining = { ...confirmPassword.errors };
+    delete remaining['passwordMismatch'];
+    confirmPassword.setErrors(Object.keys(remaining).length ? remaining : null);
+  }
+
+  return null;
+}
