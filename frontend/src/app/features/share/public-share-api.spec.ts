@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { API_BASE_URL } from '../../core/config/api-base-url.token';
 import { DEFAULT_FUEL_QUERY, DEFAULT_MAINTENANCE_QUERY } from '../vehicle/models';
+import type { MaintenanceRecord } from '../vehicle/models';
 import type { SharedVehicleResponse } from './shared-vehicle-model';
 import { PublicShareApi } from './public-share-api';
 
@@ -95,6 +96,31 @@ describe('PublicShareApi', () => {
     expect(req.request.params.get('minCost')).toBe('10');
     expect(req.request.params.get('maxCost')).toBe('200');
     req.flush({ items: [], page: 0, size: 20, totalElements: 0, totalPages: 0 });
+  });
+
+  it('requests a single maintenance record by id for a shared vehicle', () => {
+    const response: MaintenanceRecord = {
+      id: 5,
+      vehicleId: 1,
+      serviceDate: '2024-01-01',
+      title: 'Oil change',
+      mileage: 1000,
+      category: 'Repair',
+      description: '',
+      cost: 50,
+      currency: 'EUR',
+      attachments: [],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+    };
+
+    api
+      .getMaintenanceById('token-123', 5)
+      .subscribe((result) => expect(result).toEqual(response));
+
+    const req = httpMock.expectOne(`${BASE_URL}/share/token-123/maintenance/5`);
+    expect(req.request.method).toBe('GET');
+    req.flush(response);
   });
 
   it('requests a maintenance attachment download url for a shared vehicle', () => {

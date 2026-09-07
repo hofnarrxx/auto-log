@@ -67,6 +67,11 @@ public class PublicVehicleAccessController {
                 minCost, maxCost);
     }
 
+    @GetMapping("/share/{token}/maintenance/{maintenanceId}")
+    public MaintenanceResponse getMaintenanceById(@PathVariable String token, @PathVariable Long maintenanceId) {
+        return publicVehicleAccessService.getMaintenanceById(token, maintenanceId);
+    }
+
     @GetMapping("/share/{token}/maintenance/{maintenanceId}/attachments/{attachmentId}/download-url")
     public MaintenanceDownloadUrlResponse getMaintenanceAttachmentDownloadUrl(@PathVariable String token,
             @PathVariable Long maintenanceId,

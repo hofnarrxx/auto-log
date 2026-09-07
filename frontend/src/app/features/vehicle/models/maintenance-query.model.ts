@@ -19,7 +19,7 @@ export interface MaintenanceQuery {
   maxCost: number | null;
 }
 
-export const DEFAULT_MAINTENANCE_PAGE_SIZE = 20;
+export const DEFAULT_MAINTENANCE_PAGE_SIZE = 10;
 
 export const ALL_CURRENCIES = '';
 

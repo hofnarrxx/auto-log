@@ -25,6 +25,9 @@ public interface MaintenanceRepository extends JpaRepository<Maintenance, Long> 
     @EntityGraph(attributePaths = "attachments")
     Optional<Maintenance> findWithAttachmentsByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
 
+    @EntityGraph(attributePaths = "attachments")
+    Optional<Maintenance> findWithAttachmentsByIdAndVehicleId(Long id, Long vehicleId);
+    
     List<Maintenance> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
 
     @Query("""

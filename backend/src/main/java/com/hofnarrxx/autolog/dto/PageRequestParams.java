@@ -6,7 +6,7 @@ public record PageRequestParams(int page, int size) {
             page = 0;
         }
         if (size == null) {
-            size = 20;
+            size = 10;
         }
         size = Math.clamp(size, 1, 100);
         return new PageRequestParams(page, size);

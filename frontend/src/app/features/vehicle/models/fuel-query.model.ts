@@ -13,7 +13,7 @@ export interface FuelQuery {
   gasStation: string;
 }
 
-export const DEFAULT_FUEL_PAGE_SIZE = 20;
+export const DEFAULT_FUEL_PAGE_SIZE = 10;
 
 export const DEFAULT_FUEL_QUERY: FuelQuery = {
   page: 0,

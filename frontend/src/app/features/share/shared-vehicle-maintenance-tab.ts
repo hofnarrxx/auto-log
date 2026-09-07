@@ -117,6 +117,17 @@ export class SharedVehicleMaintenanceTab {
   protected openRecordDetails(record: MaintenanceRecord) {
     this.selectedRecord.set(record);
     this.isModalOpen.set(true);
+
+    this.publicShareApi.getMaintenanceById(this.currentToken, record.id).subscribe({
+      next: (fullRecord) => {
+        if (this.selectedRecord()?.id === record.id) {
+          this.selectedRecord.set(fullRecord);
+        }
+      },
+      error: () => {
+        // Keep showing the list item (without attachments) if the detail fetch fails.
+      },
+    });
   }
 
   protected closeModal() {

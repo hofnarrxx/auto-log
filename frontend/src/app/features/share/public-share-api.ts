@@ -39,6 +39,12 @@ export class PublicShareApi {
     });
   }
 
+  getMaintenanceById(token: string, maintenanceId: number): Observable<MaintenanceRecord> {
+    return this.http.get<MaintenanceRecord>(
+      `${this.shareApi}/${token}/maintenance/${maintenanceId}`
+    );
+  }
+
   getMaintenanceAttachmentDownloadUrl(
     token: string,
     maintenanceId: number,

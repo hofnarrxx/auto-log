@@ -64,27 +64,36 @@ public class MaintenanceService {
     }
 
     PageResponse<MaintenanceResponse> getPageForPublicAccess(Long vehicleId, Integer page, Integer size, String sort,
-        String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost) {
-    boolean hasCategories = true;
-    PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
-    Sort maintenanceSort = MaintenanceSort.fromParam(sort).toSort();
-    PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), maintenanceSort);
-    if (categories == null) {
-        hasCategories = false;
-        categories = List.of("_");
+            String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost) {
+        boolean hasCategories = true;
+        PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
+        Sort maintenanceSort = MaintenanceSort.fromParam(sort).toSort();
+        PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), maintenanceSort);
+        if (categories == null) {
+            hasCategories = false;
+            categories = List.of("_");
+        }
+        if (categories != null && categories.isEmpty()) {
+            return PageResponse.from(Page.empty(pageRequest), this::toListResponse);
+        }
+        Page<Maintenance> maintenancePage = maintenanceRepository.findPageForPublicAccess(vehicleId, hasCategories,
+                categories, Currency.fromDisplayName(currency).orElse(null), minCost, maxCost, title, pageRequest);
+        return PageResponse.from(maintenancePage, this::toListResponse);
     }
-    if (categories != null && categories.isEmpty()) {
-        return PageResponse.from(Page.empty(pageRequest), this::toListResponse);
-    }
-    Page<Maintenance> maintenancePage = maintenanceRepository.findPageForPublicAccess(vehicleId, hasCategories,
-            categories, Currency.fromDisplayName(currency).orElse(null), minCost, maxCost, title, pageRequest);
-    return PageResponse.from(maintenancePage, this::toListResponse);
-}
 
     public MaintenanceResponse getById(Long vehicleId, Long maintenanceId) {
         Long userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
         return toResponse(maintenance);
+    }
+
+    public MaintenanceResponse getByIdForPublicAccess(Long vehicleId, Long maintenanceId, boolean includeAttachments) {
+        Maintenance maintenance = includeAttachments
+                ? maintenanceRepository.findWithAttachmentsByIdAndVehicleId(maintenanceId, vehicleId)
+                        .orElseThrow(MaintenanceNotFoundException::new)
+                : maintenanceRepository.findByIdAndVehicleId(maintenanceId, vehicleId)
+                        .orElseThrow(MaintenanceNotFoundException::new);
+        return includeAttachments ? toResponse(maintenance) : toListResponse(maintenance);
     }
 
     public MaintenanceSummaryResponse getSummary(Long vehicleId) {
@@ -95,7 +104,7 @@ public class MaintenanceService {
         return buildSummary(maintenanceList);
     }
 
-    MaintenanceSummaryResponse getSummaryForPublicAccess(Long vehicleId){
+    MaintenanceSummaryResponse getSummaryForPublicAccess(Long vehicleId) {
         List<Maintenance> maintenanceList = maintenanceRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
         return buildSummary(maintenanceList);
     }
@@ -171,10 +180,10 @@ public class MaintenanceService {
             }
         }
 
-        return new MaintenanceSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds,
+        return new MaintenanceSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord,
+                mileageWarningRecordIds,
                 maxCost);
     }
-
 
     private Maintenance findOwnedMaintenance(Long vehicleId, Long maintenanceId, Long userId) {
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
@@ -235,6 +244,7 @@ public class MaintenanceService {
                 maintenance.getUpdatedAt());
     }
 
+    // no attachments loaded for a list
     private MaintenanceResponse toListResponse(Maintenance maintenance) {
         return new MaintenanceResponse(
                 maintenance.getId(),

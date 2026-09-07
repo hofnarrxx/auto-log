@@ -1,19 +1,21 @@
 package com.hofnarrxx.autolog.service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hofnarrxx.autolog.dto.FuelResponse;
+import com.hofnarrxx.autolog.dto.FuelSummaryResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceResponse;
+import com.hofnarrxx.autolog.dto.MaintenanceSummaryResponse;
+import com.hofnarrxx.autolog.dto.PageResponse;
 import com.hofnarrxx.autolog.dto.PublicVehicleAccessResponse;
 import com.hofnarrxx.autolog.exception.ShareLinkNotFoundException;
 import com.hofnarrxx.autolog.model.ShareLink;
 import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.hofnarrxx.autolog.dto.FuelSummaryResponse;
-import com.hofnarrxx.autolog.dto.MaintenanceSummaryResponse;
-import com.hofnarrxx.autolog.dto.PageResponse;
-import com.hofnarrxx.autolog.dto.FuelResponse;
-import com.hofnarrxx.autolog.dto.MaintenanceResponse;
-import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class PublicVehicleAccessService {
@@ -77,5 +79,10 @@ public class PublicVehicleAccessService {
         Long vehicleId = resolveShare(token).vehicle().getId();
         return maintenanceService.getPageForPublicAccess(
                 vehicleId, page, size, sort, title, categories, currency, minCost, maxCost);
+    }
+
+    public MaintenanceResponse getMaintenanceById(String token, Long maintenanceId) {
+        ResolvedShare resolved = resolveShare(token);
+        return maintenanceService.getByIdForPublicAccess(resolved.vehicle().getId(), maintenanceId, resolved.shareLink.isIncludeAttachments());
     }
 }
