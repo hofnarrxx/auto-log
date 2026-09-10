@@ -1,6 +1,7 @@
 package com.hofnarrxx.autolog.config;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -56,9 +57,11 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
             return;
         }
 
-        User user = userRepository.findByEmail(email)
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
+
+        User user = userRepository.findByEmail(normalizedEmail)
                 .orElseGet(() -> {
-                    User newUser = new User(email);
+                    User newUser = new User(normalizedEmail);
                     return userRepository.save(newUser);
                 });
 

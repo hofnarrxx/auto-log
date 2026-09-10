@@ -1,5 +1,7 @@
 package com.hofnarrxx.autolog.model;
 
+import java.util.Locale;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,7 +18,7 @@ public class User {
     public User() {}
 
     public User(String email) {
-        this.email = email;
+        this.email = normalizeEmail(email);
     }
 
     public Long getId() {
@@ -36,6 +38,10 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = normalizeEmail(email);
+    }
+
+    private static String normalizeEmail(String email) {
+        return email == null ? null : email.trim().toLowerCase(Locale.ROOT);
     }
 }

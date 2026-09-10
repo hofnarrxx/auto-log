@@ -6,7 +6,7 @@
       [class.toast-success]="toast.kind === 'success'"
       role="status"
     >
-      <p>{{ toast.messageKey | translate }}</p>
+      <p>{{ toast.messageKey | translate: toast.messageParams }}</p>
       <button
         type="button"
         class="toast-dismiss"

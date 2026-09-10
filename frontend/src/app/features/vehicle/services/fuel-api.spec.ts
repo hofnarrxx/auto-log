@@ -36,7 +36,7 @@ describe('FuelApi', () => {
       (request) => request.url === `${BASE_URL}/vehicles/3/fuel` && request.method === 'GET'
     );
     expect(req.request.params.get('page')).toBe('0');
-    expect(req.request.params.get('size')).toBe('20');
+    expect(req.request.params.get('size')).toBe('10');
     expect(req.request.params.get('sort')).toBe('newest');
     expect(req.request.params.has('gasStation')).toBe(false);
     req.flush({ items: [], page: 0, size: 20, totalElements: 0, totalPages: 0 });

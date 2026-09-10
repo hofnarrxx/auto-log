@@ -37,8 +37,9 @@ export class ForgotPassword {
         this.isSubmitting.set(false);
         this.isSent.set(true);
       },
-      error: () => {
+      error: (err) => {
         this.isSubmitting.set(false);
+        if (err.status === 429) return;
         this.notifications.notifyError('auth.forgotPassword.errors.requestFailed');
       },
     });

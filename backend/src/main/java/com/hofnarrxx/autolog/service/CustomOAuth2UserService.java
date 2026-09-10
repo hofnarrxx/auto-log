@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,7 +36,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Map<String, Object> attributes = oauthUser.getAttributes();
 
-        String email = (String) attributes.get("email");
+        String rawEmail = (String) attributes.get("email");
+        String email = rawEmail == null ? null : rawEmail.trim().toLowerCase(Locale.ROOT);
         String googleId = oauthUser.getAttribute("sub");
         Optional<AuthProvider> providerOpt =
                 providerRepository.findByProviderTypeAndProviderId(

@@ -44,7 +44,7 @@ describe('MaintenanceApi', () => {
       (request) => request.url === `${BASE_URL}/vehicles/3/maintenance` && request.method === 'GET'
     );
     expect(req.request.params.get('page')).toBe('0');
-    expect(req.request.params.get('size')).toBe('20');
+    expect(req.request.params.get('size')).toBe('10');
     expect(req.request.params.get('sort')).toBe('newest');
     expect(req.request.params.has('categoriesCsv')).toBe(false);
     expect(req.request.params.has('currency')).toBe(false);

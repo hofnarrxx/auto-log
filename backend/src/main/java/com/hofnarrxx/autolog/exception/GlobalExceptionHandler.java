@@ -20,6 +20,17 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<?> handleTooManyRequests(TooManyRequestsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .header("Retry-After", String.valueOf(ex.getRetryAfterSeconds()))
+                .body(Map.of(
+                        "error", "RATE_LIMIT_EXCEEDED",
+                        "message", ex.getMessage()
+                ));
+    }
+
     @ExceptionHandler(WeakPasswordException.class)
     public ResponseEntity<?> handleWeakPassword(WeakPasswordException ex) {
         return ResponseEntity

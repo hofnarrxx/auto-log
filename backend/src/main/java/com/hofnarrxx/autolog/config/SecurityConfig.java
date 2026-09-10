@@ -1,5 +1,6 @@
 package com.hofnarrxx.autolog.config;
 
+import com.hofnarrxx.autolog.ratelimit.RateLimitFilter;
 import com.hofnarrxx.autolog.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +24,17 @@ import java.util.List;
 public class SecurityConfig {
         private final AppProperties appProperties;
         private final JwtAuthenticationFilter jwtFilter;
+        private final RateLimitFilter rateLimitFilter;
         private final CustomOAuth2UserService oauth2UserService;
         private final OAuth2JwtSuccessHandler oauth2JwtSuccessHandler;
 
         public SecurityConfig(AppProperties appProperties, JwtAuthenticationFilter jwtFilter,
+                        RateLimitFilter rateLimitFilter,
                         CustomOAuth2UserService oauth2UserService,
                         OAuth2JwtSuccessHandler oauth2JwtSuccessHandler) {
                 this.appProperties = appProperties;
                 this.jwtFilter = jwtFilter;
+                this.rateLimitFilter = rateLimitFilter;
                 this.oauth2UserService = oauth2UserService;
                 this.oauth2JwtSuccessHandler = oauth2JwtSuccessHandler;
         }
@@ -50,8 +54,8 @@ public class SecurityConfig {
                                                 .authenticationEntryPoint((request, response, authException) -> {
                                                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                                                 }))
-                                .addFilterBefore(jwtFilter,
-                                                UsernamePasswordAuthenticationFilter.class)
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class)
                                 .oauth2Login(oauth -> oauth
                                                 .userInfoEndpoint(user -> user.userService(oauth2UserService))
                                                 .successHandler(oauth2JwtSuccessHandler));
@@ -79,6 +83,7 @@ public class SecurityConfig {
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);
+                config.setExposedHeaders(List.of("Retry-After"));
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 

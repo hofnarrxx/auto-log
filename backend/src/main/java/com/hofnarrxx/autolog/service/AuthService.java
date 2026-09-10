@@ -3,7 +3,9 @@ package com.hofnarrxx.autolog.service;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,12 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthTokens;
 import com.hofnarrxx.autolog.exception.EmailAlreadyExistsException;
+import com.hofnarrxx.autolog.exception.TooManyRequestsException;
 import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
 import com.hofnarrxx.autolog.repository.UserRepository;
 import com.hofnarrxx.autolog.utils.PasswordPolicy;
+
+import io.github.bucket4j.ConsumptionProbe;
+
+import com.hofnarrxx.autolog.ratelimit.RateLimitPolicy;
+import com.hofnarrxx.autolog.ratelimit.RateLimiterRegistry;
 
 @Service
 public class AuthService {
@@ -28,14 +36,16 @@ public class AuthService {
     private final AuthenticationManager authManager;
     private final RefreshTokenService refreshTokenService;
     private final PasswordPolicy passwordPolicy;
+    private final RateLimiterRegistry rateLimiterRegistry;
 
     public AuthService(UserRepository userRepository,
-                       AuthProviderRepository providerRepository,
-                       PasswordEncoder encoder,
-                       JwtService jwtService,
-                       AuthenticationManager authManager,
-                       RefreshTokenService refreshTokenService,
-                       PasswordPolicy passwordPolicy) {
+            AuthProviderRepository providerRepository,
+            PasswordEncoder encoder,
+            JwtService jwtService,
+            AuthenticationManager authManager,
+            RefreshTokenService refreshTokenService,
+            PasswordPolicy passwordPolicy,
+            RateLimiterRegistry rateLimiterRegistry) {
         this.userRepository = userRepository;
         this.providerRepository = providerRepository;
         this.encoder = encoder;
@@ -43,6 +53,7 @@ public class AuthService {
         this.authManager = authManager;
         this.refreshTokenService = refreshTokenService;
         this.passwordPolicy = passwordPolicy;
+        this.rateLimiterRegistry = rateLimiterRegistry;
     }
 
     @Transactional
@@ -50,7 +61,7 @@ public class AuthService {
 
         passwordPolicy.validate(request.password());
 
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException();
         }
 
@@ -69,14 +80,20 @@ public class AuthService {
 
     @Transactional
     public AuthTokens login(AuthRequest request) {
-
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
-                )
-        );
-
+        try {
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.email(),
+                            request.password()));
+            rateLimiterRegistry.reset(RateLimitPolicy.LOGIN_FAILURES, request.email());
+        } catch (AuthenticationException e) {
+            ConsumptionProbe probe = rateLimiterRegistry.tryConsume(RateLimitPolicy.LOGIN_FAILURES, request.email());
+            if (!probe.isConsumed()) {
+                double retryAfterSeconds = Math.ceil(probe.getNanosToWaitForRefill() / 1_000_000_000.0);
+                throw new TooManyRequestsException((long) retryAfterSeconds);
+            } else
+                throw e;
+        }
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow();
 

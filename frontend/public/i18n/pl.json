@@ -98,6 +98,9 @@
     }
   },
   "auth": {
+    "errors": {
+      "rateLimited": "Zbyt wiele prób. Spróbuj ponownie za {{seconds}} sekund."
+    },
     "login": {
       "title": "Logowanie",
       "emailLabel": "E-mail",

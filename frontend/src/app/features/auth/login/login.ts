@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
@@ -34,7 +35,10 @@ export class Login {
 
     this.authStore.login(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
-      error: () => this.notifications.notifyError('auth.login.errors.invalidCredentials'),
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 429) return;
+        this.notifications.notifyError('auth.login.errors.invalidCredentials');
+      },
     });
   }
 

@@ -41,6 +41,7 @@ export class Register {
     this.authStore.register(email!, password!).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
+        if (err.status === 429) return;
         this.notifications.notifyHttpError(err, {
           fallback: 'auth.register.errors.registrationFailed',
           byStatus: {

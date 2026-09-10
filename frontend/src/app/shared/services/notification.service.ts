@@ -7,6 +7,7 @@ export interface AppNotification {
   id: number;
   kind: NotificationKind;
   messageKey: string;
+  messageParams?: Record<string, unknown>;
 }
 
 export interface HttpErrorMapping {
@@ -26,8 +27,8 @@ export class NotificationService {
   readonly notifications = this.items.asReadonly();
   readonly latest = computed(() => this.items().at(-1) ?? null);
 
-  notifyError(messageKey: string): void {
-    this.push('error', messageKey);
+  notifyError(messageKey: string, messageParams?: Record<string, unknown>): void {
+    this.push('error', messageKey, messageParams);
   }
 
   notifySuccess(messageKey: string): void {
@@ -36,6 +37,12 @@ export class NotificationService {
 
   notifyHttpError(error: unknown, mapping: HttpErrorMapping): void {
     this.notifyError(this.mapHttpError(error, mapping));
+  }
+
+  notifyRateLimited(retryAfterSeconds?: number): void {
+    const seconds =
+      retryAfterSeconds !== undefined && retryAfterSeconds > 0 ? Math.ceil(retryAfterSeconds) : 60;
+    this.notifyError('auth.errors.rateLimited', { seconds });
   }
 
   mapHttpError(error: unknown, mapping: HttpErrorMapping): string {
@@ -58,11 +65,16 @@ export class NotificationService {
     this.items.set([]);
   }
 
-  private push(kind: NotificationKind, messageKey: string): void {
+  private push(
+    kind: NotificationKind,
+    messageKey: string,
+    messageParams?: Record<string, unknown>
+  ): void {
     const notification: AppNotification = {
       id: this.nextId++,
       kind,
       messageKey,
+      messageParams,
     };
 
     this.items.update((list) => [...list, notification]);
