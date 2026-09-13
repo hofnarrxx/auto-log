@@ -49,11 +49,18 @@
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
-  padding: 0;
+  padding: 10px;
+  margin: -10px -10px -10px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.toast-dismiss:hover {
-  color: var(--text);
+@media (hover: hover) {
+  .toast-dismiss:hover {
+    color: var(--text);
+  }
 }
 
 @keyframes toast-in {
@@ -71,7 +78,7 @@
 @media (max-width: 640px) {
   .toast-host {
     top: auto;
-    bottom: 18px;
+    bottom: calc(18px + env(safe-area-inset-bottom));
     right: 12px;
     left: 12px;
     width: auto;

@@ -2,15 +2,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .content-grid {
   display: grid;
   gap: 20px;
@@ -191,6 +182,13 @@
     transform 0.15s ease;
 }
 
+@media (max-width: 768px) {
+  .icon-btn {
+    width: var(--tap-target);
+    height: var(--tap-target);
+  }
+}
+
 .icon-btn svg {
   width: 18px;
   height: 18px;
@@ -242,25 +240,12 @@
     min-height: 180px;
   }
 
-  .stat-card {
-    padding: 16px;
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
   .stats-grid {
     grid-template-columns: 1fr;
   }
 
   .stat-card {
     padding: 16px;
-  }
-
-  .stat-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
   }
 
   .stat-value {

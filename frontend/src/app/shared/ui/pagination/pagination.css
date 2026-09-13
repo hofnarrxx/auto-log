@@ -32,16 +32,19 @@
   font-weight: 600;
   font-size: 13px;
   padding: 6px 10px;
-  min-width: 34px;
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
   cursor: pointer;
   transition:
     border-color 0.2s ease,
     background 0.2s ease;
 }
 
-.pager-btn:hover:not([disabled]) {
-  border-color: rgba(34, 211, 238, 0.6);
-  background: rgba(34, 211, 238, 0.08);
+@media (hover: hover) {
+  .pager-btn:hover:not([disabled]) {
+    border-color: rgba(34, 211, 238, 0.6);
+    background: rgba(34, 211, 238, 0.08);
+  }
 }
 
 .pager-btn[disabled] {
@@ -78,6 +81,7 @@
   font: inherit;
   font-weight: 600;
   padding: 6px 10px;
+  min-height: var(--tap-target);
 }
 
 @media (max-width: 768px) {
@@ -92,5 +96,10 @@
 
   .pagination-size {
     justify-content: center;
+  }
+
+  .pagination-size select {
+    /* 16px prevents iOS Safari from auto-zooming the page on focus */
+    font-size: 16px;
   }
 }

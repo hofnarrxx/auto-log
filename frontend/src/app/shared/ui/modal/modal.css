@@ -11,7 +11,7 @@
   inset: 0;
   margin: auto;
   width: var(--modal-width, min(420px, calc(100vw - 32px)));
-  max-height: var(--modal-max-height, min(90vh, 900px));
+  max-height: var(--modal-max-height, min(90dvh, 900px));
   display: flex;
   flex-direction: column;
   overflow: auto;

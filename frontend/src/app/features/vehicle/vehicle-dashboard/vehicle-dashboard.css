@@ -10,13 +10,13 @@
 
 .vehicle-header {
   position: relative;
-  height: 350px;
+  height: clamp(180px, 45vw, 350px);
   background:
     radial-gradient(600px 320px at 20% 0%, rgba(34, 211, 238, 0.35), transparent 70%),
     linear-gradient(135deg, #0b1324 0%, #1b243a 100%);
   display: flex;
   align-items: flex-end;
-  padding: 24px;
+  padding: clamp(14px, 4vw, 24px);
   color: var(--text);
 }
 
@@ -37,7 +37,7 @@
 
 .header-info h1 {
   margin: 0;
-  font-size: 32px;
+  font-size: clamp(22px, 6vw, 32px);
   font-weight: 600;
 }
 
@@ -52,44 +52,8 @@
   background: var(--surface-1);
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: auto;
-  padding-top: 16px;
-}
-
-.primary-btn,
-.secondary-btn,
-.danger-btn {
-  border: 0;
-  border-radius: 8px;
-  padding: 9px 14px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.primary-btn {
-  background: var(--accent);
-  color: #051018;
-}
-
-.secondary-btn {
-  background: rgba(15, 23, 42, 0.6);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.danger-btn {
-  background: var(--danger);
-  color: #051018;
-}
-
-.primary-btn[disabled],
-.secondary-btn[disabled],
-.danger-btn[disabled] {
-  opacity: 0.7;
-  cursor: not-allowed;
+@media (max-width: 600px) {
+  .tab-content {
+    padding: 16px 12px 20px;
+  }
 }

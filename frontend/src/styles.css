@@ -1,4 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+/* Fonts are loaded via a <link> in index.html (with preconnect) instead of an
+   @import here, so the font request isn't blocked behind this stylesheet. */
+
+/*
+ * Responsive breakpoint scale used across the app. Keep new media queries
+ * aligned to these three values instead of introducing new ones:
+ *   768px - tablet / small laptop: collapse multi-column grids
+ *   600px - phone: restructure layouts, stack controls
+ *   400px - small phone: tighten padding and type further
+ */
 
 :root {
   --bg-deep: #0b1324;
@@ -24,6 +33,7 @@
   --space-3: 16px;
   --space-4: 24px;
   --space-5: 32px;
+  --tap-target: 44px;
   --font-body: 'IBM Plex Sans', 'Segoe UI', Tahoma, sans-serif;
   --font-head: 'Space Grotesk', 'Segoe UI', Tahoma, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Consolas', 'Courier New', monospace;
@@ -41,7 +51,7 @@ body {
   background:
     radial-gradient(900px 700px at 10% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
     linear-gradient(165deg, var(--bg-deep), var(--bg));
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 h1,
@@ -75,5 +85,317 @@ a:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Shared: tab header (search / sort / add controls above record lists)   */
+/* ---------------------------------------------------------------------- */
+
+.tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tab-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 20px;
+}
+
+.header-summary {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-control,
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.search-control input,
+.sort-control select {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(10, 18, 32, 0.6);
+  color: var(--text);
+  font: inherit;
+  padding: 9px 12px;
+}
+
+.search-control input {
+  width: 180px;
+}
+
+.search-control input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-record-btn {
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #051018;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-record-btn:hover {
+  background: var(--accent-strong);
+}
+
+.status-message {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.status-message.error {
+  color: var(--danger);
+}
+
+@media (max-width: 768px) {
+  .tab-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-control,
+  .sort-control {
+    width: 100%;
+  }
+
+  .search-control input,
+  .sort-control select {
+    width: 100%;
+    /* 16px prevents iOS Safari from auto-zooming the page on focus */
+    font-size: 16px;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Shared: modal action buttons                                           */
+/* ---------------------------------------------------------------------- */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.primary-btn,
+.secondary-btn,
+.danger-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: #051018;
+}
+
+.secondary-btn {
+  background: rgba(15, 23, 42, 0.6);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.danger-btn {
+  background: var(--danger);
+  color: #051018;
+}
+
+.primary-btn[disabled],
+.secondary-btn[disabled],
+.danger-btn[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Shared: vertical record timeline (fuel list / maintenance list)        */
+/* ---------------------------------------------------------------------- */
+
+.timeline {
+  --rail-offset: 137px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: var(--rail-offset);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(39, 50, 74, 0.8) 0%, rgba(39, 50, 74, 0.3) 100%);
+}
+
+.timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 102px 52px auto auto;
+  align-items: center;
+  column-gap: 16px;
+  border: 0;
+  width: fit-content;
+  max-width: 100%;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .timeline-item:hover .entry-content {
+    border-color: rgba(34, 211, 238, 0.6);
+    background: rgba(34, 211, 238, 0.08);
+  }
+}
+
+.timeline-item:active .entry-content {
+  border-color: rgba(34, 211, 238, 0.6);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.entry-date {
+  text-align: right;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.entry-point {
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 6px 16px rgba(34, 211, 238, 0.2);
+  font-size: 15px;
+}
+
+.entry-point lucide-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.entry-content {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(10, 18, 32, 0.6);
+  width: fit-content;
+  max-width: min(560px, 100%);
+}
+
+.entry-warning-side {
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+@media (max-width: 600px) {
+  .timeline {
+    --rail-offset: 20px;
+  }
+
+  .timeline::before {
+    display: none;
+  }
+
+  .timeline-item {
+    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-areas:
+      'icon date'
+      'icon content'
+      'icon warn';
+    column-gap: 10px;
+    row-gap: 4px;
+  }
+
+  .entry-date {
+    grid-area: date;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .entry-point {
+    grid-area: icon;
+    align-self: start;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .entry-content {
+    grid-area: content;
+    width: 100%;
+  }
+
+  .entry-warning-side {
+    grid-area: warn;
+    justify-content: flex-start;
   }
 }

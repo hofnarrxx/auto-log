@@ -1,5 +1,5 @@
 .shared-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(900px 700px at 12% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
     linear-gradient(165deg, var(--bg-deep), var(--bg));
@@ -66,6 +66,7 @@
   padding: 8px 14px;
   font-weight: 600;
   cursor: pointer;
+  min-height: var(--tap-target);
 }
 
 .shared-tabs button.active {
@@ -82,7 +83,9 @@
 
 .info-item {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  gap: 4px 16px;
   border-bottom: 1px solid var(--border);
   padding: 10px 0;
 }
@@ -96,95 +99,6 @@
   color: var(--text);
 }
 
-.timeline {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 137px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(180deg, rgba(39, 50, 74, 0.8) 0%, rgba(39, 50, 74, 0.3) 100%);
-}
-
-.timeline-item {
-  position: relative;
-  display: grid;
-  grid-template-columns: 102px 52px auto;
-  align-items: center;
-  column-gap: 16px;
-}
-
-.entry-date {
-  text-align: right;
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.entry-point {
-  z-index: 1;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  background: var(--panel);
-  border: 2px solid var(--accent);
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  box-shadow: 0 6px 16px rgba(34, 211, 238, 0.2);
-  font-size: 15px;
-}
-
-.entry-content {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  background: rgba(10, 18, 32, 0.6);
-  width: fit-content;
-  max-width: min(560px, 100%);
-}
-
-.entry-title {
-  margin: 0;
-  color: var(--text);
-  font-weight: 700;
-}
-
-.entry-subtitle {
-  margin: 4px 0 0;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.entry-price {
-  margin: 4px 0 0;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.entry-meta {
-  margin: 4px 0 0;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.entry-description {
-  margin: 6px 0 0;
-  color: var(--text);
-  font-size: 13px;
-}
-
 .status {
   margin: 14px 0;
   color: var(--text-muted);
@@ -192,11 +106,6 @@
 
 .status.error {
   color: var(--danger);
-}
-
-.empty {
-  color: var(--text-muted);
-  margin: 0;
 }
 
 @media (max-width: 768px) {
@@ -220,24 +129,5 @@
 
   .vehicle-header h1 {
     font-size: 24px;
-  }
-
-  .timeline::before {
-    left: 97px;
-  }
-
-  .timeline-item {
-    grid-template-columns: 72px 40px auto;
-    column-gap: 10px;
-  }
-
-  .entry-point {
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
-  }
-
-  .entry-content {
-    width: 100%;
   }
 }

@@ -28,8 +28,15 @@
   flex-direction: column;
 }
 
-.vehicle-card:hover {
-  transform: translateY(-4px);
+@media (hover: hover) {
+  .vehicle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(3, 7, 18, 0.35);
+  }
+}
+
+.vehicle-card:active {
+  transform: translateY(-1px);
   box-shadow: 0 12px 24px rgba(3, 7, 18, 0.35);
 }
 
@@ -84,12 +91,23 @@
   text-align: center;
 }
 
-.add-card:hover {
-  border-color: var(--accent);
-  background: var(--surface-1);
+@media (hover: hover) {
+  .add-card:hover {
+    border-color: var(--accent);
+    background: var(--surface-1);
+  }
+
+  .add-card:hover .add-image {
+    background: var(--surface-1);
+  }
+
+  .add-card:hover .plus {
+    color: var(--accent);
+  }
 }
 
-.add-card:hover .add-image {
+.add-card:active {
+  border-color: var(--accent);
   background: var(--surface-1);
 }
 
@@ -106,15 +124,18 @@
   font-weight: 300;
 }
 
-.add-card:hover .plus {
-  color: var(--accent);
-}
-
 .clickable {
   cursor: pointer;
 }
 
-.clickable:hover {
-  transform: translateY(-6px);
+@media (hover: hover) {
+  .clickable:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(3, 7, 18, 0.45);
+  }
+}
+
+.clickable:active {
+  transform: translateY(-2px);
   box-shadow: 0 16px 32px rgba(3, 7, 18, 0.45);
 }

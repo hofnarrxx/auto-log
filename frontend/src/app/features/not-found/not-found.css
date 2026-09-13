@@ -1,20 +1,21 @@
 :host {
   display: block;
-  height: 100vh;
+  min-height: 100dvh;
 }
 
 .not-found-page {
-  height: 100%;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 24px 16px;
   background:
     radial-gradient(700px 500px at 15% 10%, rgba(34, 211, 238, 0.12), transparent 60%),
     linear-gradient(165deg, var(--bg-deep), var(--bg));
 }
 
 .not-found-card {
-  width: 360px;
+  width: min(360px, 100%);
   background: var(--surface-1);
   padding: 36px;
   border-radius: var(--radius-lg);
@@ -42,7 +43,10 @@ h1 {
 }
 
 .home-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-target);
   padding: 10px 20px;
   border-radius: 8px;
   background: var(--accent);
