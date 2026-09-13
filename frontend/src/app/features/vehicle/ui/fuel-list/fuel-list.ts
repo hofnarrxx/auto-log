@@ -54,7 +54,7 @@ export class FuelList<T extends FuelListRecord> {
   protected readonly showAddButtonValue = signal(false);
   protected readonly totalRecordsValue = signal(0);
   protected readonly totalCostTextValue = signal('');
-  protected readonly mileageWarningRecordIdsValue = signal<ReadonlySet<number>>(new Set());
+  protected readonly mileageWarningRecordIdsValue = signal<ReadonlySet<string>>(new Set());
   protected readonly pageValue = signal(0);
   protected readonly sizeValue = signal(20);
   protected readonly totalPagesValue = signal(0);
@@ -86,7 +86,7 @@ export class FuelList<T extends FuelListRecord> {
   }
 
   @Input()
-  set mileageWarningRecordIds(value: ReadonlySet<number>) {
+  set mileageWarningRecordIds(value: ReadonlySet<string>) {
     this.mileageWarningRecordIdsValue.set(value ?? new Set());
   }
 

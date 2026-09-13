@@ -13,25 +13,25 @@ export class FuelApi {
   private readonly http = inject(HttpClient);
   private readonly vehicleApi = `${inject(API_BASE_URL)}/vehicles`;
 
-  getPage(vehicleId: number, query: FuelQuery): Observable<Page<FuelRecord>> {
+  getPage(vehicleId: string, query: FuelQuery): Observable<Page<FuelRecord>> {
     return this.http.get<Page<FuelRecord>>(`${this.vehicleApi}/${vehicleId}/fuel`, {
       params: buildFuelPageParams(query),
     });
   }
 
-  getSummary(vehicleId: number): Observable<FuelSummary> {
+  getSummary(vehicleId: string): Observable<FuelSummary> {
     return this.http.get<FuelSummary>(`${this.vehicleApi}/${vehicleId}/fuel/summary`);
   }
 
-  create(vehicleId: number, payload: FuelRecordPayload): Observable<FuelRecord> {
+  create(vehicleId: string, payload: FuelRecordPayload): Observable<FuelRecord> {
     return this.http.post<FuelRecord>(`${this.vehicleApi}/${vehicleId}/fuel`, payload);
   }
 
-  update(vehicleId: number, recordId: number, payload: FuelRecordPayload): Observable<FuelRecord> {
+  update(vehicleId: string, recordId: string, payload: FuelRecordPayload): Observable<FuelRecord> {
     return this.http.put<FuelRecord>(`${this.vehicleApi}/${vehicleId}/fuel/${recordId}`, payload);
   }
 
-  remove(vehicleId: number, recordId: number): Observable<void> {
+  remove(vehicleId: string, recordId: string): Observable<void> {
     return this.http.delete<void>(`${this.vehicleApi}/${vehicleId}/fuel/${recordId}`);
   }
 }

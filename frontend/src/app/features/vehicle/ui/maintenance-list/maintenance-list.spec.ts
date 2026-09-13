@@ -5,7 +5,7 @@ import { MaintenanceList, type MaintenanceQueryChange } from './maintenance-list
 import type { MaintenanceListRecord } from '../../../../shared/utils/maintenance-list.utils';
 
 const RECORD: MaintenanceListRecord = {
-  id: 1,
+  id: '1',
   serviceDate: '2026-01-01',
   title: 'Oil change',
   mileage: 1000,

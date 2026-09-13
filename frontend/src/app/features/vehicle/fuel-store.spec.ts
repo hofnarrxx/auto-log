@@ -6,8 +6,8 @@ import { FuelStore } from './fuel-store';
 import { FuelApi } from './services/fuel-api';
 
 const RECORD: FuelRecord = {
-  id: 1,
-  vehicleId: 1,
+  id: '1',
+  vehicleId: '1',
   date: '2026-01-01',
   mileage: 1000,
   cost: 200,
@@ -63,7 +63,7 @@ describe('FuelStore', () => {
       of(pageOf([RECORD], { page: 0, size: 20, totalElements: 1, totalPages: 1 }))
     );
 
-    store.load(1);
+    store.load('1');
 
     expect(store.records()).toEqual([RECORD]);
     expect(store.totalElements()).toBe(1);
@@ -75,7 +75,7 @@ describe('FuelStore', () => {
 
   it('does not toggle hasLoadedOnce off again for a subsequent sort/filter refetch', () => {
     fuelApi.getPage.and.returnValue(of(pageOf([RECORD])));
-    store.load(1);
+    store.load('1');
     expect(store.hasLoadedOnce()).toBe(true);
 
     store.setQuery({ sort: 'price-low-high' });
@@ -86,7 +86,7 @@ describe('FuelStore', () => {
   it('sets an error and clears records when loading fails', () => {
     fuelApi.getPage.and.returnValue(throwError(() => new Error('boom')));
 
-    store.load(1);
+    store.load('1');
 
     expect(store.records()).toEqual([]);
     expect(store.error()).toBe('vehicle.fuelTab.errors.loadFailed');
@@ -95,29 +95,29 @@ describe('FuelStore', () => {
   it('cancels a stale in-flight load when a newer one starts', () => {
     const first$ = new Subject<Page<FuelRecord>>();
     const second$ = new Subject<Page<FuelRecord>>();
-    fuelApi.getPage.withArgs(1, jasmine.any(Object)).and.returnValue(first$);
-    fuelApi.getPage.withArgs(2, jasmine.any(Object)).and.returnValue(second$);
+    fuelApi.getPage.withArgs('1', jasmine.any(Object)).and.returnValue(first$);
+    fuelApi.getPage.withArgs('2', jasmine.any(Object)).and.returnValue(second$);
 
-    store.load(1);
-    store.load(2);
+    store.load('1');
+    store.load('2');
 
     second$.next(pageOf([RECORD]));
-    first$.next(pageOf([{ ...RECORD, id: 999 }]));
+    first$.next(pageOf([{ ...RECORD, id: '999' }]));
 
     expect(store.records()).toEqual([RECORD]);
   });
 
   it('resets the page to 0 when setQuery changes a filter', () => {
     fuelApi.getPage.and.returnValue(of(pageOf([RECORD], { page: 2 })));
-    store.load(1);
+    store.load('1');
 
     fuelApi.getPage.calls.reset();
     fuelApi.getPage.and.returnValue(of(pageOf([RECORD], { page: 0 })));
 
     store.setQuery({ gasStation: 'Shell' });
 
-    const [, query]: [number, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
-      number,
+    const [, query]: [string, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
+      string,
       FuelQuery,
     ];
     expect(query.page).toBe(0);
@@ -126,13 +126,13 @@ describe('FuelStore', () => {
 
   it('keeps sort and filter when setPage only changes the page', () => {
     fuelApi.getPage.and.returnValue(of(pageOf([RECORD])));
-    store.load(1);
+    store.load('1');
     store.setQuery({ sort: 'oldest' });
 
     store.setPage(3);
 
-    const [, query]: [number, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
-      number,
+    const [, query]: [string, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
+      string,
       FuelQuery,
     ];
     expect(query.page).toBe(3);
@@ -141,13 +141,13 @@ describe('FuelStore', () => {
 
   it('resets the page when setSize changes the page size', () => {
     fuelApi.getPage.and.returnValue(of(pageOf([RECORD])));
-    store.load(1);
+    store.load('1');
     store.setPage(2);
 
     store.setSize(50);
 
-    const [, query]: [number, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
-      number,
+    const [, query]: [string, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
+      string,
       FuelQuery,
     ];
     expect(query.page).toBe(0);
@@ -164,7 +164,7 @@ describe('FuelStore', () => {
     };
     fuelApi.getSummary.and.returnValue(of(summary));
 
-    store.loadSummary(1);
+    store.loadSummary('1');
 
     expect(store.summary()).toEqual(summary);
     expect(store.isSummaryLoading()).toBe(false);
@@ -183,10 +183,10 @@ describe('FuelStore', () => {
       })
     );
 
-    store.save(1, PAYLOAD).subscribe();
+    store.save('1', PAYLOAD).subscribe();
 
     expect(fuelApi.getPage).toHaveBeenCalled();
-    expect(fuelApi.getSummary).toHaveBeenCalledWith(1);
+    expect(fuelApi.getSummary).toHaveBeenCalledWith('1');
     expect(store.records()).toEqual([RECORD]);
     expect(store.isSaving()).toBe(false);
   });
@@ -195,7 +195,7 @@ describe('FuelStore', () => {
     fuelApi.getPage.and.returnValue(
       of(pageOf([RECORD], { page: 2, totalElements: 1, totalPages: 3 }))
     );
-    store.load(1);
+    store.load('1');
 
     fuelApi.remove.and.returnValue(of(undefined));
     fuelApi.getSummary.and.returnValue(
@@ -210,10 +210,10 @@ describe('FuelStore', () => {
     fuelApi.getPage.calls.reset();
     fuelApi.getPage.and.returnValue(of(pageOf([], { page: 1, totalElements: 0, totalPages: 2 })));
 
-    store.delete(1, RECORD.id).subscribe();
+    store.delete('1', RECORD.id).subscribe();
 
-    const [, query]: [number, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
-      number,
+    const [, query]: [string, FuelQuery] = fuelApi.getPage.calls.mostRecent().args as [
+      string,
       FuelQuery,
     ];
     expect(query.page).toBe(1);

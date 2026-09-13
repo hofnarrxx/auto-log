@@ -30,28 +30,28 @@ describe('ShareLinkApi', () => {
 
   it('creates a share link with a future expiry and the requested attachment flag', () => {
     const response: ShareLinkResponse = {
-      id: 1,
+      id: '1',
       token: 'abc',
-      carId: 5,
-      createdBy: 1,
+      carId: '5',
+      createdBy: '1',
       createdAt: '2026-01-01T00:00:00.000Z',
       expiresAt: '2026-01-08T00:00:00.000Z',
       revoked: false,
       includeAttachments: false,
     };
 
-    api.create(5, false).subscribe((result) => expect(result).toEqual(response));
+    api.create('5', false).subscribe((result) => expect(result).toEqual(response));
 
     const req = httpMock.expectOne(`${BASE_URL}/api/share-links`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body.carId).toBe(5);
+    expect(req.request.body.carId).toBe('5');
     expect(req.request.body.includeAttachments).toBe(false);
     expect(new Date(req.request.body.expiresAt).getTime()).toBeGreaterThan(Date.now());
     req.flush(response);
   });
 
   it('lists share links filtered by carId', () => {
-    api.list(5).subscribe();
+    api.list('5').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/share-links?carId=5`);
     expect(req.request.method).toBe('GET');
@@ -59,7 +59,7 @@ describe('ShareLinkApi', () => {
   });
 
   it('revokes a share link by id', () => {
-    api.revoke(9).subscribe();
+    api.revoke('9').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/share-links/9`);
     expect(req.request.method).toBe('DELETE');

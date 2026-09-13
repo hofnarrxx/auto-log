@@ -7,8 +7,8 @@ describe('MaintenanceRecordDetails', () => {
   let fixture: ComponentFixture<MaintenanceRecordDetails>;
 
   const record: MaintenanceRecord = {
-    id: 1,
-    vehicleId: 1,
+    id: '1',
+    vehicleId: '1',
     serviceDate: '2026-01-01',
     title: 'Oil change',
     mileage: 1000,
@@ -18,7 +18,7 @@ describe('MaintenanceRecordDetails', () => {
     currency: 'EUR',
     attachments: [
       {
-        id: 1,
+        id: '1',
         fileName: 'invoice.pdf',
         contentType: 'application/pdf',
         sizeBytes: 100,

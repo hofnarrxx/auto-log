@@ -57,13 +57,13 @@ export class VehicleMaintenanceTab {
   });
 
   @Input({ required: true })
-  set vehicleId(value: number) {
+  set vehicleId(value: string) {
     this.currentVehicleId = value;
     this.maintenanceStore.load(value);
     this.maintenanceStore.loadSummary(value);
   }
 
-  private currentVehicleId: number | null = null;
+  private currentVehicleId: string | null = null;
 
   protected readonly categories = this.maintenanceStore.categories;
   protected readonly isLoading = this.maintenanceStore.isLoading;
@@ -287,7 +287,7 @@ export class VehicleMaintenanceTab {
     this.pendingAttachments.set(files);
   }
 
-  private uploadAttachmentsIfNeeded(maintenanceId: number) {
+  private uploadAttachmentsIfNeeded(maintenanceId: string) {
     const files = this.pendingAttachments();
     if (!files.length || !this.currentVehicleId) {
       return of(undefined);

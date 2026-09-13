@@ -2,12 +2,16 @@ package com.hofnarrxx.autolog.model;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.UUID;
+
 @Entity
 @Table(name = "auth_providers")
 public class AuthProvider {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private AuthProviderType providerType;

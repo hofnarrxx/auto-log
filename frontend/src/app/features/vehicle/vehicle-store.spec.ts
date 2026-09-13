@@ -6,7 +6,7 @@ import { VehicleApi } from './services/vehicle-api';
 import { ShareLinkApi } from './services/share-link-api';
 
 const VEHICLE: Vehicle = {
-  id: 1,
+  id: '1',
   brand: 'Volvo',
   model: 'V60',
   year: 2019,

@@ -1,5 +1,5 @@
 export interface MaintenanceAttachment {
-  id: number;
+  id: string;
   fileName: string;
   contentType: string | null;
   sizeBytes: number | null;
@@ -8,8 +8,8 @@ export interface MaintenanceAttachment {
 }
 
 export interface MaintenanceRecord {
-  id: number;
-  vehicleId: number;
+  id: string;
+  vehicleId: string;
   serviceDate: string;
   title: string | null;
   mileage: number | null;

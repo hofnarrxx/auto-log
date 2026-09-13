@@ -10,6 +10,6 @@ export interface MaintenanceSummary {
   totalRecords: number;
   totalCostByCurrency: Record<string, number>;
   latestOdometer: LatestOdometer | null;
-  mileageWarningRecordIds: number[];
+  mileageWarningRecordIds: string[];
   maxCost: number;
 }

@@ -7,8 +7,8 @@ describe('FuelRecordDetails', () => {
   let fixture: ComponentFixture<FuelRecordDetails>;
 
   const record: FuelRecord = {
-    id: 1,
-    vehicleId: 1,
+    id: '1',
+    vehicleId: '1',
     date: '2026-01-01',
     mileage: 1000,
     cost: 200,

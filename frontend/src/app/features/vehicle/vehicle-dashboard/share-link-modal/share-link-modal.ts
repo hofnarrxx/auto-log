@@ -32,13 +32,13 @@ export class ShareLinkModal implements OnInit {
   private readonly clipboard = inject(ClipboardService);
   private readonly maxActiveShareLinks = 1;
 
-  @Input({ required: true }) vehicleId!: number;
+  @Input({ required: true }) vehicleId!: string;
   @Output() closed = new EventEmitter<void>();
 
   protected readonly shareLinks = signal<ShareLinkResponse[]>([]);
   protected readonly isLoadingShareLinks = signal(false);
   protected readonly isCreatingShareLink = signal(false);
-  protected readonly deletingShareLinkId = signal<number | null>(null);
+  protected readonly deletingShareLinkId = signal<string | null>(null);
   protected readonly shareAttachments = signal(true);
   protected readonly canCreateShareLink = computed(
     () => this.shareLinks().length < this.maxActiveShareLinks
@@ -72,7 +72,7 @@ export class ShareLinkModal implements OnInit {
     }
   }
 
-  protected deleteShareLink(linkId: number) {
+  protected deleteShareLink(linkId: string) {
     if (this.deletingShareLinkId() === linkId) {
       return;
     }

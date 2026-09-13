@@ -57,11 +57,10 @@ public class MaintenanceAttachmentService {
         this.properties = properties;
     }
 
-    public MaintenanceUploadUrlResponse createUploadUrl(Long vehicleId,
-                                                        Long maintenanceId,
+    public MaintenanceUploadUrlResponse createUploadUrl(UUID vehicleId,
+                                                        UUID maintenanceId,
                                                         MaintenanceUploadUrlRequest request) {
-        Maintenance maintenance = getOwnedMaintenance(vehicleId, maintenanceId);
-
+                                                            
         if (request.sizeBytes() == null || request.sizeBytes() <= 0 || request.sizeBytes() > MAX_ATTACHMENT_BYTES) {
             throw new IllegalArgumentException("Attachment exceeds maximum size");
         }
@@ -97,9 +96,9 @@ public class MaintenanceAttachmentService {
         );
     }
 
-        public MaintenanceDownloadUrlResponse createDownloadUrl(Long vehicleId,
-                                    Long maintenanceId,
-                                    Long attachmentId) {
+        public MaintenanceDownloadUrlResponse createDownloadUrl(UUID vehicleId,
+                                    UUID maintenanceId,
+                                    UUID attachmentId) {
         getOwnedMaintenance(vehicleId, maintenanceId);
 
         MaintenanceAttachment attachment = attachmentRepository
@@ -110,8 +109,8 @@ public class MaintenanceAttachmentService {
         }
 
     public MaintenanceDownloadUrlResponse createPublicDownloadUrl(String token,
-                                                                  Long maintenanceId,
-                                                                  Long attachmentId) {
+                                                                  UUID maintenanceId,
+                                                                  UUID attachmentId) {
         ShareLink shareLink = shareLinkService.resolveActive(token)
                 .orElseThrow(ShareLinkNotFoundException::new);
 
@@ -146,8 +145,8 @@ public class MaintenanceAttachmentService {
         return new MaintenanceDownloadUrlResponse(presignedRequest.url().toString());
     }
 
-    public MaintenanceAttachmentResponse saveAttachment(Long vehicleId,
-                                                        Long maintenanceId,
+    public MaintenanceAttachmentResponse saveAttachment(UUID vehicleId,
+                                                        UUID maintenanceId,
                                                         MaintenanceAttachmentRequest request) {
         Maintenance maintenance = getOwnedMaintenance(vehicleId, maintenanceId);
 
@@ -183,8 +182,8 @@ public class MaintenanceAttachmentService {
         return toResponse(saved);
     }
 
-    private Maintenance getOwnedMaintenance(Long vehicleId, Long maintenanceId) {
-        Long userId = authService.getCurrentUser().getId();
+    private Maintenance getOwnedMaintenance(UUID vehicleId, UUID maintenanceId) {
+        UUID userId = authService.getCurrentUser().getId();
 
         vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
@@ -193,14 +192,14 @@ public class MaintenanceAttachmentService {
                 .orElseThrow(MaintenanceNotFoundException::new);
     }
 
-    private String buildObjectKey(Long vehicleId, Long maintenanceId, String fileName) {
+    private String buildObjectKey(UUID vehicleId, UUID maintenanceId, String fileName) {
         String sanitized = sanitizeFileName(fileName);
         String prefix = attachmentPrefix(vehicleId, maintenanceId);
         return String.format("%s%s-%s", prefix, UUID.randomUUID(), sanitized);
     }
 
-    private String attachmentPrefix(Long vehicleId, Long maintenanceId) {
-        return String.format("maintenance/%d/%d/", vehicleId, maintenanceId);
+    private String attachmentPrefix(UUID vehicleId, UUID maintenanceId) {
+        return String.format("maintenance/%s/%s/", vehicleId, maintenanceId);
     }
 
     private String sanitizeFileName(String fileName) {

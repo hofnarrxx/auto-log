@@ -1,7 +1,9 @@
 package com.hofnarrxx.autolog.dto;
 
+import java.util.UUID;
+
 public record VehicleResponse(
-        Long id,
+        UUID id,
         String brand,
         String model,
         String fuelType,

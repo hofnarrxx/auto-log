@@ -2,15 +2,18 @@ package com.hofnarrxx.autolog.model;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.UuidGenerator;
+
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 128)
     private String token;
@@ -25,7 +28,7 @@ public class RefreshToken {
     @Column(nullable = false)
     private boolean revoked;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

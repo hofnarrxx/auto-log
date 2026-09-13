@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/share-links")
@@ -36,7 +37,7 @@ public class ShareLinkController {
     }
 
     @GetMapping
-    public List<ShareLinkResponse> list(@RequestParam Long carId) {
+    public List<ShareLinkResponse> list(@RequestParam UUID carId) {
         return shareLinkService.getForCar(carId)
                 .stream()
                 .map(this::toResponse)
@@ -44,7 +45,7 @@ public class ShareLinkController {
     }
 
     @DeleteMapping("/{id}")
-    public void revoke(@PathVariable Long id) {
+    public void revoke(@PathVariable UUID id) {
         shareLinkService.revoke(id);
     }
 

@@ -30,7 +30,7 @@ export function toCreateVehicleCommand(
 }
 
 export function toUpdateVehicleCommand(
-  id: number,
+  id: string,
   value: VehicleFormValue,
   imageKey: string | null
 ): UpdateVehicleCommand | null {

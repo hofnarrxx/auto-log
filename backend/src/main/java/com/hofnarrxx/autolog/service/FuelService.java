@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,9 +42,9 @@ public class FuelService {
         this.authService = authService;
     }
 
-    public PageResponse<FuelResponse> getPage(Long vehicleId, Integer page, Integer size, String sortParam,
+    public PageResponse<FuelResponse> getPage(UUID vehicleId, Integer page, Integer size, String sortParam,
             String gasStation) {
-        Long userId = authService.getCurrentUser().getId();
+        UUID userId = authService.getCurrentUser().getId();
         PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
         Sort fuelSort = FuelSort.fromParam(sortParam).toSort();
         PageRequest pageRequest = PageRequest.of(pageRequestParams.page(), pageRequestParams.size(), fuelSort);
@@ -51,7 +52,7 @@ public class FuelService {
         return PageResponse.from(fuelPage, this::toResponse);
     }
 
-    PageResponse<FuelResponse> getPageForPublicAccess(Long vehicleId, Integer page, Integer size, String sortParam,
+    PageResponse<FuelResponse> getPageForPublicAccess(UUID vehicleId, Integer page, Integer size, String sortParam,
         String gasStation) {
     PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
     Sort fuelSort = FuelSort.fromParam(sortParam).toSort();
@@ -61,27 +62,27 @@ public class FuelService {
 }
 
 
-    public FuelSummaryResponse getSummary(Long vehicleId) {
-        Long userId = authService.getCurrentUser().getId();
+    public FuelSummaryResponse getSummary(UUID vehicleId) {
+        UUID userId = authService.getCurrentUser().getId();
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
 
         List<Fuel> fuelList = fuelRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId);
         return buildSummary(fuelList);
     }
 
-    FuelSummaryResponse getSummaryForPublicAccess(Long vehicleId){
+    FuelSummaryResponse getSummaryForPublicAccess(UUID vehicleId){
         List<Fuel> fuelList = fuelRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
         return buildSummary(fuelList);
     }
 
-    public FuelResponse getById(Long vehicleId, Long fuelId) {
-        Long userId = authService.getCurrentUser().getId();
+    public FuelResponse getById(UUID vehicleId, UUID fuelId) {
+        UUID userId = authService.getCurrentUser().getId();
         Fuel fuel = findOwnedFuel(vehicleId, fuelId, userId);
         return toResponse(fuel);
     }
 
-    public FuelResponse create(Long vehicleId, FuelRequest request) {
-        Long userId = authService.getCurrentUser().getId();
+    public FuelResponse create(UUID vehicleId, FuelRequest request) {
+        UUID userId = authService.getCurrentUser().getId();
         Vehicle vehicle = vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
@@ -95,8 +96,8 @@ public class FuelService {
         return toResponse(savedFuel);
     }
 
-    public FuelResponse update(Long vehicleId, Long fuelId, FuelRequest request) {
-        Long userId = authService.getCurrentUser().getId();
+    public FuelResponse update(UUID vehicleId, UUID fuelId, FuelRequest request) {
+        UUID userId = authService.getCurrentUser().getId();
         Fuel existing = findOwnedFuel(vehicleId, fuelId, userId);
         Vehicle vehicle = existing.getVehicle();
         applyRequest(existing, request);
@@ -107,13 +108,13 @@ public class FuelService {
         return toResponse(savedFuel);
     }
 
-    public void delete(Long vehicleId, Long fuelId) {
-        Long userId = authService.getCurrentUser().getId();
+    public void delete(UUID vehicleId, UUID fuelId) {
+        UUID userId = authService.getCurrentUser().getId();
         Fuel fuel = findOwnedFuel(vehicleId, fuelId, userId);
         fuelRepository.delete(fuel);
     }
 
-    private void ensureVehicleOwnedByCurrentUser(Long vehicleId, Long userId) {
+    private void ensureVehicleOwnedByCurrentUser(UUID vehicleId, UUID userId) {
         vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
@@ -124,7 +125,7 @@ public class FuelService {
 
         Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
         LatestOdometerResponse latestOdometerRecord = null;
-        List<Long> mileageWarningRecordIds = new ArrayList<>();
+        List<UUID> mileageWarningRecordIds = new ArrayList<>();
         int maxMileageSeen = Integer.MIN_VALUE;
         Fuel prevUsable = null;
         BigDecimal totalLitres = BigDecimal.ZERO;
@@ -165,7 +166,7 @@ public class FuelService {
         return new FuelSummaryResponse(totalRecords, totalCostByCurrency, latestOdometerRecord, mileageWarningRecordIds, averageConsumptionPer100km);
     }
 
-    private Fuel findOwnedFuel(Long vehicleId, Long fuelId, Long userId) {
+    private Fuel findOwnedFuel(UUID vehicleId, UUID fuelId, UUID userId) {
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
         return fuelRepository.findByIdAndVehicleIdAndVehicleUserId(fuelId, vehicleId, userId)
                 .orElseThrow(FuelNotFoundException::new);

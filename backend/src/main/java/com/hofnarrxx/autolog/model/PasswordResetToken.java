@@ -3,21 +3,23 @@ package com.hofnarrxx.autolog.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;  
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "password_reset_tokens")
 public class PasswordResetToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 64)
     private String tokenHash; //hex sha256

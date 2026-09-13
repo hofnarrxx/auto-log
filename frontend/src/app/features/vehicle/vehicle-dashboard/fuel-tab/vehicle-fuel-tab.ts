@@ -42,13 +42,13 @@ export class VehicleFuelTab {
   });
 
   @Input({ required: true })
-  set vehicleId(value: number) {
+  set vehicleId(value: string) {
     this.currentVehicleId = value;
     this.fuelStore.load(value);
     this.fuelStore.loadSummary(value);
   }
 
-  private currentVehicleId: number | null = null;
+  private currentVehicleId: string | null = null;
 
   protected readonly isLoading = this.fuelStore.isLoading;
   protected readonly hasLoadedOnce = this.fuelStore.hasLoadedOnce;

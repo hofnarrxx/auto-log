@@ -18,7 +18,7 @@ export class AttachmentService {
     return file.type === 'application/pdf' || file.type.startsWith('image/');
   }
 
-  uploadAttachments(vehicleId: number, maintenanceId: number, files: File[]): Observable<void> {
+  uploadAttachments(vehicleId: string, maintenanceId: string, files: File[]): Observable<void> {
     return from(files).pipe(
       concatMap((file) =>
         from(this.prepareAttachment(file)).pipe(
@@ -86,7 +86,7 @@ export class AttachmentService {
     return compressed;
   }
 
-  private requestUploadUrl(vehicleId: number, maintenanceId: number, file: File) {
+  private requestUploadUrl(vehicleId: string, maintenanceId: string, file: File) {
     return this.maintenanceApi.getAttachmentUploadUrl(vehicleId, maintenanceId, file);
   }
 
@@ -95,8 +95,8 @@ export class AttachmentService {
   }
 
   private saveAttachmentMetadata(
-    vehicleId: number,
-    maintenanceId: number,
+    vehicleId: string,
+    maintenanceId: string,
     file: File,
     objectKey: string
   ) {

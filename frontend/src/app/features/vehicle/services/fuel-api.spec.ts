@@ -30,7 +30,7 @@ describe('FuelApi', () => {
   });
 
   it('requests a page of fuel records with page, size and sort params', () => {
-    api.getPage(3, DEFAULT_FUEL_QUERY).subscribe();
+    api.getPage('3', DEFAULT_FUEL_QUERY).subscribe();
 
     const req = httpMock.expectOne(
       (request) => request.url === `${BASE_URL}/vehicles/3/fuel` && request.method === 'GET'
@@ -45,7 +45,7 @@ describe('FuelApi', () => {
   it('includes a trimmed gasStation param when provided', () => {
     const query: FuelQuery = { page: 1, size: 10, sort: 'price-low-high', gasStation: '  Shell ' };
 
-    api.getPage(3, query).subscribe();
+    api.getPage('3', query).subscribe();
 
     const req = httpMock.expectOne(
       (request) => request.url === `${BASE_URL}/vehicles/3/fuel` && request.method === 'GET'
@@ -65,7 +65,7 @@ describe('FuelApi', () => {
       averageConsumptionPer100km: null,
     };
 
-    api.getSummary(3).subscribe((result) => expect(result).toEqual(summary));
+    api.getSummary('3').subscribe((result) => expect(result).toEqual(summary));
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/fuel/summary`);
     expect(req.request.method).toBe('GET');
@@ -82,7 +82,7 @@ describe('FuelApi', () => {
       currency: 'PLN',
     };
 
-    api.create(3, payload).subscribe();
+    api.create('3', payload).subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/fuel`);
     expect(req.request.method).toBe('POST');
@@ -100,7 +100,7 @@ describe('FuelApi', () => {
       currency: 'PLN',
     };
 
-    api.update(3, 9, payload).subscribe();
+    api.update('3', '9', payload).subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/fuel/9`);
     expect(req.request.method).toBe('PUT');
@@ -108,7 +108,7 @@ describe('FuelApi', () => {
   });
 
   it('deletes a fuel record', () => {
-    api.remove(3, 9).subscribe();
+    api.remove('3', '9').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/fuel/9`);
     expect(req.request.method).toBe('DELETE');

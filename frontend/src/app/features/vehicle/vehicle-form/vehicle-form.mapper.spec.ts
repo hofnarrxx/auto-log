@@ -48,8 +48,8 @@ describe('vehicle form mapping', () => {
 
   describe('toUpdateVehicleCommand', () => {
     it('adds the vehicle id to the mapped fields', () => {
-      expect(toUpdateVehicleCommand(7, completeValue, null)).toEqual({
-        id: 7,
+      expect(toUpdateVehicleCommand('7', completeValue, null)).toEqual({
+        id: '7',
         brand: 'Volvo',
         model: 'V60',
         year: 2019,
@@ -61,7 +61,7 @@ describe('vehicle form mapping', () => {
     });
 
     it('returns null when the form value is incomplete', () => {
-      expect(toUpdateVehicleCommand(7, { ...completeValue, year: null }, null)).toBeNull();
+      expect(toUpdateVehicleCommand('7', { ...completeValue, year: null }, null)).toBeNull();
     });
   });
 });

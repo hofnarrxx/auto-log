@@ -40,7 +40,7 @@ public class VehicleImageService {
         this.properties = properties;
     }
 
-    public VehicleImageUploadUrlResponse createUploadUrl(Long vehicleId,
+    public VehicleImageUploadUrlResponse createUploadUrl(UUID vehicleId,
                                                          VehicleImageUploadUrlRequest request) {
         getOwnedVehicle(vehicleId);
 
@@ -79,7 +79,7 @@ public class VehicleImageService {
         );
     }
 
-    public VehicleImageDownloadUrlResponse createDownloadUrl(Long vehicleId) {
+    public VehicleImageDownloadUrlResponse createDownloadUrl(UUID vehicleId) {
         Vehicle vehicle = getOwnedVehicle(vehicleId);
 
         String objectKey = normalize(vehicle.getImage());
@@ -102,20 +102,20 @@ public class VehicleImageService {
         return new VehicleImageDownloadUrlResponse(presignedRequest.url().toString());
     }
 
-    private Vehicle getOwnedVehicle(Long vehicleId) {
-        Long userId = authService.getCurrentUser().getId();
+    private Vehicle getOwnedVehicle(UUID vehicleId) {
+        UUID userId = authService.getCurrentUser().getId();
         return vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
 
-    private String buildObjectKey(Long vehicleId, String fileName) {
+    private String buildObjectKey(UUID vehicleId, String fileName) {
         String sanitized = sanitizeFileName(fileName);
         String prefix = imagePrefix(vehicleId);
         return String.format("%s%s-%s", prefix, UUID.randomUUID(), sanitized);
     }
 
-    private String imagePrefix(Long vehicleId) {
-        return String.format("vehicles/%d/", vehicleId);
+    private String imagePrefix(UUID vehicleId) {
+        return String.format("vehicles/%s/", vehicleId);
     }
 
     private String sanitizeFileName(String fileName) {

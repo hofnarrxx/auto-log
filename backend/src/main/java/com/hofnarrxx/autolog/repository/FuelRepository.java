@@ -10,15 +10,16 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface FuelRepository extends JpaRepository<Fuel, Long> {
+public interface FuelRepository extends JpaRepository<Fuel, UUID> {
 
-        List<Fuel> findByVehicleIdAndVehicleUserId(Long vehicleId, Long userId);
+        List<Fuel> findByVehicleIdAndVehicleUserId(UUID vehicleId, UUID userId);
 
-        Optional<Fuel> findByIdAndVehicleIdAndVehicleUserId(Long id, Long vehicleId, Long userId);
+        Optional<Fuel> findByIdAndVehicleIdAndVehicleUserId(UUID id, UUID vehicleId, UUID userId);
 
-        List<Fuel> findByVehicleIdOrderByCreatedAtDesc(Long vehicleId);
+        List<Fuel> findByVehicleIdOrderByCreatedAtDesc(UUID vehicleId);
 
         @Query("""
                         select f from Fuel f
@@ -27,8 +28,8 @@ public interface FuelRepository extends JpaRepository<Fuel, Long> {
                           and (:gasStation is null
                                or lower(f.gasStation) like lower(concat('%', cast(:gasStation as string), '%')))
                         """)
-        Page<Fuel> findPageForOwner(@Param("vehicleId") Long vehicleId,
-                        @Param("userId") Long userId,
+        Page<Fuel> findPageForOwner(@Param("vehicleId") UUID vehicleId,
+                        @Param("userId") UUID userId,
                         @Param("gasStation") String gasStation,
                         Pageable pageable);
 
@@ -38,7 +39,7 @@ public interface FuelRepository extends JpaRepository<Fuel, Long> {
                           and (:gasStation is null
                                or lower(f.gasStation) like lower(concat('%', cast(:gasStation as string), '%')))
                         """)
-        Page<Fuel> findPageForPublicAccess(@Param("vehicleId") Long vehicleId,
+        Page<Fuel> findPageForPublicAccess(@Param("vehicleId") UUID vehicleId,
                         @Param("gasStation") String gasStation,
                         Pageable pageable);
 }

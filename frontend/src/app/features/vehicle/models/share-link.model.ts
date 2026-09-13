@@ -1,8 +1,8 @@
 export interface ShareLinkResponse {
-  id: number;
+  id: string;
   token: string;
-  carId: number;
-  createdBy: number;
+  carId: string;
+  createdBy: string;
   createdAt: string;
   expiresAt: string | null;
   revoked: boolean;
@@ -10,7 +10,7 @@ export interface ShareLinkResponse {
 }
 
 export interface CreateShareLinkRequest {
-  carId: number;
+  carId: string;
   expiresAt: string;
   includeAttachments: boolean;
 }

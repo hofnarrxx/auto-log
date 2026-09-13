@@ -16,6 +16,7 @@ import com.hofnarrxx.autolog.dto.MaintenanceSummaryResponse;
 import java.util.List;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/vehicles/{vehicleId}/maintenance")
@@ -30,7 +31,7 @@ public class MaintenanceController {
     }
 
     @GetMapping
-    public PageResponse<MaintenanceResponse> getPage(@PathVariable Long vehicleId,
+    public PageResponse<MaintenanceResponse> getPage(@PathVariable UUID vehicleId,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
             @RequestParam(required = false) String sort,
@@ -54,53 +55,53 @@ public class MaintenanceController {
     }
 
     @GetMapping("/summary")
-    public MaintenanceSummaryResponse getSummary(@PathVariable Long vehicleId) {
+    public MaintenanceSummaryResponse getSummary(@PathVariable UUID vehicleId) {
         return maintenanceService.getSummary(vehicleId);
     }
 
     @GetMapping("/{maintenanceId}")
-    public MaintenanceResponse getById(@PathVariable Long vehicleId,
-            @PathVariable Long maintenanceId) {
+    public MaintenanceResponse getById(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId) {
         return maintenanceService.getById(vehicleId, maintenanceId);
     }
 
     @PostMapping
-    public MaintenanceResponse create(@PathVariable Long vehicleId,
+    public MaintenanceResponse create(@PathVariable UUID vehicleId,
             @RequestBody MaintenanceRequest request) {
         return maintenanceService.create(vehicleId, request);
     }
 
     @PutMapping("/{maintenanceId}")
-    public MaintenanceResponse update(@PathVariable Long vehicleId,
-            @PathVariable Long maintenanceId,
+    public MaintenanceResponse update(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId,
             @RequestBody MaintenanceRequest request) {
         return maintenanceService.update(vehicleId, maintenanceId, request);
     }
 
     @DeleteMapping("/{maintenanceId}")
-    public void delete(@PathVariable Long vehicleId,
-            @PathVariable Long maintenanceId) {
+    public void delete(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId) {
         maintenanceService.delete(vehicleId, maintenanceId);
     }
 
     @PostMapping("/{maintenanceId}/attachments/upload-url")
-    public MaintenanceUploadUrlResponse createUploadUrl(@PathVariable Long vehicleId,
-            @PathVariable Long maintenanceId,
+    public MaintenanceUploadUrlResponse createUploadUrl(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId,
             @RequestBody MaintenanceUploadUrlRequest request) {
         return attachmentService.createUploadUrl(vehicleId, maintenanceId, request);
     }
 
     @PostMapping("/{maintenanceId}/attachments")
-    public MaintenanceAttachmentResponse saveAttachment(@PathVariable Long vehicleId,
-            @PathVariable Long maintenanceId,
+    public MaintenanceAttachmentResponse saveAttachment(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId,
             @RequestBody MaintenanceAttachmentRequest request) {
         return attachmentService.saveAttachment(vehicleId, maintenanceId, request);
     }
 
     @GetMapping("/{maintenanceId}/attachments/{attachmentId}/download-url")
-    public MaintenanceDownloadUrlResponse createDownloadUrl(@PathVariable Long vehicleId,
-            @PathVariable Long maintenanceId,
-            @PathVariable Long attachmentId) {
+    public MaintenanceDownloadUrlResponse createDownloadUrl(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId,
+            @PathVariable UUID attachmentId) {
         return attachmentService.createDownloadUrl(vehicleId, maintenanceId, attachmentId);
     }
 }

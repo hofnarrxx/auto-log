@@ -6,7 +6,7 @@ import type { FuelSummary, MaintenanceSummary } from '../vehicle/models';
  * records are fetched separately (paged) via `PublicShareApi.getFuelPage`/`getMaintenancePage`.
  */
 export interface SharedVehicleResponse {
-  carId: number;
+  carId: string;
   brand: string;
   model: string;
   fuelType: string | null;

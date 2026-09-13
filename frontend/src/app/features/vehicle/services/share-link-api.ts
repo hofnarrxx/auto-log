@@ -13,7 +13,7 @@ export class ShareLinkApi {
   private readonly http = inject(HttpClient);
   private readonly shareLinkApi = `${inject(API_BASE_URL)}/api/share-links`;
 
-  create(carId: number, includeAttachments: boolean): Observable<ShareLinkResponse> {
+  create(carId: string, includeAttachments: boolean): Observable<ShareLinkResponse> {
     const request: CreateShareLinkRequest = {
       carId,
       expiresAt: new Date(Date.now() + SHARE_LINK_LIFETIME_MS).toISOString(),
@@ -23,11 +23,11 @@ export class ShareLinkApi {
     return this.http.post<ShareLinkResponse>(this.shareLinkApi, request);
   }
 
-  list(carId: number): Observable<ShareLinkResponse[]> {
+  list(carId: string): Observable<ShareLinkResponse[]> {
     return this.http.get<ShareLinkResponse[]>(`${this.shareLinkApi}?carId=${carId}`);
   }
 
-  revoke(id: number): Observable<void> {
+  revoke(id: string): Observable<void> {
     return this.http.delete<void>(`${this.shareLinkApi}/${id}`);
   }
 }

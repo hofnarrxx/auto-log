@@ -55,7 +55,7 @@ export class VehicleImageService {
   }
 
   /** Requests a presigned URL for `vehicleId` and uploads `file` to it, returning the object key. */
-  upload(vehicleId: number, file: File): Observable<string> {
+  upload(vehicleId: string, file: File): Observable<string> {
     return this.vehicleApi
       .requestImageUploadUrl(vehicleId, file)
       .pipe(

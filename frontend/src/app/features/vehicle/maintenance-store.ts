@@ -32,8 +32,8 @@ const FALLBACK_CATEGORIES = [
 @Injectable()
 export class MaintenanceStore {
   private readonly maintenanceApi = inject(MaintenanceApi);
-  private readonly load$ = new Subject<{ vehicleId: number; query: MaintenanceQuery }>();
-  private currentVehicleId: number | null = null;
+  private readonly load$ = new Subject<{ vehicleId: string; query: MaintenanceQuery }>();
+  private currentVehicleId: string | null = null;
 
   private readonly _query = signal<MaintenanceQuery>(DEFAULT_MAINTENANCE_QUERY);
   private readonly _records = signal<MaintenanceRecord[]>([]);
@@ -90,7 +90,7 @@ export class MaintenanceStore {
   }
 
   /** (Re)loads the first page for a vehicle with the default query, e.g. on tab activation. */
-  load(vehicleId: number): void {
+  load(vehicleId: string): void {
     this.currentVehicleId = vehicleId;
     this._query.set(DEFAULT_MAINTENANCE_QUERY);
     this._hasLoadedOnce.set(false);
@@ -98,7 +98,7 @@ export class MaintenanceStore {
   }
 
   /** Loads the summary aggregates (totals, warnings, max cost) for a vehicle. */
-  loadSummary(vehicleId: number): void {
+  loadSummary(vehicleId: string): void {
     this._isSummaryLoading.set(true);
 
     this.maintenanceApi
@@ -151,14 +151,14 @@ export class MaintenanceStore {
     });
   }
 
-  getById(vehicleId: number, maintenanceId: number): Observable<MaintenanceRecord> {
+  getById(vehicleId: string, maintenanceId: string): Observable<MaintenanceRecord> {
     return this.maintenanceApi.getById(vehicleId, maintenanceId);
   }
 
   save(
-    vehicleId: number,
+    vehicleId: string,
     payload: MaintenanceRecordPayload,
-    recordId?: number
+    recordId?: string
   ): Observable<MaintenanceRecord> {
     this._isSaving.set(true);
     this.currentVehicleId = vehicleId;
@@ -176,7 +176,7 @@ export class MaintenanceStore {
     );
   }
 
-  delete(vehicleId: number, recordId: number): Observable<void> {
+  delete(vehicleId: string, recordId: string): Observable<void> {
     this._isDeleting.set(true);
     this.currentVehicleId = vehicleId;
 
@@ -190,9 +190,9 @@ export class MaintenanceStore {
   }
 
   getAttachmentDownloadUrl(
-    vehicleId: number,
-    maintenanceId: number,
-    attachmentId: number
+    vehicleId: string,
+    maintenanceId: string,
+    attachmentId: string
   ): Observable<MaintenanceAttachmentDownloadUrlResponse> {
     return this.maintenanceApi.getAttachmentDownloadUrl(vehicleId, maintenanceId, attachmentId);
   }

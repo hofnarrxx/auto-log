@@ -5,7 +5,7 @@ import { FuelList, type FuelQueryChange } from './fuel-list';
 import type { FuelListRecord } from '../../../../shared/utils/fuel-list.utils';
 
 const RECORD: FuelListRecord = {
-  id: 1,
+  id: '1',
   date: '2026-01-01',
   mileage: 1000,
   cost: 200,

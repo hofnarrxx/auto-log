@@ -1,15 +1,17 @@
 package com.hofnarrxx.autolog.model;
 
 import java.util.Locale;
+import java.util.UUID;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -21,7 +23,7 @@ public class User {
         this.email = normalizeEmail(email);
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

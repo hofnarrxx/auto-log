@@ -39,7 +39,7 @@ export class PublicShareApi {
     });
   }
 
-  getMaintenanceById(token: string, maintenanceId: number): Observable<MaintenanceRecord> {
+  getMaintenanceById(token: string, maintenanceId: string): Observable<MaintenanceRecord> {
     return this.http.get<MaintenanceRecord>(
       `${this.shareApi}/${token}/maintenance/${maintenanceId}`
     );
@@ -47,8 +47,8 @@ export class PublicShareApi {
 
   getMaintenanceAttachmentDownloadUrl(
     token: string,
-    maintenanceId: number,
-    attachmentId: number
+    maintenanceId: string,
+    attachmentId: string
   ): Observable<MaintenanceAttachmentDownloadUrlResponse> {
     return this.http.get<MaintenanceAttachmentDownloadUrlResponse>(
       `${this.shareApi}/${token}/maintenance/${maintenanceId}/attachments/${attachmentId}/download-url`

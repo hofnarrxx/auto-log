@@ -1,12 +1,15 @@
 package com.hofnarrxx.autolog.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.util.UUID;
 
 @Entity
 public class Vehicle {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
     private String brand;
     private String model;
     private String fuelType;
@@ -20,7 +23,7 @@ public class Vehicle {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

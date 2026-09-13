@@ -63,7 +63,7 @@ export class VehicleStore {
     );
   }
 
-  remove(id: number): Observable<void> {
+  remove(id: string): Observable<void> {
     return this.vehicleApi.remove(id).pipe(
       tap(() => {
         this._vehicles.update((v) => v.filter((vehicle) => vehicle.id !== id));
@@ -75,15 +75,15 @@ export class VehicleStore {
     this.load$.next();
   }
 
-  createShareLink(carId: number, includeAttachments = true): Observable<ShareLinkResponse> {
+  createShareLink(carId: string, includeAttachments = true): Observable<ShareLinkResponse> {
     return this.shareLinkApi.create(carId, includeAttachments);
   }
 
-  listShareLinks(carId: number): Observable<ShareLinkResponse[]> {
+  listShareLinks(carId: string): Observable<ShareLinkResponse[]> {
     return this.shareLinkApi.list(carId);
   }
 
-  revokeShareLink(id: number): Observable<void> {
+  revokeShareLink(id: string): Observable<void> {
     return this.shareLinkApi.revoke(id);
   }
 }

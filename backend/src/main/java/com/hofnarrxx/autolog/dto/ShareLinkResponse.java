@@ -1,12 +1,13 @@
 package com.hofnarrxx.autolog.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record ShareLinkResponse(
-        Long id,
+        UUID id,
         String token,
-        Long carId,
-        Long createdBy,
+        UUID carId,
+        UUID createdBy,
         Instant createdAt,
         Instant expiresAt,
         boolean revoked,

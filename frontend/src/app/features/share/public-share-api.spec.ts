@@ -32,7 +32,7 @@ describe('PublicShareApi', () => {
 
   it('requests a shared vehicle by token', () => {
     const response: SharedVehicleResponse = {
-      carId: 1,
+      carId: '1',
       brand: 'Volvo',
       model: 'V60',
       fuelType: 'Diesel',
@@ -100,8 +100,8 @@ describe('PublicShareApi', () => {
 
   it('requests a single maintenance record by id for a shared vehicle', () => {
     const response: MaintenanceRecord = {
-      id: 5,
-      vehicleId: 1,
+      id: '5',
+      vehicleId: '1',
       serviceDate: '2024-01-01',
       title: 'Oil change',
       mileage: 1000,
@@ -114,7 +114,9 @@ describe('PublicShareApi', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    api.getMaintenanceById('token-123', 5).subscribe((result) => expect(result).toEqual(response));
+    api
+      .getMaintenanceById('token-123', '5')
+      .subscribe((result) => expect(result).toEqual(response));
 
     const req = httpMock.expectOne(`${BASE_URL}/share/token-123/maintenance/5`);
     expect(req.request.method).toBe('GET');
@@ -125,7 +127,7 @@ describe('PublicShareApi', () => {
     const response = { downloadUrl: 'https://files.test/attachment.pdf' };
 
     api
-      .getMaintenanceAttachmentDownloadUrl('token-123', 5, 9)
+      .getMaintenanceAttachmentDownloadUrl('token-123', '5', '9')
       .subscribe((result) => expect(result).toEqual(response));
 
     const req = httpMock.expectOne(

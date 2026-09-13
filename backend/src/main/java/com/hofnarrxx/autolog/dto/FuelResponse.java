@@ -3,10 +3,11 @@ package com.hofnarrxx.autolog.dto;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record FuelResponse(
-        Long id,
-        Long vehicleId,
+        UUID id,
+        UUID vehicleId,
         LocalDate date,
         Integer mileage,
         BigDecimal cost,

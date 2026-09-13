@@ -7,7 +7,7 @@ export type FuelSortOption =
   | 'price-per-unit-high-low';
 
 export interface FuelListRecord {
-  id: number;
+  id: string;
   date: string;
   mileage: number | null;
   cost: number | null;

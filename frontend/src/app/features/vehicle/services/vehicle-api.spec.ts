@@ -30,7 +30,7 @@ describe('VehicleApi', () => {
 
   it('requests all vehicles from the vehicles endpoint', () => {
     const vehicles: Vehicle[] = [
-      { id: 1, brand: 'Volvo', model: 'V60', year: 2019, fuelType: 'Diesel', mileage: 100 },
+      { id: '1', brand: 'Volvo', model: 'V60', year: 2019, fuelType: 'Diesel', mileage: 100 },
     ];
 
     api.getAll().subscribe((result) => expect(result).toEqual(vehicles));
@@ -50,7 +50,7 @@ describe('VehicleApi', () => {
       licensePlate: null,
       imageKey: null,
     };
-    const created: Vehicle = { id: 1, ...command };
+    const created: Vehicle = { id: '1', ...command };
 
     api.create(command).subscribe((result) => expect(result).toEqual(created));
 
@@ -62,7 +62,7 @@ describe('VehicleApi', () => {
 
   it('puts an update command to the vehicle-specific endpoint', () => {
     const command: UpdateVehicleCommand = {
-      id: 7,
+      id: '7',
       brand: 'Volvo',
       model: 'V60',
       year: 2019,
@@ -80,7 +80,7 @@ describe('VehicleApi', () => {
   });
 
   it('deletes a vehicle by id', () => {
-    api.remove(7).subscribe();
+    api.remove('7').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/7`);
     expect(req.request.method).toBe('DELETE');
@@ -91,7 +91,7 @@ describe('VehicleApi', () => {
     const file = new File(['x'], 'photo.jpg', { type: 'image/jpeg' });
     const response = { uploadUrl: 'https://upload', objectKey: 'vehicles/7/photo.jpg' };
 
-    api.requestImageUploadUrl(7, file).subscribe((result) => expect(result).toEqual(response));
+    api.requestImageUploadUrl('7', file).subscribe((result) => expect(result).toEqual(response));
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/7/image/upload-url`);
     expect(req.request.method).toBe('POST');

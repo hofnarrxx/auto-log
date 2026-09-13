@@ -10,6 +10,7 @@ import com.hofnarrxx.autolog.service.VehicleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/vehicles")
@@ -34,23 +35,23 @@ public class VehicleController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
+    public void delete(@PathVariable UUID id){
          vehicleService.delete(id);
     }
 
     @PutMapping("/{id}")
-    public VehicleResponse update(@PathVariable Long id, @RequestBody VehicleRequest request) {
+    public VehicleResponse update(@PathVariable UUID id, @RequestBody VehicleRequest request) {
         return vehicleService.update(id, request);
     }
 
     @PostMapping("/{id}/image/upload-url")
-    public VehicleImageUploadUrlResponse createImageUploadUrl(@PathVariable Long id,
+    public VehicleImageUploadUrlResponse createImageUploadUrl(@PathVariable UUID id,
                                                               @RequestBody VehicleImageUploadUrlRequest request) {
         return vehicleImageService.createUploadUrl(id, request);
     }
 
     @GetMapping("/{id}/image/download-url")
-    public VehicleImageDownloadUrlResponse createImageDownloadUrl(@PathVariable Long id) {
+    public VehicleImageDownloadUrlResponse createImageDownloadUrl(@PathVariable UUID id) {
         return vehicleImageService.createDownloadUrl(id);
     }
 }

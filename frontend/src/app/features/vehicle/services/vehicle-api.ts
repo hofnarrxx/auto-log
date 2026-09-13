@@ -28,11 +28,11 @@ export class VehicleApi {
     return this.http.put<Vehicle>(`${this.vehicleApi}/${command.id}`, command);
   }
 
-  remove(id: number): Observable<void> {
+  remove(id: string): Observable<void> {
     return this.http.delete<void>(`${this.vehicleApi}/${id}`);
   }
 
-  requestImageUploadUrl(vehicleId: number, file: File): Observable<VehicleImageUploadUrlResponse> {
+  requestImageUploadUrl(vehicleId: string, file: File): Observable<VehicleImageUploadUrlResponse> {
     return this.http.post<VehicleImageUploadUrlResponse>(
       `${this.vehicleApi}/${vehicleId}/image/upload-url`,
       {

@@ -1,6 +1,6 @@
 export interface FuelRecord {
-  id: number;
-  vehicleId: number;
+  id: string;
+  vehicleId: string;
   date: string;
   mileage: number | null;
   cost: number | null;

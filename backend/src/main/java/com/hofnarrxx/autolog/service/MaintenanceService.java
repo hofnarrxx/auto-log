@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 public class MaintenanceService {
@@ -44,9 +45,9 @@ public class MaintenanceService {
         this.authService = authService;
     }
 
-    public PageResponse<MaintenanceResponse> getPage(Long vehicleId, Integer page, Integer size, String sort,
+    public PageResponse<MaintenanceResponse> getPage(UUID vehicleId, Integer page, Integer size, String sort,
             String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost) {
-        Long userId = authService.getCurrentUser().getId();
+        UUID userId = authService.getCurrentUser().getId();
         boolean hasCategories = true;
         PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
         Sort maintenanceSort = MaintenanceSort.fromParam(sort).toSort();
@@ -63,7 +64,7 @@ public class MaintenanceService {
         return PageResponse.from(maintenancePage, this::toListResponse);
     }
 
-    PageResponse<MaintenanceResponse> getPageForPublicAccess(Long vehicleId, Integer page, Integer size, String sort,
+    PageResponse<MaintenanceResponse> getPageForPublicAccess(UUID vehicleId, Integer page, Integer size, String sort,
             String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost) {
         boolean hasCategories = true;
         PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
@@ -81,13 +82,13 @@ public class MaintenanceService {
         return PageResponse.from(maintenancePage, this::toListResponse);
     }
 
-    public MaintenanceResponse getById(Long vehicleId, Long maintenanceId) {
-        Long userId = authService.getCurrentUser().getId();
+    public MaintenanceResponse getById(UUID vehicleId, UUID maintenanceId) {
+        UUID userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
         return toResponse(maintenance);
     }
 
-    public MaintenanceResponse getByIdForPublicAccess(Long vehicleId, Long maintenanceId, boolean includeAttachments) {
+    public MaintenanceResponse getByIdForPublicAccess(UUID vehicleId, UUID maintenanceId, boolean includeAttachments) {
         Maintenance maintenance = includeAttachments
                 ? maintenanceRepository.findWithAttachmentsByIdAndVehicleId(maintenanceId, vehicleId)
                         .orElseThrow(MaintenanceNotFoundException::new)
@@ -96,21 +97,21 @@ public class MaintenanceService {
         return includeAttachments ? toResponse(maintenance) : toListResponse(maintenance);
     }
 
-    public MaintenanceSummaryResponse getSummary(Long vehicleId) {
-        Long userId = authService.getCurrentUser().getId();
+    public MaintenanceSummaryResponse getSummary(UUID vehicleId) {
+        UUID userId = authService.getCurrentUser().getId();
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
 
         List<Maintenance> maintenanceList = maintenanceRepository.findByVehicleIdAndVehicleUserId(vehicleId, userId);
         return buildSummary(maintenanceList);
     }
 
-    MaintenanceSummaryResponse getSummaryForPublicAccess(Long vehicleId) {
+    MaintenanceSummaryResponse getSummaryForPublicAccess(UUID vehicleId) {
         List<Maintenance> maintenanceList = maintenanceRepository.findByVehicleIdOrderByCreatedAtDesc(vehicleId);
         return buildSummary(maintenanceList);
     }
 
-    public MaintenanceResponse create(Long vehicleId, MaintenanceRequest request) {
-        Long userId = authService.getCurrentUser().getId();
+    public MaintenanceResponse create(UUID vehicleId, MaintenanceRequest request) {
+        UUID userId = authService.getCurrentUser().getId();
         Vehicle vehicle = vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
@@ -124,8 +125,8 @@ public class MaintenanceService {
         return toResponse(savedMaintenance);
     }
 
-    public MaintenanceResponse update(Long vehicleId, Long maintenanceId, MaintenanceRequest request) {
-        Long userId = authService.getCurrentUser().getId();
+    public MaintenanceResponse update(UUID vehicleId, UUID maintenanceId, MaintenanceRequest request) {
+        UUID userId = authService.getCurrentUser().getId();
         Maintenance existing = findOwnedMaintenance(vehicleId, maintenanceId, userId);
         Vehicle vehicle = existing.getVehicle();
         applyRequest(existing, request);
@@ -136,13 +137,13 @@ public class MaintenanceService {
         return toResponse(savedMaintenance);
     }
 
-    public void delete(Long vehicleId, Long maintenanceId) {
-        Long userId = authService.getCurrentUser().getId();
+    public void delete(UUID vehicleId, UUID maintenanceId) {
+        UUID userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
         maintenanceRepository.delete(maintenance);
     }
 
-    private void ensureVehicleOwnedByCurrentUser(Long vehicleId, Long userId) {
+    private void ensureVehicleOwnedByCurrentUser(UUID vehicleId, UUID userId) {
         vehicleRepository.findByIdAndUserId(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
@@ -153,7 +154,7 @@ public class MaintenanceService {
 
         Map<String, BigDecimal> totalCostByCurrency = new HashMap<>();
         LatestOdometerResponse latestOdometerRecord = null;
-        List<Long> mileageWarningRecordIds = new ArrayList<>();
+        List<UUID> mileageWarningRecordIds = new ArrayList<>();
         BigDecimal maxCost = BigDecimal.ZERO;
         int maxMileageSeen = Integer.MIN_VALUE;
 
@@ -185,7 +186,7 @@ public class MaintenanceService {
                 maxCost);
     }
 
-    private Maintenance findOwnedMaintenance(Long vehicleId, Long maintenanceId, Long userId) {
+    private Maintenance findOwnedMaintenance(UUID vehicleId, UUID maintenanceId, UUID userId) {
         ensureVehicleOwnedByCurrentUser(vehicleId, userId);
         return maintenanceRepository
                 .findWithAttachmentsByIdAndVehicleIdAndVehicleUserId(maintenanceId, vehicleId, userId)

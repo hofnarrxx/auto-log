@@ -2,6 +2,7 @@ package com.hofnarrxx.autolog.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,19 +70,19 @@ public class PublicVehicleAccessService {
 
     public PageResponse<FuelResponse> getFuelPage(String token, Integer page, Integer size,
             String sort, String gasStation) {
-        Long vehicleId = resolveShare(token).vehicle().getId();
+        UUID vehicleId = resolveShare(token).vehicle().getId();
         return fuelService.getPageForPublicAccess(vehicleId, page, size, sort, gasStation);
     }
 
     public PageResponse<MaintenanceResponse> getMaintenancePage(String token, Integer page, Integer size,
             String sort, String title, List<String> categories, String currency,
             BigDecimal minCost, BigDecimal maxCost) {
-        Long vehicleId = resolveShare(token).vehicle().getId();
+        UUID vehicleId = resolveShare(token).vehicle().getId();
         return maintenanceService.getPageForPublicAccess(
                 vehicleId, page, size, sort, title, categories, currency, minCost, maxCost);
     }
 
-    public MaintenanceResponse getMaintenanceById(String token, Long maintenanceId) {
+    public MaintenanceResponse getMaintenanceById(String token, UUID maintenanceId) {
         ResolvedShare resolved = resolveShare(token);
         return maintenanceService.getByIdForPublicAccess(resolved.vehicle().getId(), maintenanceId, resolved.shareLink.isIncludeAttachments());
     }

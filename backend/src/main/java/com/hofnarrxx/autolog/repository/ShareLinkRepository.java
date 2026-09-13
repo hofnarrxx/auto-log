@@ -7,19 +7,20 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface ShareLinkRepository extends JpaRepository<ShareLink, Long> {
+public interface ShareLinkRepository extends JpaRepository<ShareLink, UUID> {
     boolean existsByToken(String token);
 
     Optional<ShareLink> findByTokenAndRevokedFalse(String token);
 
     Optional<ShareLink> findByTokenAndRevokedFalseAndExpiresAtAfter(String token, Instant now);
 
-    Optional<ShareLink> findByIdAndCreatedBy(Long id, Long createdBy);
+    Optional<ShareLink> findByIdAndCreatedBy(UUID id, UUID createdBy);
 
-    List<ShareLink> findByCarIdAndCreatedByOrderByCreatedAtDesc(Long carId, Long createdBy);
+    List<ShareLink> findByCarIdAndCreatedByOrderByCreatedAtDesc(UUID carId, UUID createdBy);
 
-    int countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(Long carId, Long createdBy, Instant now);
+    int countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(UUID carId, UUID createdBy, Instant now);
 }
 

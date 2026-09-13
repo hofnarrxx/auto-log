@@ -81,7 +81,7 @@ export class MaintenanceList<T extends MaintenanceListRecord> {
   protected readonly showAddButtonValue = signal(false);
   protected readonly totalRecordsValue = signal(0);
   protected readonly totalCostTextValue = signal('');
-  protected readonly mileageWarningRecordIdsValue = signal<ReadonlySet<number>>(new Set());
+  protected readonly mileageWarningRecordIdsValue = signal<ReadonlySet<string>>(new Set());
   protected readonly availableCategoriesValue = signal<string[]>([]);
   protected readonly maxAvailablePriceValue = signal(0);
   protected readonly pageValue = signal(0);
@@ -117,7 +117,7 @@ export class MaintenanceList<T extends MaintenanceListRecord> {
     this.totalCostTextValue.set(value ?? '');
   }
 
-  @Input() set mileageWarningRecordIds(value: ReadonlySet<number>) {
+  @Input() set mileageWarningRecordIds(value: ReadonlySet<string>) {
     this.mileageWarningRecordIdsValue.set(value ?? new Set());
   }
 

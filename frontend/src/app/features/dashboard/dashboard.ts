@@ -31,7 +31,7 @@ export class Dashboard {
     this.showModal.set(false);
   }
 
-  deleteVehicle(id: number) {
+  deleteVehicle(id: string) {
     this.vehicleStore.remove(id).subscribe();
   }
 }

@@ -50,7 +50,7 @@ export class VehicleDashboard {
   }
 
   vehicle = computed(() => {
-    const id = Number(this.paramMap().get('id'));
+    const id = this.paramMap().get('id');
     return this.vehicleStore.vehicles().find((v) => v.id === id);
   });
 

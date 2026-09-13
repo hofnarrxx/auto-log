@@ -16,8 +16,8 @@ import { FuelApi } from './services/fuel-api';
 @Injectable()
 export class FuelStore {
   private readonly fuelApi = inject(FuelApi);
-  private readonly load$ = new Subject<{ vehicleId: number; query: FuelQuery }>();
-  private currentVehicleId: number | null = null;
+  private readonly load$ = new Subject<{ vehicleId: string; query: FuelQuery }>();
+  private currentVehicleId: string | null = null;
 
   private readonly _query = signal<FuelQuery>(DEFAULT_FUEL_QUERY);
   private readonly _records = signal<FuelRecord[]>([]);
@@ -71,7 +71,7 @@ export class FuelStore {
   }
 
   /** (Re)loads the first page for a vehicle with the default query, e.g. on tab activation. */
-  load(vehicleId: number): void {
+  load(vehicleId: string): void {
     this.currentVehicleId = vehicleId;
     this._query.set(DEFAULT_FUEL_QUERY);
     this._hasLoadedOnce.set(false);
@@ -79,7 +79,7 @@ export class FuelStore {
   }
 
   /** Loads the summary aggregates (totals, warnings, average consumption) for a vehicle. */
-  loadSummary(vehicleId: number): void {
+  loadSummary(vehicleId: string): void {
     this._isSummaryLoading.set(true);
 
     this.fuelApi
@@ -121,7 +121,7 @@ export class FuelStore {
     this._hasLoadedOnce.set(false);
   }
 
-  save(vehicleId: number, payload: FuelRecordPayload, recordId?: number): Observable<FuelRecord> {
+  save(vehicleId: string, payload: FuelRecordPayload, recordId?: string): Observable<FuelRecord> {
     this._isSaving.set(true);
     this.currentVehicleId = vehicleId;
 
@@ -138,7 +138,7 @@ export class FuelStore {
     );
   }
 
-  delete(vehicleId: number, recordId: number): Observable<void> {
+  delete(vehicleId: string, recordId: string): Observable<void> {
     this._isDeleting.set(true);
     this.currentVehicleId = vehicleId;
 

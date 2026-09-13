@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ShareLinkService {
@@ -33,8 +34,8 @@ public class ShareLinkService {
     }
 
     @Transactional
-    public ShareLink create(Long carId, Instant expiresAt, Boolean includeAttachments) {
-        Long userId = authService.getCurrentUser().getId();
+    public ShareLink create(UUID carId, Instant expiresAt, Boolean includeAttachments) {
+        UUID userId = authService.getCurrentUser().getId();
 
         vehicleRepository.findByIdAndUserId(carId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
@@ -71,8 +72,8 @@ public class ShareLinkService {
     }
 
     @Transactional(readOnly = true)
-    public List<ShareLink> getForCar(Long carId) {
-        Long userId = authService.getCurrentUser().getId();
+    public List<ShareLink> getForCar(UUID carId) {
+        UUID userId = authService.getCurrentUser().getId();
 
         vehicleRepository.findByIdAndUserId(carId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
@@ -81,8 +82,8 @@ public class ShareLinkService {
     }
 
     @Transactional
-    public void revoke(Long shareLinkId) {
-        Long userId = authService.getCurrentUser().getId();
+    public void revoke(UUID shareLinkId) {
+        UUID userId = authService.getCurrentUser().getId();
 
         shareLinkRepository.findByIdAndCreatedBy(shareLinkId, userId)
                 .ifPresent(link -> {

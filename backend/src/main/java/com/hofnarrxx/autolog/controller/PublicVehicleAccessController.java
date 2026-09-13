@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Arrays;
+import java.util.UUID;
 
 @RestController
 public class PublicVehicleAccessController {
@@ -68,14 +69,14 @@ public class PublicVehicleAccessController {
     }
 
     @GetMapping("/share/{token}/maintenance/{maintenanceId}")
-    public MaintenanceResponse getMaintenanceById(@PathVariable String token, @PathVariable Long maintenanceId) {
+    public MaintenanceResponse getMaintenanceById(@PathVariable String token, @PathVariable UUID maintenanceId) {
         return publicVehicleAccessService.getMaintenanceById(token, maintenanceId);
     }
 
     @GetMapping("/share/{token}/maintenance/{maintenanceId}/attachments/{attachmentId}/download-url")
     public MaintenanceDownloadUrlResponse getMaintenanceAttachmentDownloadUrl(@PathVariable String token,
-            @PathVariable Long maintenanceId,
-            @PathVariable Long attachmentId) {
+            @PathVariable UUID maintenanceId,
+            @PathVariable UUID attachmentId) {
         return maintenanceAttachmentService.createPublicDownloadUrl(token, maintenanceId, attachmentId);
     }
 }

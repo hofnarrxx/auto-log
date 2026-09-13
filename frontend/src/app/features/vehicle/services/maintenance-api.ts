@@ -35,24 +35,24 @@ export class MaintenanceApi {
     return this.http.get<string[]>(this.metadataApi);
   }
 
-  getPage(vehicleId: number, query: MaintenanceQuery): Observable<Page<MaintenanceRecord>> {
+  getPage(vehicleId: string, query: MaintenanceQuery): Observable<Page<MaintenanceRecord>> {
     return this.http.get<Page<MaintenanceRecord>>(`${this.vehicleApi}/${vehicleId}/maintenance`, {
       params: buildMaintenancePageParams(query),
     });
   }
 
-  getSummary(vehicleId: number): Observable<MaintenanceSummary> {
+  getSummary(vehicleId: string): Observable<MaintenanceSummary> {
     return this.http.get<MaintenanceSummary>(`${this.vehicleApi}/${vehicleId}/maintenance/summary`);
   }
 
-  getById(vehicleId: number, maintenanceId: number): Observable<MaintenanceRecord> {
+  getById(vehicleId: string, maintenanceId: string): Observable<MaintenanceRecord> {
     return this.http.get<MaintenanceRecord>(
       `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}`
     );
   }
 
   createMaintenance(
-    vehicleId: number,
+    vehicleId: string,
     payload: MaintenanceRecordPayload
   ): Observable<MaintenanceRecord> {
     return this.http.post<MaintenanceRecord>(
@@ -62,8 +62,8 @@ export class MaintenanceApi {
   }
 
   updateMaintenance(
-    vehicleId: number,
-    maintenanceId: number,
+    vehicleId: string,
+    maintenanceId: string,
     payload: MaintenanceRecordPayload
   ): Observable<MaintenanceRecord> {
     return this.http.put<MaintenanceRecord>(
@@ -72,13 +72,13 @@ export class MaintenanceApi {
     );
   }
 
-  deleteMaintenance(vehicleId: number, maintenanceId: number): Observable<void> {
+  deleteMaintenance(vehicleId: string, maintenanceId: string): Observable<void> {
     return this.http.delete<void>(`${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}`);
   }
 
   getAttachmentUploadUrl(
-    vehicleId: number,
-    maintenanceId: number,
+    vehicleId: string,
+    maintenanceId: string,
     file: File
   ): Observable<MaintenanceAttachmentUploadUrlResponse> {
     return this.http.post<MaintenanceAttachmentUploadUrlResponse>(
@@ -92,8 +92,8 @@ export class MaintenanceApi {
   }
 
   saveAttachmentMetadata(
-    vehicleId: number,
-    maintenanceId: number,
+    vehicleId: string,
+    maintenanceId: string,
     file: File,
     objectKey: string
   ): Observable<MaintenanceAttachment> {
@@ -109,9 +109,9 @@ export class MaintenanceApi {
   }
 
   getAttachmentDownloadUrl(
-    vehicleId: number,
-    maintenanceId: number,
-    attachmentId: number
+    vehicleId: string,
+    maintenanceId: string,
+    attachmentId: string
   ): Observable<MaintenanceAttachmentDownloadUrlResponse> {
     return this.http.get<MaintenanceAttachmentDownloadUrlResponse>(
       `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}/attachments/${attachmentId}/download-url`

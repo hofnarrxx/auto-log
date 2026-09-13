@@ -8,6 +8,6 @@ export interface FuelSummary {
   totalRecords: number;
   totalCostByCurrency: Record<string, number>;
   latestOdometerRecord: LatestOdometer | null;
-  mileageWarningRecordIds: number[];
+  mileageWarningRecordIds: string[];
   averageConsumptionPer100km: number | null;
 }

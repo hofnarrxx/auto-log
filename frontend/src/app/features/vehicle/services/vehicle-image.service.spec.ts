@@ -62,8 +62,8 @@ describe('VehicleImageService', () => {
     );
     objectStorageApi.upload.and.returnValue(of('ok'));
 
-    service.upload(1, file).subscribe((objectKey) => {
-      expect(vehicleApi.requestImageUploadUrl).toHaveBeenCalledWith(1, file);
+    service.upload('1', file).subscribe((objectKey) => {
+      expect(vehicleApi.requestImageUploadUrl).toHaveBeenCalledWith('1', file);
       expect(objectStorageApi.upload).toHaveBeenCalledWith('https://storage/upload', file);
       expect(objectKey).toBe('vehicles/1/photo.jpg');
       done();

@@ -3,8 +3,6 @@ package com.hofnarrxx.autolog.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -12,7 +10,10 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;  
 import jakarta.persistence.Index;
 
+import org.hibernate.annotations.UuidGenerator;
+
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "maintenance_attachments", indexes = {
@@ -20,8 +21,8 @@ import java.time.Instant;
 })
 public class MaintenanceAttachment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, length = 512)
     private String objectKey;
@@ -50,7 +51,7 @@ public class MaintenanceAttachment {
         this.createdAt = Instant.now();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

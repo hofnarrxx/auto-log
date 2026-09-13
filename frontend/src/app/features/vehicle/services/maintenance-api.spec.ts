@@ -38,7 +38,7 @@ describe('MaintenanceApi', () => {
   });
 
   it('requests a page of maintenance records with page, size and sort params, omitting unset filters', () => {
-    api.getPage(3, DEFAULT_MAINTENANCE_QUERY).subscribe();
+    api.getPage('3', DEFAULT_MAINTENANCE_QUERY).subscribe();
 
     const req = httpMock.expectOne(
       (request) => request.url === `${BASE_URL}/vehicles/3/maintenance` && request.method === 'GET'
@@ -65,7 +65,7 @@ describe('MaintenanceApi', () => {
       maxCost: 200,
     };
 
-    api.getPage(3, query).subscribe();
+    api.getPage('3', query).subscribe();
 
     const req = httpMock.expectOne(
       (request) => request.url === `${BASE_URL}/vehicles/3/maintenance` && request.method === 'GET'
@@ -79,7 +79,7 @@ describe('MaintenanceApi', () => {
   });
 
   it('sends an empty categoriesCsv when categories is explicitly empty', () => {
-    api.getPage(3, { ...DEFAULT_MAINTENANCE_QUERY, categories: [] }).subscribe();
+    api.getPage('3', { ...DEFAULT_MAINTENANCE_QUERY, categories: [] }).subscribe();
 
     const req = httpMock.expectOne(
       (request) => request.url === `${BASE_URL}/vehicles/3/maintenance` && request.method === 'GET'
@@ -97,7 +97,7 @@ describe('MaintenanceApi', () => {
       maxCost: 0,
     };
 
-    api.getSummary(3).subscribe((result) => expect(result).toEqual(summary));
+    api.getSummary('3').subscribe((result) => expect(result).toEqual(summary));
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/maintenance/summary`);
     expect(req.request.method).toBe('GET');
@@ -105,7 +105,7 @@ describe('MaintenanceApi', () => {
   });
 
   it('requests a single maintenance record by id', () => {
-    api.getById(3, 9).subscribe();
+    api.getById('3', '9').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/maintenance/9`);
     expect(req.request.method).toBe('GET');
@@ -123,7 +123,7 @@ describe('MaintenanceApi', () => {
       currency: 'PLN',
     };
 
-    api.createMaintenance(3, payload).subscribe();
+    api.createMaintenance('3', payload).subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/maintenance`);
     expect(req.request.method).toBe('POST');
@@ -134,7 +134,7 @@ describe('MaintenanceApi', () => {
   it('requests an attachment upload url with file metadata', () => {
     const file = new File(['x'], 'invoice.pdf', { type: 'application/pdf' });
 
-    api.getAttachmentUploadUrl(3, 9, file).subscribe();
+    api.getAttachmentUploadUrl('3', '9', file).subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/maintenance/9/attachments/upload-url`);
     expect(req.request.method).toBe('POST');
@@ -147,7 +147,7 @@ describe('MaintenanceApi', () => {
   });
 
   it('requests an attachment download url', () => {
-    api.getAttachmentDownloadUrl(3, 9, 42).subscribe();
+    api.getAttachmentDownloadUrl('3', '9', '42').subscribe();
 
     const req = httpMock.expectOne(
       `${BASE_URL}/vehicles/3/maintenance/9/attachments/42/download-url`

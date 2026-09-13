@@ -6,10 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface MaintenanceAttachmentRepository extends JpaRepository<MaintenanceAttachment, Long> {
-    List<MaintenanceAttachment> findByMaintenanceId(Long maintenanceId);
+public interface MaintenanceAttachmentRepository extends JpaRepository<MaintenanceAttachment, UUID> {
+    List<MaintenanceAttachment> findByMaintenanceId(UUID maintenanceId);
 
-    Optional<MaintenanceAttachment> findByIdAndMaintenanceId(Long id, Long maintenanceId);
+    Optional<MaintenanceAttachment> findByIdAndMaintenanceId(UUID id, UUID maintenanceId);
 }

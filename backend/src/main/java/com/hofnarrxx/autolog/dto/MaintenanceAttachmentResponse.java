@@ -1,9 +1,10 @@
 package com.hofnarrxx.autolog.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record MaintenanceAttachmentResponse(
-        Long id,
+        UUID id,
         String fileName,
         String contentType,
         Long sizeBytes,

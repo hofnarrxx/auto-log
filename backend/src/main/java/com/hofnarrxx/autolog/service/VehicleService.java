@@ -14,6 +14,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.time.Duration;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VehicleService {
@@ -57,7 +58,7 @@ public class VehicleService {
         return toResponse(saved);
     }
 
-    public VehicleResponse update(Long id, VehicleRequest request) {
+    public VehicleResponse update(UUID id, VehicleRequest request) {
         Vehicle existing = repository.findByIdAndUserId(id, authService.getCurrentUser().getId())
                 .orElseThrow(VehicleNotFoundException::new);
         applyRequest(existing, request, false);
@@ -74,7 +75,7 @@ public class VehicleService {
         return toResponse(repository.save(existing));
     }
 
-    public void delete(Long id){
+    public void delete(UUID id){
         repository.deleteById(id);
     }
 
@@ -116,7 +117,7 @@ public class VehicleService {
         );
     }
 
-    private String resolveImageUrl(Long vehicleId, String imageKey) {
+    private String resolveImageUrl(UUID vehicleId, String imageKey) {
         if (!hasText(imageKey)) {
             return null;
         }
@@ -140,15 +141,15 @@ public class VehicleService {
         return presignedRequest.url().toString();
     }
 
-    private void validateImageKey(Long vehicleId, String imageKey) {
+    private void validateImageKey(UUID vehicleId, String imageKey) {
         String normalized = normalize(imageKey);
         if (!hasText(normalized) || !normalized.startsWith(imagePrefix(vehicleId))) {
             throw new IllegalArgumentException("Invalid image key");
         }
     }
 
-    private String imagePrefix(Long vehicleId) {
-        return String.format("vehicles/%d/", vehicleId);
+    private String imagePrefix(UUID vehicleId) {
+        return String.format("vehicles/%s/", vehicleId);
     }
 
     private String normalize(String value) {

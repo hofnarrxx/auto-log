@@ -2,7 +2,6 @@ package com.hofnarrxx.autolog.ratelimit;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

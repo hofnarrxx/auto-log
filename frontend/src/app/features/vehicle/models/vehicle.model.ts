@@ -1,5 +1,5 @@
 export interface Vehicle {
-  id: number;
+  id: string;
   brand: string;
   model: string;
   year: number | null;
@@ -25,7 +25,7 @@ export interface CreateVehicleCommand {
 }
 
 export interface UpdateVehicleCommand extends CreateVehicleCommand {
-  id: number;
+  id: string;
 }
 
 export interface VehicleImageUploadUrlResponse {

@@ -1,7 +1,7 @@
 export type MaintenanceSortOption = 'newest' | 'oldest' | 'price-low-high' | 'price-high-low';
 
 export interface MaintenanceListRecord {
-  id: number;
+  id: string;
   serviceDate: string;
   title?: string | null;
   mileage: number | null;

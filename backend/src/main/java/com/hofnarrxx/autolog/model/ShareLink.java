@@ -2,30 +2,31 @@ package com.hofnarrxx.autolog.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.UuidGenerator;
+
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "share_links")
 public class ShareLink {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 128)
     private String token;
 
     @Column(nullable = false)
-    private Long carId;
+    private UUID carId;
 
     @Column(nullable = false)
-    private Long createdBy;
+    private UUID createdBy;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -46,7 +47,7 @@ public class ShareLink {
         }
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -58,19 +59,19 @@ public class ShareLink {
         this.token = token;
     }
 
-    public Long getCarId() {
+    public UUID getCarId() {
         return carId;
     }
 
-    public void setCarId(Long carId) {
+    public void setCarId(UUID carId) {
         this.carId = carId;
     }
 
-    public Long getCreatedBy() {
+    public UUID getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(UUID createdBy) {
         this.createdBy = createdBy;
     }
 
