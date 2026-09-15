@@ -67,6 +67,36 @@
       "goToPage": "Przejdź do strony {{page}}"
     }
   },
+  "landing": {
+    "hero": {
+      "title": "Śledź każde tankowanie i serwis w jednym miejscu",
+      "subtitle": "AutoLog pomaga rejestrować tankowania i serwisy dla wszystkich Twoich pojazdów, dzięki czemu zawsze wiesz, ile wydałeś i kiedy czeka Cię kolejny przegląd."
+    },
+    "cta": {
+      "demo": "Wypróbuj demo",
+      "signIn": "Zaloguj się",
+      "register": "Załóż darmowe konto",
+      "myGarage": "Przejdź do garażu"
+    },
+    "features": {
+      "fuel": {
+        "title": "Rejestr tankowań",
+        "description": "Zapisuj każde tankowanie z kosztem, ceną za litr i przebiegiem, aby śledzić zużycie paliwa w czasie."
+      },
+      "maintenance": {
+        "title": "Historia serwisowa",
+        "description": "Prowadź pełną historię serwisową z kategoriami, kosztami i załącznikami, takimi jak faktury i paragony."
+      },
+      "share": {
+        "title": "Udostępniaj każdemu",
+        "description": "Wygeneruj link tylko do odczytu, aby mechanik lub kupujący mógł zobaczyć historię pojazdu bez konta."
+      },
+      "personalize": {
+        "title": "Dostosuj do siebie",
+        "description": "Przełączaj się między językiem polskim i angielskim oraz śledź koszty w EUR, USD lub PLN."
+      }
+    }
+  },
   "nav": {
     "details": "Szczegóły",
     "fuel": "Tankowanie",

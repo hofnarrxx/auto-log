@@ -124,6 +124,48 @@ export default tseslint.config(
     },
   },
   {
+    files: ['src/app/features/landing/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '../vehicle',
+              message:
+                'features/landing is a public marketing page; it must not depend on the authenticated vehicle store or form.',
+            },
+            {
+              name: '../vehicle/vehicle-store',
+              message: 'features/landing must not depend on the authenticated VehicleStore.',
+            },
+            {
+              name: '../vehicle/fuel-store',
+              message: 'features/landing must not depend on the authenticated FuelStore.',
+            },
+            {
+              name: '../vehicle/maintenance-store',
+              message: 'features/landing must not depend on the authenticated MaintenanceStore.',
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                '../vehicle/vehicle-dashboard/**',
+                '../vehicle/vehicle-shell/**',
+                '../vehicle/vehicle-form/**',
+                '../vehicle/services/**',
+                '../vehicle/utils/**',
+              ],
+              message:
+                'features/landing may depend only on features/vehicle/models and features/vehicle/ui (shared record contracts and presentational UI), if needed at all.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ['src/app/features/share/**/*.ts'],
     rules: {
       'no-restricted-imports': [

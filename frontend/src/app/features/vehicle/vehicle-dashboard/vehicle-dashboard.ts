@@ -85,7 +85,7 @@ export class VehicleDashboard {
 
     this.isDeletingVehicle.set(true);
     this.vehicleStore.remove(vehicle.id).subscribe({
-      next: () => this.router.navigate(['/dashboard'], { replaceUrl: true }),
+      next: () => this.router.navigate(['/garage'], { replaceUrl: true }),
       error: () => this.isDeletingVehicle.set(false),
     });
   }

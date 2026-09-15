@@ -1,0 +1,64 @@
+<div class="landing-page">
+  <header class="landing-header">
+    <div class="logo">{{ 'common.appName' | translate }}</div>
+
+    <div class="header-actions">
+      <select
+        class="language-select"
+        [ngModel]="selectedLanguage"
+        (ngModelChange)="onLanguageChange($event)"
+        aria-label="Language"
+      >
+        <option value="en">{{ 'settings.languages.en' | translate }}</option>
+        <option value="pl">{{ 'settings.languages.pl' | translate }}</option>
+      </select>
+
+      @if (isAuthenticated()) {
+        <a class="header-link" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>
+      } @else {
+        <a class="header-link" routerLink="/login">{{ 'landing.cta.signIn' | translate }}</a>
+      }
+    </div>
+  </header>
+
+  <main class="hero">
+    <h1>{{ 'landing.hero.title' | translate }}</h1>
+    <p class="subtitle">{{ 'landing.hero.subtitle' | translate }}</p>
+
+    <div class="hero-actions">
+      <a class="cta-primary" [href]="demoUrl">{{ 'landing.cta.demo' | translate }}</a>
+
+      @if (isAuthenticated()) {
+        <a class="cta-secondary" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>
+      } @else {
+        <a class="cta-secondary" routerLink="/register">{{ 'landing.cta.register' | translate }}</a>
+      }
+    </div>
+  </main>
+
+  <section class="features">
+    <div class="feature-card">
+      <lucide-icon name="fuel" size="24" strokeWidth="2" aria-hidden="true"></lucide-icon>
+      <h3>{{ 'landing.features.fuel.title' | translate }}</h3>
+      <p>{{ 'landing.features.fuel.description' | translate }}</p>
+    </div>
+
+    <div class="feature-card">
+      <lucide-icon name="wrench" size="24" strokeWidth="2" aria-hidden="true"></lucide-icon>
+      <h3>{{ 'landing.features.maintenance.title' | translate }}</h3>
+      <p>{{ 'landing.features.maintenance.description' | translate }}</p>
+    </div>
+
+    <div class="feature-card">
+      <lucide-icon name="droplets" size="24" strokeWidth="2" aria-hidden="true"></lucide-icon>
+      <h3>{{ 'landing.features.share.title' | translate }}</h3>
+      <p>{{ 'landing.features.share.description' | translate }}</p>
+    </div>
+
+    <div class="feature-card">
+      <lucide-icon name="sparkles" size="24" strokeWidth="2" aria-hidden="true"></lucide-icon>
+      <h3>{{ 'landing.features.personalize.title' | translate }}</h3>
+      <p>{{ 'landing.features.personalize.description' | translate }}</p>
+    </div>
+  </section>
+</div>

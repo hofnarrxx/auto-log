@@ -67,6 +67,36 @@
       "goToPage": "Go to page {{page}}"
     }
   },
+  "landing": {
+    "hero": {
+      "title": "Track every fill-up and service, all in one place",
+      "subtitle": "AutoLog helps you log fuel and maintenance for all your vehicles, so you always know what you spent and when you're due for service."
+    },
+    "cta": {
+      "demo": "Try the demo",
+      "signIn": "Sign in",
+      "register": "Create a free account",
+      "myGarage": "Go to my garage"
+    },
+    "features": {
+      "fuel": {
+        "title": "Fuel logging",
+        "description": "Record every fill-up with cost, price per litre, and mileage to track consumption over time."
+      },
+      "maintenance": {
+        "title": "Maintenance history",
+        "description": "Keep a full service history with categories, costs, and attachments like invoices and receipts."
+      },
+      "share": {
+        "title": "Share with anyone",
+        "description": "Generate a read-only link so mechanics or buyers can view a vehicle's history without an account."
+      },
+      "personalize": {
+        "title": "Made your way",
+        "description": "Switch between English and Polish and track costs in EUR, USD, or PLN."
+      }
+    }
+  },
   "nav": {
     "details": "Details",
     "fuel": "Fuel",

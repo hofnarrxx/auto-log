@@ -2,12 +2,14 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
 import { AppLayout } from './core/layout/app-layout/app-layout';
 import { authRoutes } from './features/auth/auth.routes';
-
-// `authRoutes` is spread here rather than mounted via `loadChildren` under a `path: ''`
-// parent: a second top-level `path: ''` route whose children (`login`/`register`) don't
-// match the root URL leaves the router with nothing to activate instead of falling
-// through to the next sibling route, so `/` never reaches the `AppLayout` redirect below.
+ 
 export const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./features/landing/landing').then((m) => m.Landing),
+  },
+
   {
     path: 'share',
     loadChildren: () => import('./features/share/share.routes').then((m) => m.shareRoutes),
@@ -21,13 +23,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-      },
-
-      {
-        path: 'dashboard',
+        path: 'garage',
         loadChildren: () =>
           import('./features/dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
       },

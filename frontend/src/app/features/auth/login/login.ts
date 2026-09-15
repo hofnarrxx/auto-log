@@ -34,7 +34,7 @@ export class Login {
     const { email, password } = this.form.value;
 
     this.authStore.login(email!, password!).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => this.router.navigate(['/garage']),
       error: (err: HttpErrorResponse) => {
         if (err.status === 429) return;
         this.notifications.notifyError('auth.login.errors.invalidCredentials');

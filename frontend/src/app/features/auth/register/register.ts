@@ -39,7 +39,7 @@ export class Register {
     if (password !== confirmPassword) return;
 
     this.authStore.register(email!, password!).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
+      next: () => this.router.navigate(['/garage']),
       error: (err) => {
         if (err.status === 429) return;
         this.notifications.notifyHttpError(err, {
