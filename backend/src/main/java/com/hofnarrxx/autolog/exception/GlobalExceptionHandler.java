@@ -120,4 +120,14 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(DemoUserNotFoundException.class)
+    public ResponseEntity<?> handleDemoUserNotFound(DemoUserNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of(
+                        "error", "DEMO_USER_NOT_FOUND",
+                        "message", ex.getMessage()
+                ));
+    }
 }

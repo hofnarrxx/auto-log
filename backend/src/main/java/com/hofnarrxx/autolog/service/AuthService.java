@@ -10,21 +10,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hofnarrxx.autolog.config.DemoProperties;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthTokens;
+import com.hofnarrxx.autolog.exception.DemoUserNotFoundException;
 import com.hofnarrxx.autolog.exception.EmailAlreadyExistsException;
 import com.hofnarrxx.autolog.exception.TooManyRequestsException;
 import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
+import com.hofnarrxx.autolog.ratelimit.RateLimitPolicy;
+import com.hofnarrxx.autolog.ratelimit.RateLimiterRegistry;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
 import com.hofnarrxx.autolog.repository.UserRepository;
 import com.hofnarrxx.autolog.utils.PasswordPolicy;
 
 import io.github.bucket4j.ConsumptionProbe;
-
-import com.hofnarrxx.autolog.ratelimit.RateLimitPolicy;
-import com.hofnarrxx.autolog.ratelimit.RateLimiterRegistry;
 
 @Service
 public class AuthService {
@@ -36,6 +37,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final PasswordPolicy passwordPolicy;
     private final RateLimiterRegistry rateLimiterRegistry;
+    private final DemoProperties demoProperties;
 
     public AuthService(UserRepository userRepository,
             AuthProviderRepository providerRepository,
@@ -44,7 +46,8 @@ public class AuthService {
             AuthenticationManager authManager,
             RefreshTokenService refreshTokenService,
             PasswordPolicy passwordPolicy,
-            RateLimiterRegistry rateLimiterRegistry) {
+            RateLimiterRegistry rateLimiterRegistry,
+            DemoProperties demoProperties) {
         this.userRepository = userRepository;
         this.providerRepository = providerRepository;
         this.encoder = encoder;
@@ -53,6 +56,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
         this.passwordPolicy = passwordPolicy;
         this.rateLimiterRegistry = rateLimiterRegistry;
+        this.demoProperties = demoProperties;
     }
 
     @Transactional
@@ -96,6 +100,14 @@ public class AuthService {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow();
 
+        return issueTokens(user);
+    }
+
+    @Transactional
+    public AuthTokens startDemo() {
+        User user = userRepository.findByEmail(demoProperties.email())
+                .orElseThrow(() -> new DemoUserNotFoundException());
+                if(!user.isDemo()) throw new DemoUserNotFoundException();
         return issueTokens(user);
     }
 

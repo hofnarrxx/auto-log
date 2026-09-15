@@ -73,7 +73,7 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE,
                 buildCookie("refresh_token", refreshToken, refreshTokenExpirationMs).toString());
 
-        response.sendRedirect(appProperties.frontendUrl() + "/dashboard");
+        response.sendRedirect(appProperties.frontendUrl() + "/garage");
     }
 
     private ResponseCookie buildCookie(String name, String value, long maxAgeMs) {

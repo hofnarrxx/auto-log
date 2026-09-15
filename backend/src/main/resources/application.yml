@@ -49,4 +49,8 @@ app:
   mail:
     from: ${MAIL_FROM}
   password-reset:
-    token-expiration: 1800000 # 30 minutes
+    token-expiration: 1800000 # 30 minutes'
+  
+demo:
+  enabled: false
+  email: {DEMO_LOGIN}

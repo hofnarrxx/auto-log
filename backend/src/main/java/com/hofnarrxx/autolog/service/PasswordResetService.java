@@ -66,6 +66,7 @@ public class PasswordResetService {
         if (userOpt.isEmpty())
             return;
         User user = userOpt.get();
+        if (user.isDemo()) return;
         if (!authProviderRepository.existsByUserAndProviderType(user, AuthProviderType.LOCAL))
             return;
         ConsumptionProbe probe = rateLimiterRegistry.tryConsume(RateLimitPolicy.AUTH_FORGOT_PASSWORD, email);

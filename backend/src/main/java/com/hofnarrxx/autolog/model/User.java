@@ -17,6 +17,9 @@ public class User {
     private String email;
     private String password;
 
+    @Column(nullable = false)
+    private boolean demo = false;
+
     public User() {}
 
     public User(String email) {
@@ -41,6 +44,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = normalizeEmail(email);
+    }
+
+    public boolean isDemo() {
+        return demo;
+    }
+
+    public void setDemo(boolean demo) {
+        this.demo = demo;
     }
 
     private static String normalizeEmail(String email) {

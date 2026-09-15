@@ -87,7 +87,8 @@ public class AuthController {
         }
 
         String email = authentication.getName();
-        return ResponseEntity.ok(new AuthResponse(email));
+        boolean demo = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEMO"));
+        return ResponseEntity.ok(new AuthResponse(email, demo));
     }
 
     @PostMapping("/logout")
@@ -108,17 +109,24 @@ public class AuthController {
     }
 
     @GetMapping("/reset-password/validate")
-    public ResponseEntity<Void> validateRequest(@RequestParam String token){
-        if(!passwordResetService.validateToken(token)){
+    public ResponseEntity<Void> validateRequest(@RequestParam String token) {
+        if (!passwordResetService.validateToken(token)) {
             throw new InvalidPasswordResetTokenException();
         }
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request){
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
         passwordResetService.resetPassword(request.token(), request.password());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/demo")
+    public ResponseEntity<Void> startDemo(HttpServletResponse response) {
+        AuthTokens tokens = authService.startDemo();
+        setAuthCookies(response, tokens);
+        return ResponseEntity.ok().build();
     }
 
     private void setAuthCookies(HttpServletResponse response, AuthTokens tokens) {

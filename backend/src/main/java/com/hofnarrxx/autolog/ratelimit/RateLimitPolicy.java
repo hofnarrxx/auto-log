@@ -9,6 +9,7 @@ public enum RateLimitPolicy {
     AUTH_RESET_PASSWORD(10, Duration.ofMinutes(15)),
     AUTH_REFRESH(30, Duration.ofMinutes(1)),
     AUTH_ME(60, Duration.ofMinutes(1)),
+    AUTH_DEMO(10, Duration.ofMinutes(1)),
     SHARE_PUBLIC(60, Duration.ofMinutes(1)),
     SHARE_SUMMARY(20, Duration.ofMinutes(1)),
     LOGIN_FAILURES(5, Duration.ofMinutes(15));

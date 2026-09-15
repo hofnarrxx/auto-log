@@ -21,15 +21,15 @@ public class RefreshTokenService {
     private long refreshExpirationMs;
 
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository,
-                               SecureTokenGenerator secureTokenGenerator) {
+            SecureTokenGenerator secureTokenGenerator) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.secureTokenGenerator = secureTokenGenerator;
     }
 
     @Transactional
     public String createForUser(User user) {
-        refreshTokenRepository.deleteByUser(user);
-
+        if (!user.isDemo())
+            refreshTokenRepository.deleteByUser(user);
         RefreshToken token = new RefreshToken();
         token.setToken(secureTokenGenerator.generateToken());
         token.setUser(user);

@@ -49,8 +49,15 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                                 .requestMatchers("/api/auth/**", "/oauth2/**", "/share/**").permitAll()
-                                                .anyRequest().authenticated())
+                                                .requestMatchers(HttpMethod.GET, "/vehicles/**", "metadata/**")
+                                                .hasAnyRole("USER", "DEMO")
+                                                .anyRequest().hasRole("USER"))
                                 .exceptionHandling(ex -> ex
+                                                .accessDeniedHandler((request, response, accessException) -> {
+                                                        response.setStatus(HttpStatus.FORBIDDEN.value());
+                                                        response.setContentType("application/json");
+                                                        response.getWriter().write("{\"error\":\"DEMO_READ_ONLY\"}");
+                                                })
                                                 .authenticationEntryPoint((request, response, authException) -> {
                                                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                                                 }))
