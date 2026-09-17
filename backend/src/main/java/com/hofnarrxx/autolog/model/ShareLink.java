@@ -11,8 +11,15 @@ import org.hibernate.annotations.UuidGenerator;
 import java.time.Instant;
 import java.util.UUID;
 
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
+
 @Entity
-@Table(name = "share_links")
+@Table(name = "share_links", indexes = {
+        @Index(name = "idx_share_links_vehicle_created_by", columnList = "vehicle_id, created_by")
+})
 public class ShareLink {
 
     @Id
@@ -22,11 +29,13 @@ public class ShareLink {
     @Column(nullable = false, unique = true, length = 128)
     private String token;
 
-    @Column(nullable = false)
-    private UUID carId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;
 
-    @Column(nullable = false)
-    private UUID createdBy;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -59,19 +68,19 @@ public class ShareLink {
         this.token = token;
     }
 
-    public UUID getCarId() {
-        return carId;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setCarId(UUID carId) {
-        this.carId = carId;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
-    public UUID getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UUID createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -107,4 +116,3 @@ public class ShareLink {
         this.includeAttachments = includeAttachments;
     }
 }
-

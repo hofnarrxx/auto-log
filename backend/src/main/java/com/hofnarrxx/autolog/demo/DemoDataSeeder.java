@@ -11,6 +11,7 @@ import com.hofnarrxx.autolog.repository.UserRepository;
 import com.hofnarrxx.autolog.utils.SecureTokenGenerator;
 
 import com.hofnarrxx.autolog.model.User;
+import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
@@ -25,7 +26,8 @@ public class DemoDataSeeder implements ApplicationRunner {
     SecureTokenGenerator secureTokenGenerator;
     AuthProviderRepository providerRepository;
 
-    public DemoDataSeeder(DemoProperties demoProperties, UserRepository userRepository, PasswordEncoder passwordEncoder, SecureTokenGenerator secureTokenGenerator, AuthProviderRepository providerRepository) {
+    public DemoDataSeeder(DemoProperties demoProperties, UserRepository userRepository, PasswordEncoder passwordEncoder,
+            SecureTokenGenerator secureTokenGenerator, AuthProviderRepository providerRepository) {
         this.demoProperties = demoProperties;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -38,10 +40,10 @@ public class DemoDataSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (userRepository.existsByEmail(demoProperties.email()))
             return;
-        seed();        
+        seed();
     }
 
-    private void seed(){
+    private void seed() {
         User demo = new User();
         demo.setEmail(demoProperties.email());
         demo.setPassword(passwordEncoder.encode(secureTokenGenerator.generateToken()));
@@ -53,5 +55,16 @@ public class DemoDataSeeder implements ApplicationRunner {
         provider.setProviderType(AuthProviderType.LOCAL);
         provider.setUser(demo);
         providerRepository.save(provider);
+
+        Vehicle vehicle = generateVehicle();
+    }
+
+    private Vehicle generateVehicle() {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setBrand("Peugeot");
+        vehicle.setModel("406");
+        vehicle.setYear(1997);
+        //vehicle.setFuelType();
+        return vehicle;
     }
 }

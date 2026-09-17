@@ -53,8 +53,8 @@ public class ShareLinkController {
         return new ShareLinkResponse(
                 shareLink.getId(),
                 shareLink.getToken(),
-                shareLink.getCarId(),
-                shareLink.getCreatedBy(),
+                shareLink.getVehicle().getId(),
+                shareLink.getCreatedBy().getId(),
                 shareLink.getCreatedAt(),
                 shareLink.getExpiresAt(),
             shareLink.isRevoked(),

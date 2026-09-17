@@ -17,12 +17,12 @@ public interface ShareLinkRepository extends JpaRepository<ShareLink, UUID> {
 
     Optional<ShareLink> findByTokenAndRevokedFalseAndExpiresAtAfter(String token, Instant now);
 
-    Optional<ShareLink> findByIdAndCreatedBy(UUID id, UUID createdBy);
+    Optional<ShareLink> findByIdAndCreatedById(UUID id, UUID createdBy);
 
-    List<ShareLink> findByCarIdAndCreatedByOrderByCreatedAtDesc(UUID carId, UUID createdBy);
+    List<ShareLink> findByVehicleIdAndCreatedByIdOrderByCreatedAtDesc(UUID carId, UUID createdBy);
 
-    List<ShareLink> findByCarIdAndCreatedByAndRevokedFalse(UUID carId, UUID createdBy);
+    List<ShareLink> findByVehicleIdAndCreatedByIdAndRevokedFalse(UUID carId, UUID createdBy);
 
-    int countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(UUID carId, UUID createdBy, Instant now);
+    int countByVehicleIdAndCreatedByIdAndRevokedFalseAndExpiresAtAfter(UUID carId, UUID createdBy, Instant now);
 }
 

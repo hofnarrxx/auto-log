@@ -2,6 +2,8 @@ package com.hofnarrxx.autolog.service;
 
 import com.hofnarrxx.autolog.exception.VehicleNotFoundException;
 import com.hofnarrxx.autolog.model.ShareLink;
+import com.hofnarrxx.autolog.model.User;
+import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.ShareLinkRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
 import com.hofnarrxx.autolog.utils.SecureTokenGenerator;
@@ -35,14 +37,14 @@ public class ShareLinkService {
 
     @Transactional
     public ShareLink create(UUID carId, Instant expiresAt, Boolean includeAttachments) {
-        UUID userId = authService.getCurrentUser().getId();
+        User user = authService.getCurrentUser();
 
-        vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(carId, userId)
+        Vehicle vehicle = vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(carId, user.getId())
                 .orElseThrow(VehicleNotFoundException::new);
 
-        int activeLinks = shareLinkRepository.countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(
+        int activeLinks = shareLinkRepository.countByVehicleIdAndCreatedByIdAndRevokedFalseAndExpiresAtAfter(
             carId,
-            userId,
+            user.getId(),
             Instant.now()
         );
         if (activeLinks >= 1) {
@@ -53,8 +55,8 @@ public class ShareLinkService {
 
         ShareLink shareLink = new ShareLink();
         shareLink.setToken(generateUniqueToken());
-        shareLink.setCarId(carId);
-        shareLink.setCreatedBy(userId);
+        shareLink.setVehicle(vehicle);
+        shareLink.setCreatedBy(user);
         shareLink.setExpiresAt(expiresAt);
         shareLink.setRevoked(false);
         shareLink.setIncludeAttachments(includeAttachments == null || includeAttachments);
@@ -78,14 +80,14 @@ public class ShareLinkService {
         vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(carId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
-        return shareLinkRepository.findByCarIdAndCreatedByOrderByCreatedAtDesc(carId, userId);
+        return shareLinkRepository.findByVehicleIdAndCreatedByIdOrderByCreatedAtDesc(carId, userId);
     }
 
     @Transactional
     public void revoke(UUID shareLinkId) {
         UUID userId = authService.getCurrentUser().getId();
 
-        shareLinkRepository.findByIdAndCreatedBy(shareLinkId, userId)
+        shareLinkRepository.findByIdAndCreatedById(shareLinkId, userId)
                 .ifPresent(link -> {
                     link.setRevoked(true);
                     shareLinkRepository.save(link);
@@ -95,7 +97,7 @@ public class ShareLinkService {
     @Transactional
     public void revokeAllForCar(UUID carId) {
         UUID userId = authService.getCurrentUser().getId();
-        shareLinkRepository.findByCarIdAndCreatedByAndRevokedFalse(carId, userId).forEach(link -> {
+        shareLinkRepository.findByVehicleIdAndCreatedByIdAndRevokedFalse(carId, userId).forEach(link -> {
             link.setRevoked(true);
             shareLinkRepository.save(link);
         });

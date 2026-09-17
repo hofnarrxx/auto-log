@@ -119,7 +119,7 @@ public class MaintenanceAttachmentService {
         }
 
         Maintenance maintenance = maintenanceRepository
-                .findByIdAndVehicleId(maintenanceId, shareLink.getCarId())
+                .findByIdAndVehicleId(maintenanceId, shareLink.getVehicle().getId())
                 .orElseThrow(MaintenanceNotFoundException::new);
 
         MaintenanceAttachment attachment = attachmentRepository
