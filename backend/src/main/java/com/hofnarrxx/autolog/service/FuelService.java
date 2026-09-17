@@ -83,7 +83,7 @@ public class FuelService {
 
     public FuelResponse create(UUID vehicleId, FuelRequest request) {
         UUID userId = authService.getCurrentUser().getId();
-        Vehicle vehicle = vehicleRepository.findByIdAndUserId(vehicleId, userId)
+        Vehicle vehicle = vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         Fuel fuel = new Fuel();
@@ -115,7 +115,7 @@ public class FuelService {
     }
 
     private void ensureVehicleOwnedByCurrentUser(UUID vehicleId, UUID userId) {
-        vehicleRepository.findByIdAndUserId(vehicleId, userId)
+        vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
 
@@ -202,7 +202,7 @@ public class FuelService {
 
     private void updateVehicleMileageIfNeeded(Vehicle vehicle, Integer fuelMileage) {
         if (fuelMileage != null && (vehicle.getMileage() == null || fuelMileage > vehicle.getMileage())) {
-            vehicle.setMileage(fuelMileage.doubleValue());
+            vehicle.setMileage(fuelMileage);
             vehicleRepository.save(vehicle);
         }
     }

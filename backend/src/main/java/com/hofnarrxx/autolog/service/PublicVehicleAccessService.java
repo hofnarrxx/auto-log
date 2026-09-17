@@ -43,7 +43,7 @@ public class PublicVehicleAccessService {
         ShareLink shareLink = shareLinkService.resolveActive(token)
                 .orElseThrow(ShareLinkNotFoundException::new);
 
-        Vehicle vehicle = vehicleRepository.findById(shareLink.getCarId())
+        Vehicle vehicle = vehicleRepository.findByIdAndDeletedAtIsNull(shareLink.getCarId())
                 .orElseThrow(ShareLinkNotFoundException::new);
 
         return new ResolvedShare(shareLink, vehicle);
@@ -61,7 +61,7 @@ public class PublicVehicleAccessService {
                 vehicle.getId(),
                 vehicle.getBrand(),
                 vehicle.getModel(),
-                vehicle.getFuelType(),
+                vehicle.getFuelType().getDisplayName(),
                 vehicle.getMileage(),
                 vehicle.getYear(),
                 fuelSummary,

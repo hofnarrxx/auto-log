@@ -223,7 +223,10 @@
       "thumbnailAlt": "Vehicle thumbnail",
       "avgEfficiency": "Average fuel efficiency",
       "lastOdometerReading": "Last odometer reading",
-      "lastOdometerDate": "Recorded on"
+      "lastOdometerDate": "Recorded on",
+      "errors": {
+        "deleteFailed": "Unable to delete this vehicle right now."
+      }
     },
     "dashboard": {
       "share": {
@@ -264,7 +267,9 @@
         "fuelTypeRequired": "Fuel type is required.",
         "yearInteger": "Year must be a whole number.",
         "yearRange": "Year must be between 1886 and {{ currentYear }}.",
-        "mileageNonNegative": "Mileage cannot be negative."
+        "mileageNonNegative": "Mileage cannot be negative.",
+        "mileageInteger": "Mileage must be a whole number.",
+        "licensePlateMaxLength": "License plate cannot exceed 20 characters."
       },
       "fuelTypes": {
         "petrol": "Petrol",

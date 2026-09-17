@@ -223,7 +223,10 @@
       "thumbnailAlt": "Miniatura pojazdu",
       "avgEfficiency": "Średnie zużycie paliwa",
       "lastOdometerReading": "Ostatni odczyt licznika",
-      "lastOdometerDate": "Zapisano"
+      "lastOdometerDate": "Zapisano",
+      "errors": {
+        "deleteFailed": "Nie można teraz usunąć tego pojazdu."
+      }
     },
     "dashboard": {
       "share": {
@@ -264,7 +267,9 @@
         "fuelTypeRequired": "Rodzaj paliwa jest wymagany.",
         "yearInteger": "Rok musi być liczbą całkowitą.",
         "yearRange": "Rok musi mieścić się w zakresie od 1886 do {{ currentYear }}.",
-        "mileageNonNegative": "Przebieg nie może być ujemny."
+        "mileageNonNegative": "Przebieg nie może być ujemny.",
+        "mileageInteger": "Przebieg musi być liczbą całkowitą.",
+        "licensePlateMaxLength": "Numer rejestracyjny nie może przekraczać 20 znaków."
       },
       "fuelTypes": {
         "petrol": "Benzyna",

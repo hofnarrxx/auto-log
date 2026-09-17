@@ -112,7 +112,7 @@ public class MaintenanceService {
 
     public MaintenanceResponse create(UUID vehicleId, MaintenanceRequest request) {
         UUID userId = authService.getCurrentUser().getId();
-        Vehicle vehicle = vehicleRepository.findByIdAndUserId(vehicleId, userId)
+        Vehicle vehicle = vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         Maintenance maintenance = new Maintenance();
@@ -144,7 +144,7 @@ public class MaintenanceService {
     }
 
     private void ensureVehicleOwnedByCurrentUser(UUID vehicleId, UUID userId) {
-        vehicleRepository.findByIdAndUserId(vehicleId, userId)
+        vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
 
@@ -264,7 +264,7 @@ public class MaintenanceService {
 
     private void updateVehicleMileageIfNeeded(Vehicle vehicle, Integer maintenanceMileage) {
         if (maintenanceMileage != null && (vehicle.getMileage() == null || maintenanceMileage > vehicle.getMileage())) {
-            vehicle.setMileage(maintenanceMileage.doubleValue());
+            vehicle.setMileage(maintenanceMileage);
             vehicleRepository.save(vehicle);
         }
     }

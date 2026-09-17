@@ -7,6 +7,9 @@ import com.hofnarrxx.autolog.dto.VehicleRequest;
 import com.hofnarrxx.autolog.dto.VehicleResponse;
 import com.hofnarrxx.autolog.service.VehicleImageService;
 import com.hofnarrxx.autolog.service.VehicleService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +33,7 @@ public class VehicleController {
     }
 
     @PostMapping
-    public VehicleResponse create(@RequestBody VehicleRequest request) {
+    public VehicleResponse create(@Valid @RequestBody VehicleRequest request) {
         return vehicleService.create(request);
     }
 
@@ -40,7 +43,7 @@ public class VehicleController {
     }
 
     @PutMapping("/{id}")
-    public VehicleResponse update(@PathVariable UUID id, @RequestBody VehicleRequest request) {
+    public VehicleResponse update(@PathVariable UUID id, @Valid @RequestBody VehicleRequest request) {
         return vehicleService.update(id, request);
     }
 

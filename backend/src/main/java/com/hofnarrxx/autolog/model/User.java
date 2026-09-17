@@ -20,7 +20,8 @@ public class User {
     @Column(nullable = false)
     private boolean demo = false;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String email) {
         this.email = normalizeEmail(email);

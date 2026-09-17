@@ -52,9 +52,13 @@ export class VehicleForm {
       Validators.max(this.currentYear),
       this.integerValidator.bind(this),
     ]),
-    mileage: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
+    mileage: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+      this.integerValidator.bind(this),
+    ]),
     fuelType: new FormControl<string | null>(null, Validators.required),
-    licensePlate: new FormControl<string | null>(null),
+    licensePlate: new FormControl<string | null>(null, Validators.maxLength(20)),
   });
 
   ngOnInit() {

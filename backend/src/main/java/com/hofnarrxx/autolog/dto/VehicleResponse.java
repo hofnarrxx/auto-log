@@ -7,7 +7,7 @@ public record VehicleResponse(
         String brand,
         String model,
         String fuelType,
-        Double mileage,
+        Integer mileage,
         Integer year,
         String licensePlate,
         String imageKey,

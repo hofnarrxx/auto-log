@@ -22,7 +22,7 @@
         step="1"
       />
 
-      @if (form.controls.year.hasError('integer') && form.controls.year.touched) {
+      @if (form.controls.year.hasError('notInteger') && form.controls.year.touched) {
         <div class="error">{{ 'vehicle.form.errors.yearInteger' | translate }}</div>
       } @else if (form.controls.year.invalid && form.controls.year.touched) {
         <div class="error">
@@ -52,10 +52,12 @@
       [placeholder]="'vehicle.form.placeholders.mileage' | translate"
       formControlName="mileage"
       min="0"
-      step="0.1"
+      step="1"
     />
 
-    @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
+    @if (form.controls.mileage.hasError('notInteger') && form.controls.mileage.touched) {
+      <div class="error">{{ 'vehicle.form.errors.mileageInteger' | translate }}</div>
+    } @else if (form.controls.mileage.invalid && form.controls.mileage.touched) {
       <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
     }
   }
@@ -64,7 +66,11 @@
     type="text"
     [placeholder]="'vehicle.form.placeholders.licensePlate' | translate"
     formControlName="licensePlate"
+    maxlength="20"
   />
+  @if (form.controls.licensePlate.invalid && form.controls.licensePlate.touched) {
+    <div class="error">{{ 'vehicle.form.errors.licensePlateMaxLength' | translate }}</div>
+  }
 
   <app-vehicle-image-picker
     [currentImageUrl]="vehicle?.imageUrl"

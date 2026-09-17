@@ -21,6 +21,8 @@ public interface ShareLinkRepository extends JpaRepository<ShareLink, UUID> {
 
     List<ShareLink> findByCarIdAndCreatedByOrderByCreatedAtDesc(UUID carId, UUID createdBy);
 
+    List<ShareLink> findByCarIdAndCreatedByAndRevokedFalse(UUID carId, UUID createdBy);
+
     int countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(UUID carId, UUID createdBy, Instant now);
 }
 

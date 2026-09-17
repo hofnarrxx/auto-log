@@ -7,7 +7,7 @@ public record PublicVehicleAccessResponse(
         String brand,
         String model,
         String fuelType,
-        Double mileage,
+        Integer mileage,
         Integer year,
         FuelSummaryResponse fuelSummary,
         MaintenanceSummaryResponse maintenanceSummary

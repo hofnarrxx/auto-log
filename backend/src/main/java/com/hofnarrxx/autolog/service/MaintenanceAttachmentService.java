@@ -185,7 +185,7 @@ public class MaintenanceAttachmentService {
     private Maintenance getOwnedMaintenance(UUID vehicleId, UUID maintenanceId) {
         UUID userId = authService.getCurrentUser().getId();
 
-        vehicleRepository.findByIdAndUserId(vehicleId, userId)
+        vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         return maintenanceRepository.findByIdAndVehicleIdAndVehicleUserId(maintenanceId, vehicleId, userId)

@@ -18,12 +18,17 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 import java.time.Duration;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class VehicleImageService {
     private static final Duration PRESIGNED_URL_TTL = Duration.ofMinutes(10);
     private static final long MAX_IMAGE_BYTES = 5L * 1024 * 1024;
+    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
+            "image/jpeg",
+            "image/png",
+            "image/webp");
 
     private final VehicleRepository vehicleRepository;
     private final AuthService authService;
@@ -31,9 +36,9 @@ public class VehicleImageService {
     private final R2Properties properties;
 
     public VehicleImageService(VehicleRepository vehicleRepository,
-                               AuthService authService,
-                               S3Presigner presigner,
-                               R2Properties properties) {
+            AuthService authService,
+            S3Presigner presigner,
+            R2Properties properties) {
         this.vehicleRepository = vehicleRepository;
         this.authService = authService;
         this.presigner = presigner;
@@ -41,7 +46,7 @@ public class VehicleImageService {
     }
 
     public VehicleImageUploadUrlResponse createUploadUrl(UUID vehicleId,
-                                                         VehicleImageUploadUrlRequest request) {
+            VehicleImageUploadUrlRequest request) {
         getOwnedVehicle(vehicleId);
 
         if (request.sizeBytes() == null || request.sizeBytes() <= 0 || request.sizeBytes() > MAX_IMAGE_BYTES) {
@@ -70,13 +75,11 @@ public class VehicleImageService {
                 PutObjectPresignRequest.builder()
                         .signatureDuration(PRESIGNED_URL_TTL)
                         .putObjectRequest(putObjectRequest)
-                        .build()
-        );
+                        .build());
 
         return new VehicleImageUploadUrlResponse(
                 presignedRequest.url().toString(),
-                objectKey
-        );
+                objectKey);
     }
 
     public VehicleImageDownloadUrlResponse createDownloadUrl(UUID vehicleId) {
@@ -96,15 +99,14 @@ public class VehicleImageService {
                 GetObjectPresignRequest.builder()
                         .signatureDuration(PRESIGNED_URL_TTL)
                         .getObjectRequest(getObjectRequest)
-                        .build()
-        );
+                        .build());
 
         return new VehicleImageDownloadUrlResponse(presignedRequest.url().toString());
     }
 
     private Vehicle getOwnedVehicle(UUID vehicleId) {
         UUID userId = authService.getCurrentUser().getId();
-        return vehicleRepository.findByIdAndUserId(vehicleId, userId)
+        return vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
     }
 
@@ -132,8 +134,7 @@ public class VehicleImageService {
         if (contentType == null) {
             return false;
         }
-        String lower = contentType.toLowerCase(Locale.ROOT);
-        return lower.startsWith("image/");
+        return ALLOWED_CONTENT_TYPES.contains(contentType.toLowerCase(Locale.ROOT));
     }
 
     private String normalize(String value) {

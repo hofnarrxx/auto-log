@@ -37,7 +37,7 @@ public class ShareLinkService {
     public ShareLink create(UUID carId, Instant expiresAt, Boolean includeAttachments) {
         UUID userId = authService.getCurrentUser().getId();
 
-        vehicleRepository.findByIdAndUserId(carId, userId)
+        vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(carId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         int activeLinks = shareLinkRepository.countByCarIdAndCreatedByAndRevokedFalseAndExpiresAtAfter(
@@ -75,7 +75,7 @@ public class ShareLinkService {
     public List<ShareLink> getForCar(UUID carId) {
         UUID userId = authService.getCurrentUser().getId();
 
-        vehicleRepository.findByIdAndUserId(carId, userId)
+        vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(carId, userId)
                 .orElseThrow(VehicleNotFoundException::new);
 
         return shareLinkRepository.findByCarIdAndCreatedByOrderByCreatedAtDesc(carId, userId);
@@ -92,6 +92,15 @@ public class ShareLinkService {
                 });
     }
 
+    @Transactional
+    public void revokeAllForCar(UUID carId) {
+        UUID userId = authService.getCurrentUser().getId();
+        shareLinkRepository.findByCarIdAndCreatedByAndRevokedFalse(carId, userId).forEach(link -> {
+            link.setRevoked(true);
+            shareLinkRepository.save(link);
+        });
+    }
+    
     private String generateUniqueToken() {
         for (int i = 0; i < TOKEN_RETRY_LIMIT; i++) {
             String candidate = secureTokenGenerator.generateToken();

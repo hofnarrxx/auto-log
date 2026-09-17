@@ -1,5 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { VehicleStore } from '../vehicle-store';
@@ -12,6 +13,7 @@ import { VehicleDetailsTab } from './details-tab/vehicle-details-tab';
 import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab';
 import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
 import { ShareLinkModal } from './share-link-modal/share-link-modal';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-vehicle-dashboard',
@@ -32,6 +34,7 @@ export class VehicleDashboard {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private vehicleStore = inject(VehicleStore);
+  private notifications = inject(NotificationService);
   showEditModal = signal(false);
   showShareModal = signal(false);
   showDeleteConfirmModal = signal(false);
@@ -86,7 +89,17 @@ export class VehicleDashboard {
     this.isDeletingVehicle.set(true);
     this.vehicleStore.remove(vehicle.id).subscribe({
       next: () => this.router.navigate(['/garage'], { replaceUrl: true }),
-      error: () => this.isDeletingVehicle.set(false),
+      error: (err: unknown) => {
+        this.isDeletingVehicle.set(false);
+
+        if (err instanceof HttpErrorResponse && err.status === 404) {
+          // Already gone (deleted elsewhere, or never ours) - nothing left to confirm.
+          this.router.navigate(['/garage'], { replaceUrl: true });
+          return;
+        }
+
+        this.notifications.notifyError('vehicle.details.errors.deleteFailed');
+      },
     });
   }
 }
