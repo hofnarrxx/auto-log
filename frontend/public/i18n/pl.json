@@ -263,13 +263,18 @@
       },
       "errors": {
         "brandRequired": "Marka jest wymagana.",
+        "brandMaxLength": "Marka nie może przekraczać 60 znaków.",
         "modelRequired": "Model jest wymagany.",
+        "modelMaxLength": "Model nie może przekraczać 60 znaków.",
         "fuelTypeRequired": "Rodzaj paliwa jest wymagany.",
         "yearInteger": "Rok musi być liczbą całkowitą.",
         "yearRange": "Rok musi mieścić się w zakresie od 1886 do {{ currentYear }}.",
         "mileageNonNegative": "Przebieg nie może być ujemny.",
         "mileageInteger": "Przebieg musi być liczbą całkowitą.",
-        "licensePlateMaxLength": "Numer rejestracyjny nie może przekraczać 20 znaków."
+        "mileageMax": "Przebieg nie może przekraczać 10 000 000.",
+        "licensePlateMaxLength": "Numer rejestracyjny nie może przekraczać 20 znaków.",
+        "saveFailed": "Nie udało się zapisać tego pojazdu.",
+        "serverRejected": "Ta wartość została odrzucona przez serwer."
       },
       "fuelTypes": {
         "petrol": "Benzyna",
@@ -298,15 +303,23 @@
       },
       "errors": {
         "dateRequired": "Data jest wymagana.",
+        "dateFuture": "Data nie może być w przyszłości.",
         "amountPositive": "Ilość paliwa musi być większa od 0.",
+        "amountDecimals": "Ilość paliwa nie może mieć więcej niż 3 miejsca po przecinku.",
+        "amountMax": "Ilość paliwa jest za duża.",
         "costRequired": "Koszt jest wymagany.",
+        "costDecimals": "Koszt nie może mieć więcej niż 2 miejsca po przecinku.",
+        "costMax": "Koszt jest za duży.",
         "currencyRequired": "Waluta jest wymagana.",
         "mileageRequired": "Przebieg jest wymagany.",
+        "mileageInteger": "Przebieg musi być liczbą całkowitą.",
+        "mileageMax": "Przebieg nie może przekraczać 10 000 000.",
         "gasStationMaxLength": "Nazwa stacji paliw nie może przekraczać 50 znaków.",
         "invalidData": "Przed zapisaniem wprowadź poprawne dane.",
         "saveFailed": "Nie można zapisać wpisu tankowania.",
         "deleteFailed": "Nie można usunąć wpisu tankowania.",
-        "loadFailed": "Nie udało się wczytać wpisów tankowania."
+        "loadFailed": "Nie udało się wczytać wpisów tankowania.",
+        "serverRejected": "Ta wartość została odrzucona przez serwer."
       }
     },
     "maintenanceTab": {
@@ -335,10 +348,15 @@
       "errors": {
         "titleRequired": "Tytuł jest wymagany.",
         "serviceDateRequired": "Data serwisu jest wymagana.",
+        "serviceDateFuture": "Data serwisu nie może być w przyszłości.",
         "categoryRequired": "Kategoria jest wymagana.",
         "costRequired": "Koszt jest wymagany.",
+        "costDecimals": "Koszt nie może mieć więcej niż 2 miejsca po przecinku.",
+        "costMax": "Koszt jest za duży.",
         "currencyRequired": "Waluta jest wymagana.",
         "mileageRequired": "Przebieg jest wymagany.",
+        "mileageInteger": "Przebieg musi być liczbą całkowitą.",
+        "mileageMax": "Przebieg nie może przekraczać 10 000 000.",
         "descriptionMaxLength": "Opis nie może przekraczać 200 znaków.",
         "invalidData": "Przed zapisaniem wprowadź poprawne dane.",
         "invalidAttachmentType": "Dozwolone są tylko pliki PDF lub obrazy.",
@@ -347,7 +365,8 @@
         "uploadFailed": "Nie udało się przesłać załączników.",
         "deleteFailed": "Nie można usunąć wpisu serwisowego.",
         "attachmentDeleteFailed": "Nie udało się usunąć załącznika.",
-        "loadFailed": "Nie można teraz wczytać wpisów serwisowych."
+        "loadFailed": "Nie można teraz wczytać wpisów serwisowych.",
+        "serverRejected": "Ta wartość została odrzucona przez serwer."
       },
       "categories": {
         "inspection": "Przegląd",

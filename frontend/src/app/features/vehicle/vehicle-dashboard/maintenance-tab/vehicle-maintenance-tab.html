@@ -44,10 +44,8 @@
             />
           </label>
 
-          @if (form.controls.title.invalid && form.controls.title.touched) {
-            <p class="error-text">
-              {{ 'vehicle.maintenanceTab.errors.titleRequired' | translate }}
-            </p>
+          @if (fieldError('title'); as key) {
+            <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
           }
 
           <label>
@@ -55,10 +53,8 @@
             <input type="date" formControlName="serviceDate" />
           </label>
 
-          @if (form.controls.serviceDate.invalid && form.controls.serviceDate.touched) {
-            <p class="error-text">
-              {{ 'vehicle.maintenanceTab.errors.serviceDateRequired' | translate }}
-            </p>
+          @if (fieldError('serviceDate'); as key) {
+            <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
           }
 
           <label>
@@ -71,10 +67,8 @@
             </select>
           </label>
 
-          @if (form.controls.category.invalid && form.controls.category.touched) {
-            <p class="error-text">
-              {{ 'vehicle.maintenanceTab.errors.categoryRequired' | translate }}
-            </p>
+          @if (fieldError('category'); as key) {
+            <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
           }
 
           <div class="cost-currency-row">
@@ -84,10 +78,8 @@
                 <input type="number" formControlName="cost" min="0" step="0.01" />
               </label>
 
-              @if (form.controls.cost.invalid && form.controls.cost.touched) {
-                <p class="error-text">
-                  {{ 'vehicle.maintenanceTab.errors.costRequired' | translate }}
-                </p>
+              @if (fieldError('cost'); as key) {
+                <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
               }
             </div>
 
@@ -101,10 +93,8 @@
                 </select>
               </label>
 
-              @if (form.controls.currency.invalid && form.controls.currency.touched) {
-                <p class="error-text">
-                  {{ 'vehicle.maintenanceTab.errors.currencyRequired' | translate }}
-                </p>
+              @if (fieldError('currency'); as key) {
+                <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
               }
             </div>
           </div>
@@ -114,10 +104,8 @@
             <input type="number" formControlName="mileage" min="0" step="1" />
           </label>
 
-          @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-            <p class="error-text">
-              {{ 'vehicle.maintenanceTab.errors.mileageRequired' | translate }}
-            </p>
+          @if (fieldError('mileage'); as key) {
+            <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
           }
 
           <label>
@@ -125,10 +113,8 @@
             <textarea formControlName="description" rows="4"></textarea>
           </label>
 
-          @if (form.controls.description.invalid && form.controls.description.touched) {
-            <p class="error-text">
-              {{ 'vehicle.maintenanceTab.errors.descriptionMaxLength' | translate }}
-            </p>
+          @if (fieldError('description'); as key) {
+            <p class="error-text">{{ 'vehicle.maintenanceTab.errors.' + key | translate }}</p>
           }
 
           <app-attachment-picker

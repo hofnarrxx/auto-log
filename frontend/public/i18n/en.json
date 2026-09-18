@@ -263,13 +263,18 @@
       },
       "errors": {
         "brandRequired": "Brand is required.",
+        "brandMaxLength": "Brand cannot exceed 60 characters.",
         "modelRequired": "Model is required.",
+        "modelMaxLength": "Model cannot exceed 60 characters.",
         "fuelTypeRequired": "Fuel type is required.",
         "yearInteger": "Year must be a whole number.",
         "yearRange": "Year must be between 1886 and {{ currentYear }}.",
         "mileageNonNegative": "Mileage cannot be negative.",
         "mileageInteger": "Mileage must be a whole number.",
-        "licensePlateMaxLength": "License plate cannot exceed 20 characters."
+        "mileageMax": "Mileage cannot exceed 10,000,000.",
+        "licensePlateMaxLength": "License plate cannot exceed 20 characters.",
+        "saveFailed": "Unable to save this vehicle right now.",
+        "serverRejected": "This value was rejected by the server."
       },
       "fuelTypes": {
         "petrol": "Petrol",
@@ -298,15 +303,23 @@
       },
       "errors": {
         "dateRequired": "Date is required.",
+        "dateFuture": "Date cannot be in the future.",
         "amountPositive": "Fuel amount must be greater than 0.",
+        "amountDecimals": "Fuel amount cannot have more than 3 decimal places.",
+        "amountMax": "Fuel amount is too large.",
         "costRequired": "Cost is required.",
+        "costDecimals": "Cost cannot have more than 2 decimal places.",
+        "costMax": "Cost is too large.",
         "currencyRequired": "Currency is required.",
         "mileageRequired": "Mileage is required.",
+        "mileageInteger": "Mileage must be a whole number.",
+        "mileageMax": "Mileage cannot exceed 10,000,000.",
         "gasStationMaxLength": "Gas station name cannot exceed 50 characters.",
         "invalidData": "Please enter valid data before saving.",
         "saveFailed": "Unable to save fuel record.",
         "deleteFailed": "Unable to delete fuel record.",
-        "loadFailed": "Failed to load fuel records."
+        "loadFailed": "Failed to load fuel records.",
+        "serverRejected": "This value was rejected by the server."
       }
     },
     "maintenanceTab": {
@@ -335,10 +348,15 @@
       "errors": {
         "titleRequired": "Title is required.",
         "serviceDateRequired": "Service date is required.",
+        "serviceDateFuture": "Service date cannot be in the future.",
         "categoryRequired": "Category is required.",
         "costRequired": "Cost is required.",
+        "costDecimals": "Cost cannot have more than 2 decimal places.",
+        "costMax": "Cost is too large.",
         "currencyRequired": "Currency is required.",
         "mileageRequired": "Mileage is required.",
+        "mileageInteger": "Mileage must be a whole number.",
+        "mileageMax": "Mileage cannot exceed 10,000,000.",
         "descriptionMaxLength": "Description cannot exceed 200 characters.",
         "invalidData": "Please enter valid data before saving.",
         "invalidAttachmentType": "Only PDF or image files are allowed.",
@@ -347,7 +365,8 @@
         "uploadFailed": "Unable to upload attachments.",
         "deleteFailed": "Unable to delete service record.",
         "attachmentDeleteFailed": "Unable to delete the attachment.",
-        "loadFailed": "Unable to load service records right now."
+        "loadFailed": "Unable to load service records right now.",
+        "serverRejected": "This value was rejected by the server."
       },
       "categories": {
         "inspection": "Inspection",

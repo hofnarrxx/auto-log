@@ -37,16 +37,16 @@
             {{ 'common.date' | translate }}
             <input type="date" formControlName="date" />
           </label>
-          @if (form.controls.date.invalid && form.controls.date.touched) {
-            <p class="error-text">{{ 'vehicle.fuelTab.errors.dateRequired' | translate }}</p>
+          @if (fieldError('date'); as key) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.' + key | translate }}</p>
           }
 
           <label>
             {{ 'common.amount' | translate }} ({{ fuelUnit() }})
             <input type="number" formControlName="amount" min="0.01" step="0.01" />
           </label>
-          @if (form.controls.amount.invalid && form.controls.amount.touched) {
-            <p class="error-text">{{ 'vehicle.fuelTab.errors.amountPositive' | translate }}</p>
+          @if (fieldError('amount'); as key) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.' + key | translate }}</p>
           }
 
           <div class="cost-currency-row">
@@ -55,8 +55,8 @@
                 {{ 'common.cost' | translate }}
                 <input type="number" formControlName="cost" min="0" step="0.01" />
               </label>
-              @if (form.controls.cost.invalid && form.controls.cost.touched) {
-                <p class="error-text">{{ 'vehicle.fuelTab.errors.costRequired' | translate }}</p>
+              @if (fieldError('cost'); as key) {
+                <p class="error-text">{{ 'vehicle.fuelTab.errors.' + key | translate }}</p>
               }
             </div>
 
@@ -69,10 +69,8 @@
                   <option value="PLN">PLN</option>
                 </select>
               </label>
-              @if (form.controls.currency.invalid && form.controls.currency.touched) {
-                <p class="error-text">
-                  {{ 'vehicle.fuelTab.errors.currencyRequired' | translate }}
-                </p>
+              @if (fieldError('currency'); as key) {
+                <p class="error-text">{{ 'vehicle.fuelTab.errors.' + key | translate }}</p>
               }
             </div>
           </div>
@@ -81,8 +79,8 @@
             {{ 'common.mileage' | translate }} (km)
             <input type="number" formControlName="mileage" min="0" step="1" />
           </label>
-          @if (form.controls.mileage.invalid && form.controls.mileage.touched) {
-            <p class="error-text">{{ 'vehicle.fuelTab.errors.mileageRequired' | translate }}</p>
+          @if (fieldError('mileage'); as key) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.' + key | translate }}</p>
           }
 
           <label>
@@ -94,8 +92,8 @@
               [placeholder]="'vehicle.fuelTab.placeholders.gasStation' | translate"
             />
           </label>
-          @if (form.controls.gasStation.invalid && form.controls.gasStation.touched) {
-            <p class="error-text">{{ 'vehicle.fuelTab.errors.gasStationMaxLength' | translate }}</p>
+          @if (fieldError('gasStation'); as key) {
+            <p class="error-text">{{ 'vehicle.fuelTab.errors.' + key | translate }}</p>
           }
 
           <div class="modal-actions">

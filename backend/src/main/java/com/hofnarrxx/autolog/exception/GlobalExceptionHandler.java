@@ -2,12 +2,14 @@ package com.hofnarrxx.autolog.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -132,6 +134,12 @@ public class GlobalExceptionHandler {
 
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
+                Map<String, String> fields = ex.getBindingResult().getFieldErrors().stream()
+                                .collect(Collectors.toMap(
+                                                FieldError::getField,
+                                                FieldError::getCode,
+                                                (first, second) -> first));
+
                 String message = ex.getBindingResult().getFieldErrors().stream()
                                 .findFirst()
                                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
@@ -139,7 +147,17 @@ public class GlobalExceptionHandler {
 
                 return ResponseEntity
                                 .status(HttpStatus.BAD_REQUEST)
-                                .body(Map.of("error", "VALIDATION_FAILED", "message", message));
+                                .body(Map.of("error", "VALIDATION_FAILED", "message", message, "fields", fields));
+        }
+
+        @ExceptionHandler(FieldValidationException.class)
+        public ResponseEntity<?> handleFieldValidation(FieldValidationException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "error", "VALIDATION_FAILED",
+                                                "message", ex.getMessage(),
+                                                "fields", Map.of(ex.getField(), ex.getCode())));
         }
 
         @ExceptionHandler(DataIntegrityViolationException.class)

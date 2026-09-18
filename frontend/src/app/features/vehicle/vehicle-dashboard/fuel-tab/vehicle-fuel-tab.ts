@@ -8,6 +8,15 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Modal } from '../../../../shared/ui/modal/modal';
 import { formatCurrencyTotals } from '../../../../shared/utils/currency-totals.utils';
 import { getFuelUnit } from '../../../../shared/utils/fuel-type.utils';
+import {
+  MAX_COST,
+  MAX_FUEL_AMOUNT,
+  MAX_MILEAGE,
+  integerValidator,
+  maxDecimalsValidator,
+  notInFutureValidator,
+} from '../../../../shared/utils/field.validators';
+import { applyServerFieldErrors } from '../../../../shared/utils/server-field-errors.utils';
 import { FuelList, type FuelQueryChange } from '../../ui/fuel-list/fuel-list';
 import { FuelRecordDetails } from '../../ui/fuel-record-details/fuel-record-details';
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
@@ -34,13 +43,60 @@ export class VehicleFuelTab {
   private readonly notifications = inject(NotificationService);
 
   readonly form = new FormGroup({
-    date: new FormControl('', Validators.required),
-    amount: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
-    cost: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-    mileage: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
+    date: new FormControl('', [Validators.required, notInFutureValidator]),
+    amount: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0.01),
+      Validators.max(MAX_FUEL_AMOUNT),
+      maxDecimalsValidator(3),
+    ]),
+    cost: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+      Validators.max(MAX_COST),
+      maxDecimalsValidator(2),
+    ]),
+    mileage: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+      Validators.max(MAX_MILEAGE),
+      integerValidator,
+    ]),
     gasStation: new FormControl('', [Validators.maxLength(50)]),
     currency: new FormControl<string>('', Validators.required),
   });
+
+  /**
+   * First matching error key per field, in priority order, used by `fieldError()` to keep the
+   * template down to a single error line per field even though several validators can now apply
+   * to the same control.
+   */
+  private static readonly ERROR_KEYS: Record<string, Record<string, string>> = {
+    date: { futureDate: 'dateFuture', server: 'serverRejected', required: 'dateRequired' },
+    amount: {
+      maxDecimals: 'amountDecimals',
+      max: 'amountMax',
+      server: 'serverRejected',
+      required: 'amountPositive',
+      min: 'amountPositive',
+    },
+    cost: {
+      maxDecimals: 'costDecimals',
+      max: 'costMax',
+      server: 'serverRejected',
+      required: 'costRequired',
+      min: 'costRequired',
+    },
+    mileage: {
+      notInteger: 'mileageInteger',
+      max: 'mileageMax',
+      server: 'serverRejected',
+      required: 'mileageRequired',
+      min: 'mileageRequired',
+    },
+    gasStation: { server: 'serverRejected', maxlength: 'gasStationMaxLength' },
+    currency: { server: 'serverRejected', required: 'currencyRequired' },
+  };
 
   @Input({ required: true })
   set vehicleId(value: string) {
@@ -187,10 +243,28 @@ export class VehicleFuelTab {
         next: () => {
           this.closeModal();
         },
-        error: () => {
-          this.notifications.notifyError('vehicle.fuelTab.errors.saveFailed');
+        error: (err) => {
+          if (!applyServerFieldErrors(this.form, err)) {
+            this.notifications.notifyError('vehicle.fuelTab.errors.saveFailed');
+          }
         },
       });
+  }
+
+  /**
+   * First translation key suffix for `name`'s current error, or `null` when the control has no
+   * error worth showing yet. Keeps the template to a single error line per field even though
+   * several validators can apply to the same control.
+   */
+  protected fieldError(name: keyof typeof this.form.controls): string | null {
+    const control = this.form.controls[name];
+    if (!control.invalid || !control.touched) {
+      return null;
+    }
+
+    const keys = VehicleFuelTab.ERROR_KEYS[name];
+    const errorCode = Object.keys(keys).find((code) => control.hasError(code));
+    return errorCode ? keys[errorCode] : null;
   }
 
   protected deleteSelectedRecord() {

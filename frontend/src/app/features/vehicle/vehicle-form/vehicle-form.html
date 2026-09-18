@@ -1,13 +1,29 @@
 <h2>{{ (vehicle ? 'vehicle.form.title.edit' : 'vehicle.form.title.add') | translate }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="save()">
-  <input [placeholder]="'vehicle.form.placeholders.brand' | translate" formControlName="brand" />
-  @if (form.controls.brand.invalid && form.controls.brand.touched) {
+  <input
+    [placeholder]="'vehicle.form.placeholders.brand' | translate"
+    formControlName="brand"
+    maxlength="60"
+  />
+  @if (form.controls.brand.hasError('maxlength') && form.controls.brand.touched) {
+    <div class="error">{{ 'vehicle.form.errors.brandMaxLength' | translate }}</div>
+  } @else if (form.controls.brand.hasError('server') && form.controls.brand.touched) {
+    <div class="error">{{ 'vehicle.form.errors.serverRejected' | translate }}</div>
+  } @else if (form.controls.brand.invalid && form.controls.brand.touched) {
     <div class="error">{{ 'vehicle.form.errors.brandRequired' | translate }}</div>
   }
 
-  <input [placeholder]="'vehicle.form.placeholders.model' | translate" formControlName="model" />
-  @if (form.controls.model.invalid && form.controls.model.touched) {
+  <input
+    [placeholder]="'vehicle.form.placeholders.model' | translate"
+    formControlName="model"
+    maxlength="60"
+  />
+  @if (form.controls.model.hasError('maxlength') && form.controls.model.touched) {
+    <div class="error">{{ 'vehicle.form.errors.modelMaxLength' | translate }}</div>
+  } @else if (form.controls.model.hasError('server') && form.controls.model.touched) {
+    <div class="error">{{ 'vehicle.form.errors.serverRejected' | translate }}</div>
+  } @else if (form.controls.model.invalid && form.controls.model.touched) {
     <div class="error">{{ 'vehicle.form.errors.modelRequired' | translate }}</div>
   }
 
@@ -24,6 +40,8 @@
 
       @if (form.controls.year.hasError('notInteger') && form.controls.year.touched) {
         <div class="error">{{ 'vehicle.form.errors.yearInteger' | translate }}</div>
+      } @else if (form.controls.year.hasError('server') && form.controls.year.touched) {
+        <div class="error">{{ 'vehicle.form.errors.serverRejected' | translate }}</div>
       } @else if (form.controls.year.invalid && form.controls.year.touched) {
         <div class="error">
           {{ 'vehicle.form.errors.yearRange' | translate: { currentYear: currentYear } }}
@@ -57,6 +75,10 @@
 
     @if (form.controls.mileage.hasError('notInteger') && form.controls.mileage.touched) {
       <div class="error">{{ 'vehicle.form.errors.mileageInteger' | translate }}</div>
+    } @else if (form.controls.mileage.hasError('max') && form.controls.mileage.touched) {
+      <div class="error">{{ 'vehicle.form.errors.mileageMax' | translate }}</div>
+    } @else if (form.controls.mileage.hasError('server') && form.controls.mileage.touched) {
+      <div class="error">{{ 'vehicle.form.errors.serverRejected' | translate }}</div>
     } @else if (form.controls.mileage.invalid && form.controls.mileage.touched) {
       <div class="error">{{ 'vehicle.form.errors.mileageNonNegative' | translate }}</div>
     }
@@ -68,7 +90,9 @@
     formControlName="licensePlate"
     maxlength="20"
   />
-  @if (form.controls.licensePlate.invalid && form.controls.licensePlate.touched) {
+  @if (form.controls.licensePlate.hasError('server') && form.controls.licensePlate.touched) {
+    <div class="error">{{ 'vehicle.form.errors.serverRejected' | translate }}</div>
+  } @else if (form.controls.licensePlate.invalid && form.controls.licensePlate.touched) {
     <div class="error">{{ 'vehicle.form.errors.licensePlateMaxLength' | translate }}</div>
   }
 
