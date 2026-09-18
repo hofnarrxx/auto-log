@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatAppDate } from '../../../../shared/utils/date-format.utils';
-import { getFuelTypeLabelKey } from '../../../../shared/utils/fuel-type.utils';
+import { getFuelTypeLabelKey, getFuelUnit } from '../../../../shared/utils/fuel-type.utils';
 import { pickLatestOdometer } from '../../../../shared/utils/odometer.utils';
 import type { Vehicle } from '../../models';
 import { FuelStore } from '../../fuel-store';
@@ -34,8 +34,13 @@ export class VehicleDetailsTab {
   );
 
   protected readonly avgFuelEfficiency = computed(() => {
-    const litresPer100Km = this.fuelSummary()?.averageConsumptionPer100km ?? null;
-    return litresPer100Km === null ? '-' : `${litresPer100Km.toFixed(2)} L/100km`;
+    const consumptionPer100Km = this.fuelSummary()?.averageConsumptionPer100km ?? null;
+    if (consumptionPer100Km === null) {
+      return '-';
+    }
+
+    const unit = getFuelUnit(this.vehicle.fuelType);
+    return `${consumptionPer100Km.toFixed(2)} ${unit}/100km`;
   });
 
   ngOnInit() {

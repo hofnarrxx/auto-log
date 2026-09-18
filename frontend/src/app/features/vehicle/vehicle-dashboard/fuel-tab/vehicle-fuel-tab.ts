@@ -7,6 +7,7 @@ import { NotificationService } from '../../../../shared/services/notification.se
 import { LucideAngularModule } from 'lucide-angular';
 import { Modal } from '../../../../shared/ui/modal/modal';
 import { formatCurrencyTotals } from '../../../../shared/utils/currency-totals.utils';
+import { getFuelUnit } from '../../../../shared/utils/fuel-type.utils';
 import { FuelList, type FuelQueryChange } from '../../ui/fuel-list/fuel-list';
 import { FuelRecordDetails } from '../../ui/fuel-record-details/fuel-record-details';
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
@@ -48,7 +49,13 @@ export class VehicleFuelTab {
     this.fuelStore.loadSummary(value);
   }
 
+  @Input()
+  set fuelType(value: string | null | undefined) {
+    this.fuelUnit.set(getFuelUnit(value));
+  }
+
   private currentVehicleId: string | null = null;
+  protected readonly fuelUnit = signal('L');
 
   protected readonly isLoading = this.fuelStore.isLoading;
   protected readonly hasLoadedOnce = this.fuelStore.hasLoadedOnce;

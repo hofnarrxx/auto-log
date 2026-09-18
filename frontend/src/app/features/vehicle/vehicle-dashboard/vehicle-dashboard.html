@@ -16,7 +16,10 @@
       }
 
       @if (activeTab() === 'fuel') {
-        <app-vehicle-fuel-tab [vehicleId]="vehicle()!.id"></app-vehicle-fuel-tab>
+        <app-vehicle-fuel-tab
+          [vehicleId]="vehicle()!.id"
+          [fuelType]="vehicle()!.fuelType"
+        ></app-vehicle-fuel-tab>
       }
     </div>
   </div>

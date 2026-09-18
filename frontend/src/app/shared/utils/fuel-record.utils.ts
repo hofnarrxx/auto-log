@@ -14,10 +14,10 @@ export function getFuelPricePerUnit(record: FuelPricingRecord): number | null {
   return record.cost / record.amount;
 }
 
-export function formatFuelAmount(amount: number | null | undefined): string {
+export function formatFuelAmount(amount: number | null | undefined, unit = 'L'): string {
   if (amount === null || amount === undefined) {
     return '-';
   }
 
-  return `${amount.toFixed(2)} L`;
+  return `${amount.toFixed(2)} ${unit}`;
 }

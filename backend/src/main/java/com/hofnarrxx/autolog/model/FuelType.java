@@ -9,8 +9,7 @@ public enum FuelType {
     DIESEL("Diesel"),
     ELECTRIC("Electric"),
     HYBRID("Hybrid"),
-    LPG("LPG"),
-    CNG("CNG");
+    LPG("LPG");
 
     private final String displayName;
 

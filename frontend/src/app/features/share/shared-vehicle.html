@@ -90,7 +90,11 @@
 
       @if (activeTab() === 'fuel') {
         <section class="section" role="tabpanel">
-          <app-shared-vehicle-fuel-tab [token]="token()" [summary]="data()!.fuelSummary">
+          <app-shared-vehicle-fuel-tab
+            [token]="token()"
+            [summary]="data()!.fuelSummary"
+            [fuelType]="data()!.fuelType"
+          >
           </app-shared-vehicle-fuel-tab>
         </section>
       }

@@ -42,7 +42,11 @@
                 </button>
               }
               @if (attachmentsDeletable) {
-                <button type="button" class="link-btn danger" (click)="deleteAttachment(attachment)">
+                <button
+                  type="button"
+                  class="link-btn danger"
+                  (click)="deleteAttachment(attachment)"
+                >
                   {{ 'common.delete' | translate }}
                 </button>
               }

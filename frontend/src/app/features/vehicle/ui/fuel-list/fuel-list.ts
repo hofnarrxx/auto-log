@@ -59,6 +59,7 @@ export class FuelList<T extends FuelListRecord> {
   protected readonly sizeValue = signal(20);
   protected readonly totalPagesValue = signal(0);
   protected readonly totalElementsValue = signal(0);
+  protected readonly fuelUnitValue = signal('L');
 
   @Input()
   set records(value: T[]) {
@@ -120,6 +121,11 @@ export class FuelList<T extends FuelListRecord> {
     this.totalElementsValue.set(value ?? 0);
   }
 
+  @Input()
+  set fuelUnit(value: string | null | undefined) {
+    this.fuelUnitValue.set(value || 'L');
+  }
+
   @Output() recordSelected = new EventEmitter<T>();
   @Output() addRequested = new EventEmitter<void>();
   @Output() queryChange = new EventEmitter<FuelQueryChange>();
@@ -140,7 +146,7 @@ export class FuelList<T extends FuelListRecord> {
   }
 
   protected formatFuelAmount(amount: number | null | undefined): string {
-    return formatFuelAmount(amount);
+    return formatFuelAmount(amount, this.fuelUnitValue());
   }
 
   protected formatPricePerLitre(
@@ -154,7 +160,7 @@ export class FuelList<T extends FuelListRecord> {
       return '-';
     }
 
-    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
+    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / ${this.fuelUnitValue()}`;
   }
 
   protected hasMileageWarning(record: T): boolean {

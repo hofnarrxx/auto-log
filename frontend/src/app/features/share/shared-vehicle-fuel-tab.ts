@@ -8,6 +8,7 @@ import { emptyPage } from '../../shared/models';
 import { CurrencyService } from '../../shared/services/currency.service';
 import { Modal } from '../../shared/ui/modal/modal';
 import { formatCurrencyTotals } from '../../shared/utils/currency-totals.utils';
+import { getFuelUnit } from '../../shared/utils/fuel-type.utils';
 import { FuelList, type FuelQueryChange } from '../vehicle/ui/fuel-list/fuel-list';
 import { FuelRecordDetails } from '../vehicle/ui/fuel-record-details/fuel-record-details';
 import type { FuelQuery, FuelRecord, FuelSummary } from '../vehicle/models';
@@ -45,7 +46,13 @@ export class SharedVehicleFuelTab {
     this.summaryValue.set(value ?? null);
   }
 
+  @Input()
+  set fuelType(value: string | null | undefined) {
+    this.fuelUnit.set(getFuelUnit(value));
+  }
+
   protected readonly summaryValue = signal<FuelSummary | null>(null);
+  protected readonly fuelUnit = signal('L');
   protected readonly query = signal<FuelQuery>(DEFAULT_FUEL_QUERY);
   protected readonly fuelRecords = signal<FuelRecord[]>([]);
   protected readonly page = signal(0);

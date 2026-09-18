@@ -20,9 +20,10 @@ export class FuelRecordDetails {
 
   @Input({ required: true }) record!: FuelRecord;
   @Input() hasMileageWarning = false;
+  @Input() fuelUnit = 'L';
 
   protected formatFuelAmount(amount: number | null | undefined): string {
-    return formatFuelAmount(amount);
+    return formatFuelAmount(amount, this.fuelUnit);
   }
 
   protected formatPricePerLitre(
@@ -36,6 +37,6 @@ export class FuelRecordDetails {
       return '-';
     }
 
-    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / L`;
+    return `${this.currencyService.formatCurrency(pricePerLitre, currency)} / ${this.fuelUnit}`;
   }
 }

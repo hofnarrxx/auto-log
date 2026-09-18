@@ -31,7 +31,7 @@
     "optional": "opcjonalnie",
     "open": "Otworz",
     "price": "Cena",
-    "pricePerLitre": "Cena za litr",
+    "pricePerLitre": "Cena za jednostkę",
     "priceRange": "Zakres cen",
     "records": "Wpisy",
     "remove": "Usun",
@@ -55,8 +55,8 @@
       "oldest": "Najstarsze",
       "priceLowHigh": "Cena: od najniższej do najwyższej",
       "priceHighLow": "Cena: od najwyższej do najniższej",
-      "pricePerUnitLowHigh": "Cena za litr: od najniższej do najwyższej",
-      "pricePerUnitHighLow": "Cena za litr: od najwyższej do najniższej"
+      "pricePerUnitLowHigh": "Cena za jednostkę: od najniższej do najwyższej",
+      "pricePerUnitHighLow": "Cena za jednostkę: od najwyższej do najniższej"
     },
     "pagination": {
       "previous": "Poprzednia",
@@ -276,8 +276,7 @@
         "diesel": "Diesel",
         "hybrid": "Hybryda",
         "electric": "Elektryczny",
-        "lpg": "LPG",
-        "cng": "CNG"
+        "lpg": "LPG"
       }
     },
     "fuelTab": {

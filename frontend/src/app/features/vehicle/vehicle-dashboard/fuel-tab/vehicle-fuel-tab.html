@@ -8,6 +8,7 @@
       [records]="fuelRecords()"
       titleKeyPrefix="vehicle.fuelTab"
       [showAddButton]="true"
+      [fuelUnit]="fuelUnit()"
       [totalRecords]="summary()?.totalRecords ?? 0"
       [totalCostText]="totalFuelCostByCurrency()"
       [mileageWarningRecordIds]="mileageWarningRecordIds()"
@@ -41,7 +42,7 @@
           }
 
           <label>
-            {{ 'common.amount' | translate }} (L)
+            {{ 'common.amount' | translate }} ({{ fuelUnit() }})
             <input type="number" formControlName="amount" min="0.01" step="0.01" />
           </label>
           @if (form.controls.amount.invalid && form.controls.amount.touched) {
@@ -107,7 +108,11 @@
           </div>
         </form>
       } @else if (selectedRecord(); as record) {
-        <app-fuel-record-details [record]="record" [hasMileageWarning]="hasMileageWarning(record)">
+        <app-fuel-record-details
+          [record]="record"
+          [hasMileageWarning]="hasMileageWarning(record)"
+          [fuelUnit]="fuelUnit()"
+        >
         </app-fuel-record-details>
 
         <div class="modal-actions">

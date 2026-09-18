@@ -31,7 +31,7 @@
     "optional": "optional",
     "open": "Open",
     "price": "Price",
-    "pricePerLitre": "Price per litre",
+    "pricePerLitre": "Price per unit",
     "priceRange": "Price range",
     "records": "Records",
     "remove": "Remove",
@@ -55,8 +55,8 @@
       "oldest": "Oldest",
       "priceLowHigh": "Price: Low to High",
       "priceHighLow": "Price: High to Low",
-      "pricePerUnitLowHigh": "Price per litre: Low to High",
-      "pricePerUnitHighLow": "Price per litre: High to Low"
+      "pricePerUnitLowHigh": "Price per unit: Low to High",
+      "pricePerUnitHighLow": "Price per unit: High to Low"
     },
     "pagination": {
       "previous": "Previous",
@@ -276,8 +276,7 @@
         "diesel": "Diesel",
         "hybrid": "Hybrid",
         "electric": "Electric",
-        "lpg": "LPG",
-        "cng": "CNG"
+        "lpg": "LPG"
       }
     },
     "fuelTab": {

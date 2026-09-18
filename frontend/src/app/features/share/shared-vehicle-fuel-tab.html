@@ -6,6 +6,7 @@
       [records]="fuelRecords()"
       titleKeyPrefix="sharedVehicle.fuelTab"
       [showAddButton]="false"
+      [fuelUnit]="fuelUnit()"
       [totalRecords]="summaryValue()?.totalRecords ?? 0"
       [totalCostText]="totalFuelCostByCurrency()"
       [mileageWarningRecordIds]="mileageWarningRecordIds()"
@@ -28,7 +29,11 @@
       <h2>{{ 'sharedVehicle.fuelTab.detailsTitle' | translate }}</h2>
 
       @if (selectedRecord(); as record) {
-        <app-fuel-record-details [record]="record" [hasMileageWarning]="hasMileageWarning(record)">
+        <app-fuel-record-details
+          [record]="record"
+          [hasMileageWarning]="hasMileageWarning(record)"
+          [fuelUnit]="fuelUnit()"
+        >
         </app-fuel-record-details>
 
         <div class="modal-actions">
