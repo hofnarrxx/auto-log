@@ -197,6 +197,14 @@ export class MaintenanceStore {
     return this.maintenanceApi.getAttachmentDownloadUrl(vehicleId, maintenanceId, attachmentId);
   }
 
+  deleteAttachment(
+    vehicleId: string,
+    maintenanceId: string,
+    attachmentId: string
+  ): Observable<void> {
+    return this.maintenanceApi.deleteAttachment(vehicleId, maintenanceId, attachmentId);
+  }
+
   private reloadAfterDelete(): void {
     const isLastPage = this._page() >= this._totalPages() - 1;
     const wouldBeEmpty = this._records().length <= 1;

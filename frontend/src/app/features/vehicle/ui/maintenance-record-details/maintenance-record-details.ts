@@ -6,7 +6,8 @@ import type { MaintenanceAttachment, MaintenanceRecord } from '../../models';
 /**
  * Read-only maintenance record view, reused by the authenticated maintenance tab's details modal
  * and the public share maintenance tab. Attachment download is opt-in via `attachmentsOpenable`
- * since public share links only expose file names.
+ * and attachment deletion via `attachmentsDeletable`, since public share links only expose file
+ * names and must not offer either action.
  */
 @Component({
   selector: 'app-maintenance-record-details',
@@ -18,9 +19,15 @@ export class MaintenanceRecordDetails {
   @Input({ required: true }) record!: MaintenanceRecord;
   @Input() hasMileageWarning = false;
   @Input() attachmentsOpenable = false;
+  @Input() attachmentsDeletable = false;
   @Output() attachmentOpened = new EventEmitter<MaintenanceAttachment>();
+  @Output() attachmentDeleted = new EventEmitter<MaintenanceAttachment>();
 
   protected openAttachment(attachment: MaintenanceAttachment) {
     this.attachmentOpened.emit(attachment);
+  }
+
+  protected deleteAttachment(attachment: MaintenanceAttachment) {
+    this.attachmentDeleted.emit(attachment);
   }
 }

@@ -49,7 +49,7 @@ describe('MaintenanceRecordDetails', () => {
   it('hides the open-attachment action unless attachmentsOpenable is set', () => {
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.link-btn')).toBeFalsy();
+    expect(fixture.nativeElement.querySelector('.link-btn:not(.danger)')).toBeFalsy();
   });
 
   it('emits attachmentOpened when the open action is used', () => {
@@ -59,7 +59,29 @@ describe('MaintenanceRecordDetails', () => {
     let emitted: unknown = null;
     fixture.componentInstance.attachmentOpened.subscribe((attachment) => (emitted = attachment));
 
-    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.link-btn')!.click();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('.link-btn:not(.danger)')!
+      .click();
+
+    expect(emitted).toEqual(record.attachments![0]);
+  });
+
+  it('hides the delete-attachment action unless attachmentsDeletable is set', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.link-btn.danger')).toBeFalsy();
+  });
+
+  it('emits attachmentDeleted when the delete action is used', () => {
+    fixture.componentInstance.attachmentsDeletable = true;
+    fixture.detectChanges();
+
+    let emitted: unknown = null;
+    fixture.componentInstance.attachmentDeleted.subscribe((attachment) => (emitted = attachment));
+
+    (fixture.nativeElement as HTMLElement)
+      .querySelector<HTMLButtonElement>('.link-btn.danger')!
+      .click();
 
     expect(emitted).toEqual(record.attachments![0]);
   });

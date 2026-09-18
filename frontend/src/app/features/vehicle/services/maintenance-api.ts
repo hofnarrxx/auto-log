@@ -117,4 +117,14 @@ export class MaintenanceApi {
       `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}/attachments/${attachmentId}/download-url`
     );
   }
+
+  deleteAttachment(
+    vehicleId: string,
+    maintenanceId: string,
+    attachmentId: string
+  ): Observable<void> {
+    return this.http.delete<void>(
+      `${this.vehicleApi}/${vehicleId}/maintenance/${maintenanceId}/attachments/${attachmentId}`
+    );
+  }
 }

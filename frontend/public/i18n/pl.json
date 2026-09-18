@@ -347,6 +347,7 @@
         "saveFailed": "Nie można zapisać wpisu serwisowego.",
         "uploadFailed": "Nie udało się przesłać załączników.",
         "deleteFailed": "Nie można usunąć wpisu serwisowego.",
+        "attachmentDeleteFailed": "Nie udało się usunąć załącznika.",
         "loadFailed": "Nie można teraz wczytać wpisów serwisowych."
       },
       "categories": {

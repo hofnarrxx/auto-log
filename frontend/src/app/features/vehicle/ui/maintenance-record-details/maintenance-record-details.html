@@ -35,11 +35,18 @@
         @for (attachment of record.attachments; track attachment.id) {
           <li>
             <span>{{ attachment.fileName }}</span>
-            @if (attachmentsOpenable) {
-              <button type="button" class="link-btn" (click)="openAttachment(attachment)">
-                {{ 'common.open' | translate }}
-              </button>
-            }
+            <span class="attachment-actions">
+              @if (attachmentsOpenable) {
+                <button type="button" class="link-btn" (click)="openAttachment(attachment)">
+                  {{ 'common.open' | translate }}
+                </button>
+              }
+              @if (attachmentsDeletable) {
+                <button type="button" class="link-btn danger" (click)="deleteAttachment(attachment)">
+                  {{ 'common.delete' | translate }}
+                </button>
+              }
+            </span>
           </li>
         }
       </ul>

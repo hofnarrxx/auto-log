@@ -219,6 +219,7 @@ public class MaintenanceService {
     private MaintenanceResponse toResponse(Maintenance maintenance) {
         List<MaintenanceAttachmentResponse> attachments = maintenance.getAttachments()
                 .stream()
+                .filter(attachment -> attachment.getDeletedAt() == null)
                 .map(attachment -> new MaintenanceAttachmentResponse(
                         attachment.getId(),
                         attachment.getFileName(),

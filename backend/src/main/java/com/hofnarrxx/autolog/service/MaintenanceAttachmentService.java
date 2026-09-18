@@ -1,5 +1,13 @@
 package com.hofnarrxx.autolog.service;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Locale;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.hofnarrxx.autolog.config.R2Properties;
 import com.hofnarrxx.autolog.dto.MaintenanceAttachmentRequest;
 import com.hofnarrxx.autolog.dto.MaintenanceAttachmentResponse;
@@ -15,18 +23,14 @@ import com.hofnarrxx.autolog.model.ShareLink;
 import com.hofnarrxx.autolog.repository.MaintenanceAttachmentRepository;
 import com.hofnarrxx.autolog.repository.MaintenanceRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
-import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
-
-import java.time.Duration;
-import java.util.Locale;
-import java.util.UUID;
 
 @Service
 public class MaintenanceAttachmentService {
@@ -42,12 +46,12 @@ public class MaintenanceAttachmentService {
     private final R2Properties properties;
 
     public MaintenanceAttachmentService(MaintenanceRepository maintenanceRepository,
-                                        MaintenanceAttachmentRepository attachmentRepository,
-                                        VehicleRepository vehicleRepository,
-                                        AuthService authService,
-                                        ShareLinkService shareLinkService,
-                                        S3Presigner presigner,
-                                        R2Properties properties) {
+            MaintenanceAttachmentRepository attachmentRepository,
+            VehicleRepository vehicleRepository,
+            AuthService authService,
+            ShareLinkService shareLinkService,
+            S3Presigner presigner,
+            R2Properties properties) {
         this.maintenanceRepository = maintenanceRepository;
         this.attachmentRepository = attachmentRepository;
         this.vehicleRepository = vehicleRepository;
@@ -58,9 +62,9 @@ public class MaintenanceAttachmentService {
     }
 
     public MaintenanceUploadUrlResponse createUploadUrl(UUID vehicleId,
-                                                        UUID maintenanceId,
-                                                        MaintenanceUploadUrlRequest request) {
-                                                            
+            UUID maintenanceId,
+            MaintenanceUploadUrlRequest request) {
+
         if (request.sizeBytes() == null || request.sizeBytes() <= 0 || request.sizeBytes() > MAX_ATTACHMENT_BYTES) {
             throw new IllegalArgumentException("Attachment exceeds maximum size");
         }
@@ -87,30 +91,28 @@ public class MaintenanceAttachmentService {
                 PutObjectPresignRequest.builder()
                         .signatureDuration(PRESIGNED_URL_TTL)
                         .putObjectRequest(putObjectRequest)
-                        .build()
-        );
+                        .build());
 
         return new MaintenanceUploadUrlResponse(
                 presignedRequest.url().toString(),
-            objectKey
-        );
+                objectKey);
     }
 
-        public MaintenanceDownloadUrlResponse createDownloadUrl(UUID vehicleId,
-                                    UUID maintenanceId,
-                                    UUID attachmentId) {
+    public MaintenanceDownloadUrlResponse createDownloadUrl(UUID vehicleId,
+            UUID maintenanceId,
+            UUID attachmentId) {
         getOwnedMaintenance(vehicleId, maintenanceId);
 
         MaintenanceAttachment attachment = attachmentRepository
-            .findByIdAndMaintenanceId(attachmentId, maintenanceId)
-            .orElseThrow(MaintenanceNotFoundException::new);
+                .findByIdAndMaintenanceIdAndDeletedAtIsNull(attachmentId, maintenanceId)
+                .orElseThrow(MaintenanceNotFoundException::new);
 
         return presignDownload(attachment);
-        }
+    }
 
     public MaintenanceDownloadUrlResponse createPublicDownloadUrl(String token,
-                                                                  UUID maintenanceId,
-                                                                  UUID attachmentId) {
+            UUID maintenanceId,
+            UUID attachmentId) {
         ShareLink shareLink = shareLinkService.resolveActive(token)
                 .orElseThrow(ShareLinkNotFoundException::new);
 
@@ -123,7 +125,7 @@ public class MaintenanceAttachmentService {
                 .orElseThrow(MaintenanceNotFoundException::new);
 
         MaintenanceAttachment attachment = attachmentRepository
-                .findByIdAndMaintenanceId(attachmentId, maintenance.getId())
+                .findByIdAndMaintenanceIdAndDeletedAtIsNull(attachmentId, maintenance.getId())
                 .orElseThrow(MaintenanceNotFoundException::new);
 
         return presignDownload(attachment);
@@ -131,23 +133,22 @@ public class MaintenanceAttachmentService {
 
     private MaintenanceDownloadUrlResponse presignDownload(MaintenanceAttachment attachment) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-            .bucket(properties.bucket())
-            .key(attachment.getObjectKey())
-            .build();
+                .bucket(properties.bucket())
+                .key(attachment.getObjectKey())
+                .build();
 
         PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(
-            GetObjectPresignRequest.builder()
-                .signatureDuration(PRESIGNED_URL_TTL)
-                .getObjectRequest(getObjectRequest)
-                .build()
-        );
+                GetObjectPresignRequest.builder()
+                        .signatureDuration(PRESIGNED_URL_TTL)
+                        .getObjectRequest(getObjectRequest)
+                        .build());
 
         return new MaintenanceDownloadUrlResponse(presignedRequest.url().toString());
     }
 
     public MaintenanceAttachmentResponse saveAttachment(UUID vehicleId,
-                                                        UUID maintenanceId,
-                                                        MaintenanceAttachmentRequest request) {
+            UUID maintenanceId,
+            MaintenanceAttachmentRequest request) {
         Maintenance maintenance = getOwnedMaintenance(vehicleId, maintenanceId);
 
         if (request.sizeBytes() == null || request.sizeBytes() <= 0 || request.sizeBytes() > MAX_ATTACHMENT_BYTES) {
@@ -180,6 +181,16 @@ public class MaintenanceAttachmentService {
         MaintenanceAttachment saved = attachmentRepository.save(attachment);
 
         return toResponse(saved);
+    }
+
+    @Transactional
+    public void deleteAttachment(UUID vehicleId, UUID maintenanceId, UUID attachmentId) {
+        getOwnedMaintenance(vehicleId, maintenanceId);
+        MaintenanceAttachment attachment = attachmentRepository
+                .findByIdAndMaintenanceIdAndDeletedAtIsNull(attachmentId, maintenanceId)
+                .orElseThrow(MaintenanceNotFoundException::new);
+        attachment.setDeletedAt(Instant.now());
+        attachmentRepository.save(attachment);
     }
 
     private Maintenance getOwnedMaintenance(UUID vehicleId, UUID maintenanceId) {
@@ -227,8 +238,7 @@ public class MaintenanceAttachmentService {
                 attachment.getContentType(),
                 attachment.getSizeBytes(),
                 attachment.getUrl(),
-                attachment.getCreatedAt()
-        );
+                attachment.getCreatedAt());
     }
 
     private String normalize(String value) {

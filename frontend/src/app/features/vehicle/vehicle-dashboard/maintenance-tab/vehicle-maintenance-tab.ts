@@ -327,6 +327,31 @@ export class VehicleMaintenanceTab {
       });
   }
 
+  protected deleteAttachment(attachment: MaintenanceAttachment) {
+    const record = this.selectedRecord();
+    if (!this.currentVehicleId || !record) {
+      return;
+    }
+
+    this.maintenanceStore
+      .deleteAttachment(this.currentVehicleId, record.id, attachment.id)
+      .subscribe({
+        next: () => {
+          const current = this.selectedRecord();
+          if (current?.id !== record.id) {
+            return;
+          }
+          this.selectedRecord.set({
+            ...current,
+            attachments: (current.attachments ?? []).filter((a) => a.id !== attachment.id),
+          });
+        },
+        error: () => {
+          this.notifications.notifyError('vehicle.maintenanceTab.errors.attachmentDeleteFailed');
+        },
+      });
+  }
+
   private resolveErrorKey(error: unknown, fallbackKey: string): string {
     if (
       typeof error === 'object' &&

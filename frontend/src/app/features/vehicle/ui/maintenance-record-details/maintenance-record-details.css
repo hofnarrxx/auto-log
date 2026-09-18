@@ -56,6 +56,11 @@
   gap: 4px 10px;
 }
 
+.attachment-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .link-btn {
   border: 0;
   background: none;
@@ -68,4 +73,8 @@
 
 .link-btn:hover {
   text-decoration: underline;
+}
+
+.link-btn.danger {
+  color: var(--danger);
 }

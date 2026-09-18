@@ -107,4 +107,11 @@ public class MaintenanceController {
             @PathVariable UUID attachmentId) {
         return attachmentService.createDownloadUrl(vehicleId, maintenanceId, attachmentId);
     }
+
+    @DeleteMapping("/{maintenanceId}/attachments/{attachmentId}")
+    public void deleteAttachment(@PathVariable UUID vehicleId,
+            @PathVariable UUID maintenanceId,
+            @PathVariable UUID attachmentId) {
+        attachmentService.deleteAttachment(vehicleId, maintenanceId, attachmentId);
+    }
 }

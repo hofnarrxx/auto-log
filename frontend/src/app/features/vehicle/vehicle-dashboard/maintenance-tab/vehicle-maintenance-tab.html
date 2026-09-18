@@ -154,7 +154,9 @@
           [record]="record"
           [hasMileageWarning]="hasMileageWarning(record)"
           [attachmentsOpenable]="true"
+          [attachmentsDeletable]="true"
           (attachmentOpened)="openAttachment($event)"
+          (attachmentDeleted)="deleteAttachment($event)"
         >
         </app-maintenance-record-details>
 

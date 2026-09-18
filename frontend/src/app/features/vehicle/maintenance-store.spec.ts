@@ -55,6 +55,7 @@ describe('MaintenanceStore', () => {
       'updateMaintenance',
       'deleteMaintenance',
       'getAttachmentDownloadUrl',
+      'deleteAttachment',
     ]);
 
     TestBed.configureTestingModule({
@@ -214,5 +215,13 @@ describe('MaintenanceStore', () => {
     store.getById('1', RECORD.id).subscribe((record) => {
       expect(record).toEqual(RECORD);
     });
+  });
+
+  it('delegates attachment deletion to the api', () => {
+    maintenanceApi.deleteAttachment.and.returnValue(of(undefined));
+
+    store.deleteAttachment('1', RECORD.id, 'attachment-1').subscribe();
+
+    expect(maintenanceApi.deleteAttachment).toHaveBeenCalledWith('1', RECORD.id, 'attachment-1');
   });
 });

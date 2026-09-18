@@ -347,6 +347,7 @@
         "saveFailed": "Unable to save service record.",
         "uploadFailed": "Unable to upload attachments.",
         "deleteFailed": "Unable to delete service record.",
+        "attachmentDeleteFailed": "Unable to delete the attachment.",
         "loadFailed": "Unable to load service records right now."
       },
       "categories": {

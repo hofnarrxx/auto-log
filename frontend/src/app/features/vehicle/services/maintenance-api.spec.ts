@@ -155,4 +155,12 @@ describe('MaintenanceApi', () => {
     expect(req.request.method).toBe('GET');
     req.flush({ downloadUrl: 'https://download' });
   });
+
+  it('deletes an attachment', () => {
+    api.deleteAttachment('3', '9', '42').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/vehicles/3/maintenance/9/attachments/42`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
 });

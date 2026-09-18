@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                                 .requestMatchers("/api/auth/**", "/oauth2/**", "/share/**").permitAll()
-                                                .requestMatchers(HttpMethod.GET, "/vehicles/**", "metadata/**")
+                                                .requestMatchers(HttpMethod.GET, "/vehicles/**", "/metadata/**")
                                                 .hasAnyRole("USER", "DEMO")
                                                 .anyRequest().hasRole("USER"))
                                 .exceptionHandling(ex -> ex

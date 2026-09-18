@@ -42,6 +42,8 @@ public class MaintenanceAttachment {
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    private Instant deletedAt;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "maintenance_id", nullable = false)
     private Maintenance maintenance;
@@ -97,6 +99,15 @@ public class MaintenanceAttachment {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+
+    public Instant getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Instant deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     public Maintenance getMaintenance() {

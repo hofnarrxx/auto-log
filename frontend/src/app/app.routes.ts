@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
 import { AppLayout } from './core/layout/app-layout/app-layout';
 import { authRoutes } from './features/auth/auth.routes';
- 
+
 export const routes: Routes = [
   {
     path: '',
