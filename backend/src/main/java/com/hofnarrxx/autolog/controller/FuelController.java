@@ -4,6 +4,9 @@ import com.hofnarrxx.autolog.dto.FuelRequest;
 import com.hofnarrxx.autolog.dto.FuelResponse;
 import com.hofnarrxx.autolog.dto.FuelSummaryResponse;
 import com.hofnarrxx.autolog.service.FuelService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.hofnarrxx.autolog.dto.PageResponse;
@@ -41,14 +44,14 @@ public class FuelController {
 
     @PostMapping
     public FuelResponse create(@PathVariable UUID vehicleId,
-                               @RequestBody FuelRequest request) {
+                               @Valid @RequestBody FuelRequest request) {
         return fuelService.create(vehicleId, request);
     }
 
     @PutMapping("/{fuelId}")
     public FuelResponse update(@PathVariable UUID vehicleId,
                                @PathVariable UUID fuelId,
-                               @RequestBody FuelRequest request) {
+                               @Valid @RequestBody FuelRequest request) {
         return fuelService.update(vehicleId, fuelId, request);
     }
 

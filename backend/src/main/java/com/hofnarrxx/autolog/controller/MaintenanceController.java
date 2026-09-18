@@ -9,6 +9,9 @@ import com.hofnarrxx.autolog.dto.MaintenanceUploadUrlRequest;
 import com.hofnarrxx.autolog.dto.MaintenanceUploadUrlResponse;
 import com.hofnarrxx.autolog.service.MaintenanceAttachmentService;
 import com.hofnarrxx.autolog.service.MaintenanceService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.hofnarrxx.autolog.dto.PageResponse;
@@ -67,14 +70,14 @@ public class MaintenanceController {
 
     @PostMapping
     public MaintenanceResponse create(@PathVariable UUID vehicleId,
-            @RequestBody MaintenanceRequest request) {
+            @Valid @RequestBody MaintenanceRequest request) {
         return maintenanceService.create(vehicleId, request);
     }
 
     @PutMapping("/{maintenanceId}")
     public MaintenanceResponse update(@PathVariable UUID vehicleId,
             @PathVariable UUID maintenanceId,
-            @RequestBody MaintenanceRequest request) {
+            @Valid @RequestBody MaintenanceRequest request) {
         return maintenanceService.update(vehicleId, maintenanceId, request);
     }
 

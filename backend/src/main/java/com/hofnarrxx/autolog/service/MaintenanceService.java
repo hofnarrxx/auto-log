@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import com.hofnarrxx.autolog.model.MaintenanceSort;
+import com.hofnarrxx.autolog.utils.RequestValidation;
 
 import java.util.List;
 import java.util.HashMap;
@@ -204,16 +205,13 @@ public class MaintenanceService {
                         request.currency(),
                         Currency.allowedValues()));
 
-        String title = request.title() == null ? null : request.title().trim();
-        if (title != null && title.length() > 50) {
-            title = title.substring(0, 50);
-        }
+        RequestValidation.requireNotFuture(request.serviceDate(), "serviceDate");
 
         maintenance.setServiceDate(request.serviceDate());
-        maintenance.setTitle(title);
+        maintenance.setTitle(RequestValidation.normalizeToNull(request.title()));
         maintenance.setMileage(request.mileage());
         maintenance.setCategory(category.getDisplayName());
-        maintenance.setDescription(request.description());
+        maintenance.setDescription(RequestValidation.normalizeToNull(request.description()));
         maintenance.setCost(request.cost());
         maintenance.setCurrency(currency);
     }

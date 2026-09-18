@@ -27,6 +27,7 @@ import com.hofnarrxx.autolog.model.FuelSort;
 import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.FuelRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository; 
+import com.hofnarrxx.autolog.utils.RequestValidation;
 
 @Service
 public class FuelService {
@@ -178,11 +179,13 @@ public class FuelService {
                         request.currency(),
                         Currency.allowedValues()));
 
+        RequestValidation.requireNotFuture(request.date(), "date");
+
         fuel.setDate(request.date());
         fuel.setMileage(request.mileage());
         fuel.setCost(request.cost());
         fuel.setAmount(request.amount());
-        fuel.setGasStation(request.gasStation());
+        fuel.setGasStation(RequestValidation.normalizeToNull(request.gasStation()));
         fuel.setCurrency(currency);
     }
 
