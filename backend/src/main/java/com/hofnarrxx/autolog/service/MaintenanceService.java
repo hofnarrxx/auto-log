@@ -16,8 +16,10 @@ import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.MaintenanceRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
-import java.math.BigDecimal;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import com.hofnarrxx.autolog.dto.PageResponse;
 import com.hofnarrxx.autolog.dto.PageRequestParams;
 import org.springframework.data.domain.Sort;
@@ -138,10 +140,18 @@ public class MaintenanceService {
         return toResponse(savedMaintenance);
     }
 
+    @Transactional 
     public void delete(UUID vehicleId, UUID maintenanceId) {
         UUID userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
-        maintenanceRepository.delete(maintenance);
+        Instant now = Instant.now();
+
+        maintenance.getAttachments().stream()
+        .filter(attachment -> attachment.getDeletedAt() == null)
+        .forEach(attachment -> attachment.setDeletedAt(now));
+
+        maintenance.setDeletedAt(now);
+        maintenanceRepository.save(maintenance);
     }
 
     private void ensureVehicleOwnedByCurrentUser(UUID vehicleId, UUID userId) {

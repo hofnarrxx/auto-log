@@ -1,6 +1,7 @@
 package com.hofnarrxx.autolog.service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hofnarrxx.autolog.dto.FuelRequest;
 import com.hofnarrxx.autolog.dto.FuelResponse;
@@ -26,7 +28,7 @@ import com.hofnarrxx.autolog.model.Fuel;
 import com.hofnarrxx.autolog.model.FuelSort;
 import com.hofnarrxx.autolog.model.Vehicle;
 import com.hofnarrxx.autolog.repository.FuelRepository;
-import com.hofnarrxx.autolog.repository.VehicleRepository; 
+import com.hofnarrxx.autolog.repository.VehicleRepository;
 import com.hofnarrxx.autolog.utils.RequestValidation;
 
 @Service
@@ -109,10 +111,12 @@ public class FuelService {
         return toResponse(savedFuel);
     }
 
+    @Transactional 
     public void delete(UUID vehicleId, UUID fuelId) {
         UUID userId = authService.getCurrentUser().getId();
         Fuel fuel = findOwnedFuel(vehicleId, fuelId, userId);
-        fuelRepository.delete(fuel);
+        fuel.setDeletedAt(Instant.now());
+        fuelRepository.save(fuel);
     }
 
     private void ensureVehicleOwnedByCurrentUser(UUID vehicleId, UUID userId) {

@@ -15,6 +15,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Index;
 
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
@@ -25,9 +26,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@SQLRestriction("deleted_at is null")
 @Table(name = "maintenance", indexes = {
         @Index(name = "idx_maintenance_vehicle_date", columnList = "vehicle_id, service_date"),
-        @Index(name = "idx_maintenance_vehicle_cost", columnList = "vehicle_id, cost")
+        @Index(name = "idx_maintenance_vehicle_cost", columnList = "vehicle_id, cost"),
+        @Index(name = "idx_maintenance_vehicle_active", columnList = "vehicle_id, deleted_at")
 })
 public class Maintenance {
     @Id
@@ -57,6 +60,8 @@ public class Maintenance {
 
     @Column(nullable = false)
     private Instant updatedAt;
+
+    private Instant deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "vehicle_id", nullable = false)
@@ -155,6 +160,14 @@ public class Maintenance {
 
     public List<MaintenanceAttachment> getAttachments() {
         return attachments;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Instant deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }
 
