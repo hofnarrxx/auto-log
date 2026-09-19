@@ -8,6 +8,7 @@
       [records]="serviceRecords()"
       titleKeyPrefix="vehicle.maintenanceTab"
       [showAddButton]="true"
+      [disableAddButton]="isDemo()"
       [totalRecords]="summary()?.totalRecords ?? 0"
       [totalCostText]="totalServiceCostByCurrency()"
       [mileageWarningRecordIds]="mileageWarningRecordIds()"
@@ -119,6 +120,8 @@
 
           <app-attachment-picker
             [pendingFiles]="pendingAttachments()"
+            [disabled]="isDemo()"
+            [disabledTooltip]="'demo.readOnly' | translate"
             (filesSelected)="onAttachmentsSelected($event)"
             (pendingRemoved)="removePendingAttachment($event)"
           >
@@ -128,7 +131,12 @@
             <button type="button" class="secondary-btn" (click)="closeModal()">
               {{ 'common.cancel' | translate }}
             </button>
-            <button type="submit" class="primary-btn" [disabled]="isSaving()">
+            <button
+              type="submit"
+              class="primary-btn"
+              [disabled]="isSaving() || isDemo()"
+              [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
+            >
               {{ isSaving() ? ('common.saving' | translate) : ('common.save' | translate) }}
             </button>
           </div>
@@ -150,14 +158,21 @@
           <button type="button" class="secondary-btn" (click)="closeModal()">
             {{ 'common.close' | translate }}
           </button>
-          <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">
+          <button
+            type="button"
+            class="primary-btn"
+            [disabled]="isDemo()"
+            [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
+            (click)="startEditSelectedRecord()"
+          >
             {{ 'common.edit' | translate }}
           </button>
           <button
             type="button"
             class="danger-btn"
             (click)="deleteSelectedRecord()"
-            [disabled]="isDeleting()"
+            [disabled]="isDeleting() || isDemo()"
+            [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
           >
             {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}
           </button>

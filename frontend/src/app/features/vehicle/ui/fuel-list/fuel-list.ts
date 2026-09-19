@@ -52,6 +52,7 @@ export class FuelList<T extends FuelListRecord> {
   protected readonly selectedSort = signal<FuelSortOption>('newest');
   protected readonly titleKeyPrefixValue = signal('vehicle.fuelTab');
   protected readonly showAddButtonValue = signal(false);
+  protected readonly disableAddButtonValue = signal(false);
   protected readonly totalRecordsValue = signal(0);
   protected readonly totalCostTextValue = signal('');
   protected readonly mileageWarningRecordIdsValue = signal<ReadonlySet<string>>(new Set());
@@ -74,6 +75,16 @@ export class FuelList<T extends FuelListRecord> {
   @Input()
   set showAddButton(value: boolean) {
     this.showAddButtonValue.set(value);
+  }
+
+  /**
+   * Unlike `showAddButton` (which hides the button entirely, used by the public share views),
+   * this keeps the add button visible but disabled - the shape the demo account wants so
+   * visitors can still see what the control looks like.
+   */
+  @Input()
+  set disableAddButton(value: boolean) {
+    this.disableAddButtonValue.set(value ?? false);
   }
 
   @Input()
@@ -203,6 +214,9 @@ export class FuelList<T extends FuelListRecord> {
   }
 
   protected requestAdd() {
+    if (this.disableAddButtonValue()) {
+      return;
+    }
     this.addRequested.emit();
   }
 

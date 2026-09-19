@@ -22,6 +22,7 @@ import { FuelRecordDetails } from '../../ui/fuel-record-details/fuel-record-deta
 import { parseIntegerField, parseNumericField } from '../../../../shared/utils/form-value.utils';
 import type { FuelRecord, FuelRecordPayload } from '../../models';
 import { FuelStore } from '../../fuel-store';
+import { AuthStore } from '../../../../core/auth/auth-store';
 
 @Component({
   selector: 'app-vehicle-fuel-tab',
@@ -41,6 +42,8 @@ export class VehicleFuelTab {
   private readonly fuelStore = inject(FuelStore);
   private readonly currencyService = inject(CurrencyService);
   private readonly notifications = inject(NotificationService);
+  private readonly authStore = inject(AuthStore);
+  protected readonly isDemo = this.authStore.isDemo;
 
   readonly form = new FormGroup({
     date: new FormControl('', [Validators.required, notInFutureValidator]),
@@ -224,6 +227,10 @@ export class VehicleFuelTab {
   }
 
   protected saveRecord() {
+    if (this.isDemo()) {
+      return;
+    }
+
     if (this.form.invalid || this.currentVehicleId === null) {
       this.form.markAllAsTouched();
       return;
@@ -268,6 +275,10 @@ export class VehicleFuelTab {
   }
 
   protected deleteSelectedRecord() {
+    if (this.isDemo()) {
+      return;
+    }
+
     const selected = this.selectedRecord();
     if (!selected || this.currentVehicleId === null) {
       return;

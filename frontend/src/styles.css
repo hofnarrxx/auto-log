@@ -178,6 +178,12 @@ a:hover {
   background: var(--accent-strong);
 }
 
+.add-record-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--accent);
+}
+
 .status-message {
   margin: 0;
   color: var(--text-muted);

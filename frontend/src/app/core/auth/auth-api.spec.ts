@@ -61,10 +61,21 @@ describe('AuthApi', () => {
   });
 
   it('requests the current session from the me endpoint', () => {
-    api.checkAuth().subscribe();
+    let response: { auth: string; demo: boolean } | undefined;
+    api.checkAuth().subscribe((res) => (response = res));
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/me`);
     expect(req.request.method).toBe('GET');
+    req.flush({ auth: 'a@b.com', demo: true });
+
+    expect(response).toEqual({ auth: 'a@b.com', demo: true });
+  });
+
+  it('posts to the demo endpoint', () => {
+    api.startDemo().subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/demo`);
+    expect(req.request.method).toBe('POST');
     req.flush(null);
   });
 

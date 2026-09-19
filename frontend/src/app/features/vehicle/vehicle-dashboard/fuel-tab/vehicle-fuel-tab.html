@@ -8,6 +8,7 @@
       [records]="fuelRecords()"
       titleKeyPrefix="vehicle.fuelTab"
       [showAddButton]="true"
+      [disableAddButton]="isDemo()"
       [fuelUnit]="fuelUnit()"
       [totalRecords]="summary()?.totalRecords ?? 0"
       [totalCostText]="totalFuelCostByCurrency()"
@@ -100,7 +101,12 @@
             <button type="button" class="secondary-btn" (click)="closeModal()">
               {{ 'common.cancel' | translate }}
             </button>
-            <button type="submit" class="primary-btn" [disabled]="isSaving()">
+            <button
+              type="submit"
+              class="primary-btn"
+              [disabled]="isSaving() || isDemo()"
+              [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
+            >
               {{ saveButtonLabel() | translate }}
             </button>
           </div>
@@ -117,13 +123,20 @@
           <button type="button" class="secondary-btn" (click)="closeModal()">
             {{ 'common.close' | translate }}
           </button>
-          <button type="button" class="primary-btn" (click)="startEditSelectedRecord()">
+          <button
+            type="button"
+            class="primary-btn"
+            [disabled]="isDemo()"
+            [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
+            (click)="startEditSelectedRecord()"
+          >
             {{ 'common.edit' | translate }}
           </button>
           <button
             type="button"
             class="danger-btn"
-            [disabled]="isDeleting()"
+            [disabled]="isDeleting() || isDemo()"
+            [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
             (click)="deleteSelectedRecord()"
           >
             {{ isDeleting() ? ('common.deleting' | translate) : ('common.delete' | translate) }}

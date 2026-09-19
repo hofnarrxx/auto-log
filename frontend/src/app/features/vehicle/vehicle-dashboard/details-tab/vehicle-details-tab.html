@@ -18,7 +18,8 @@
             <button
               type="button"
               class="icon-btn share-btn"
-              [attr.title]="shareVehicleLabel()"
+              [disabled]="isDemo()"
+              [attr.title]="isDemo() ? ('demo.readOnly' | translate) : shareVehicleLabel()"
               [attr.aria-label]="shareVehicleLabel()"
               (click)="shareRequested.emit()"
             >
@@ -31,7 +32,8 @@
             <button
               type="button"
               class="icon-btn edit-btn"
-              [attr.title]="editVehicleLabel()"
+              [disabled]="isDemo()"
+              [attr.title]="isDemo() ? ('demo.readOnly' | translate) : editVehicleLabel()"
               [attr.aria-label]="editVehicleLabel()"
               (click)="editRequested.emit()"
             >
@@ -44,7 +46,8 @@
             <button
               type="button"
               class="icon-btn delete-btn"
-              [attr.title]="deleteVehicleLabel()"
+              [disabled]="isDemo()"
+              [attr.title]="isDemo() ? ('demo.readOnly' | translate) : deleteVehicleLabel()"
               [attr.aria-label]="deleteVehicleLabel()"
               (click)="deleteRequested.emit()"
             >

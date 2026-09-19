@@ -14,6 +14,7 @@ import { VehicleMaintenanceTab } from './maintenance-tab/vehicle-maintenance-tab
 import { VehicleFuelTab } from './fuel-tab/vehicle-fuel-tab';
 import { ShareLinkModal } from './share-link-modal/share-link-modal';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { AuthStore } from '../../../core/auth/auth-store';
 
 @Component({
   selector: 'app-vehicle-dashboard',
@@ -35,6 +36,8 @@ export class VehicleDashboard {
   private router = inject(Router);
   private vehicleStore = inject(VehicleStore);
   private notifications = inject(NotificationService);
+  private authStore = inject(AuthStore);
+  protected readonly isDemo = this.authStore.isDemo;
   showEditModal = signal(false);
   showShareModal = signal(false);
   showDeleteConfirmModal = signal(false);
@@ -84,7 +87,7 @@ export class VehicleDashboard {
 
   confirmDeleteVehicle() {
     const vehicle = this.vehicle();
-    if (!vehicle || this.isDeletingVehicle()) return;
+    if (!vehicle || this.isDeletingVehicle() || this.isDemo()) return;
 
     this.isDeletingVehicle.set(true);
     this.vehicleStore.remove(vehicle.id).subscribe({

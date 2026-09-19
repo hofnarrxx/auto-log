@@ -4,6 +4,8 @@
     type="file"
     accept="image/*,application/pdf"
     multiple
+    [disabled]="disabled"
+    [attr.title]="disabled ? disabledTooltip : null"
     (change)="onFileInputChange($event)"
   />
 </label>
@@ -13,7 +15,13 @@
     @for (file of pendingFiles; track $index) {
       <li>
         <span>{{ file.name }}</span>
-        <button type="button" class="link-btn" (click)="removePending($index)">
+        <button
+          type="button"
+          class="link-btn"
+          [disabled]="disabled"
+          [attr.title]="disabled ? disabledTooltip : null"
+          (click)="removePending($index)"
+        >
           {{ 'common.remove' | translate }}
         </button>
       </li>

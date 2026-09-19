@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
+import { demoGuard } from './core/auth/demo-guard';
 import { AppLayout } from './core/layout/app-layout/app-layout';
 import { authRoutes } from './features/auth/auth.routes';
 
@@ -36,6 +37,7 @@ export const routes: Routes = [
 
       {
         path: 'add-vehicle',
+        canActivate: [demoGuard],
         loadComponent: () =>
           import('./features/vehicle/vehicle-form/vehicle-form').then((m) => m.VehicleForm),
       },

@@ -15,6 +15,8 @@ export class AppLayout {
   private router = inject(Router);
   menuOpen = signal(false);
 
+  protected readonly isDemo = this.authStore.isDemo;
+
   toggleMenu(event: Event) {
     event.stopPropagation();
     this.menuOpen.update((v) => !v);

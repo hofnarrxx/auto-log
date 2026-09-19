@@ -1,4 +1,10 @@
-<input type="file" accept="image/jpeg,image/png,image/webp" (change)="onFileSelected($event)" />
+<input
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+  [disabled]="disabled"
+  [attr.title]="disabled ? disabledTooltip : null"
+  (change)="onFileSelected($event)"
+/>
 
 @if (previewUrl()) {
   <div class="preview">

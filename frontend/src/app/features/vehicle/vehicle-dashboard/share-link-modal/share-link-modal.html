@@ -25,8 +25,8 @@
                 type="button"
                 class="icon-btn delete-btn"
                 [attr.aria-label]="'vehicle.dashboard.share.delete' | translate"
-                [attr.title]="'vehicle.dashboard.share.delete' | translate"
-                [disabled]="deletingShareLinkId() === link.id"
+                [attr.title]="isDemo() ? ('demo.readOnly' | translate) : ('vehicle.dashboard.share.delete' | translate)"
+                [disabled]="deletingShareLinkId() === link.id || isDemo()"
                 (click)="deleteShareLink(link.id)"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -49,6 +49,8 @@
       <input
         type="checkbox"
         [checked]="shareAttachments()"
+        [disabled]="isDemo()"
+        [attr.title]="isDemo() ? ('demo.readOnly' | translate) : null"
         (change)="onShareAttachmentsChange($event)"
       />
       <span>{{ 'vehicle.dashboard.share.includeAttachments' | translate }}</span>
@@ -58,7 +60,8 @@
       <button
         type="button"
         class="create-btn"
-        [disabled]="!canCreateShareLink() || isCreatingShareLink() || isLoadingShareLinks()"
+        [disabled]="!canCreateShareLink() || isCreatingShareLink() || isLoadingShareLinks() || isDemo()"
+        [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
         (click)="createShareLink()"
       >
         {{ 'vehicle.dashboard.share.create' | translate }}

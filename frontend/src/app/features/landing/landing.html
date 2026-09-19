@@ -26,7 +26,9 @@
     <p class="subtitle">{{ 'landing.hero.subtitle' | translate }}</p>
 
     <div class="hero-actions">
-      <a class="cta-primary" [href]="demoUrl">{{ 'landing.cta.demo' | translate }}</a>
+      <button type="button" class="cta-primary" (click)="tryDemo()">
+        {{ 'landing.cta.demo' | translate }}
+      </button>
 
       @if (isAuthenticated()) {
         <a class="cta-secondary" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>

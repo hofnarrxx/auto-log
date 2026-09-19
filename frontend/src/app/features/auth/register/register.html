@@ -94,6 +94,10 @@
       </button>
     </form>
 
+    <button type="button" class="demo-btn" (click)="tryDemo()">
+      {{ 'demo.tryIt' | translate }}
+    </button>
+
     <p class="auth-switch">
       {{ 'auth.register.switchPrompt' | translate }}
       <a routerLink="/login">{{ 'auth.register.switchLink' | translate }}</a>

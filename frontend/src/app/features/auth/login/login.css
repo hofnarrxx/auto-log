@@ -148,20 +148,25 @@ input:focus {
   margin-top: 2px;
 }
 
-.google-btn {
+.google-btn,
+.demo-btn {
   margin-top: 10px;
+  width: 100%;
   padding: 10px;
+  min-height: var(--tap-target);
   border-radius: 8px;
   border: 1px solid var(--border);
   background: rgba(10, 18, 32, 0.4);
   color: var(--text);
+  font: inherit;
   cursor: pointer;
   transition:
     border 0.2s ease,
     background 0.2s ease;
 }
 
-.google-btn:hover {
+.google-btn:hover,
+.demo-btn:hover {
   background: rgba(34, 211, 238, 0.08);
   border-color: rgba(34, 211, 238, 0.5);
 }

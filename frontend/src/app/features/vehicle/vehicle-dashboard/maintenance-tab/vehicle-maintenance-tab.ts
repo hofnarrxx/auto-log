@@ -30,6 +30,7 @@ import type {
   MaintenanceRecordPayload,
 } from '../../models';
 import { AttachmentService } from '../../services/attachment.service';
+import { AuthStore } from '../../../../core/auth/auth-store';
 
 type ModalMode = 'closed' | 'create' | 'view' | 'edit';
 
@@ -53,6 +54,8 @@ export class VehicleMaintenanceTab {
   private readonly attachmentService = inject(AttachmentService);
   private readonly maintenanceStore = inject(MaintenanceStore);
   private readonly notifications = inject(NotificationService);
+  private readonly authStore = inject(AuthStore);
+  protected readonly isDemo = this.authStore.isDemo;
 
   readonly form = new FormGroup({
     serviceDate: new FormControl('', [Validators.required, notInFutureValidator]),
@@ -218,6 +221,10 @@ export class VehicleMaintenanceTab {
   }
 
   protected saveRecord() {
+    if (this.isDemo()) {
+      return;
+    }
+
     if (this.form.invalid || !this.currentVehicleId) {
       this.form.markAllAsTouched();
       return;
@@ -270,6 +277,10 @@ export class VehicleMaintenanceTab {
   }
 
   protected deleteSelectedRecord() {
+    if (this.isDemo()) {
+      return;
+    }
+
     const selected = this.selectedRecord();
     if (!selected || !this.currentVehicleId) {
       return;

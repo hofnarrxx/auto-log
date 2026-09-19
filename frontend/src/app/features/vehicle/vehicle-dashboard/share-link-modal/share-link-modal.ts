@@ -15,6 +15,7 @@ import { NotificationService } from '../../../../shared/services/notification.se
 import { Modal } from '../../../../shared/ui/modal/modal';
 import type { ShareLinkResponse } from '../../models';
 import { VehicleStore } from '../../vehicle-store';
+import { AuthStore } from '../../../../core/auth/auth-store';
 
 /**
  * Self-contained share-link management dialog for a single vehicle: loads existing links on
@@ -30,7 +31,10 @@ export class ShareLinkModal implements OnInit {
   private readonly vehicleStore = inject(VehicleStore);
   private readonly notifications = inject(NotificationService);
   private readonly clipboard = inject(ClipboardService);
+  private readonly authStore = inject(AuthStore);
   private readonly maxActiveShareLinks = 1;
+
+  protected readonly isDemo = this.authStore.isDemo;
 
   @Input({ required: true }) vehicleId!: string;
   @Output() closed = new EventEmitter<void>();
@@ -73,7 +77,7 @@ export class ShareLinkModal implements OnInit {
   }
 
   protected deleteShareLink(linkId: string) {
-    if (this.deletingShareLinkId() === linkId) {
+    if (this.isDemo() || this.deletingShareLinkId() === linkId) {
       return;
     }
 
@@ -93,7 +97,7 @@ export class ShareLinkModal implements OnInit {
   }
 
   protected createShareLink() {
-    if (!this.canCreateShareLink()) {
+    if (this.isDemo() || !this.canCreateShareLink()) {
       return;
     }
 

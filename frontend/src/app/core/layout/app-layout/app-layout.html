@@ -17,6 +17,13 @@
   </div>
 </nav>
 
+@if (isDemo()) {
+  <div class="demo-banner">
+    <span>{{ 'demo.bannerText' | translate }}</span>
+    <a routerLink="/register">{{ 'demo.signUpCta' | translate }}</a>
+  </div>
+}
+
 <div class="content">
   <router-outlet></router-outlet>
 </div>

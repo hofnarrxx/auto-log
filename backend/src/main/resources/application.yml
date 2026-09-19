@@ -52,5 +52,5 @@ app:
     token-expiration: 1800000 # 30 minutes'
   
 demo:
-  enabled: false
-  email: {DEMO_LOGIN}
+  enabled: true
+  email: ${DEMO_LOGIN}

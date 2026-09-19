@@ -113,6 +113,15 @@
       "loadFailed": "Unable to load vehicles right now."
     }
   },
+  "demo": {
+    "tryIt": "Try the demo",
+    "bannerText": "Demo mode - this account is read-only.",
+    "signUpCta": "Sign up to track your own car.",
+    "readOnly": "Not available in demo mode.",
+    "errors": {
+      "startFailed": "Unable to start the demo right now."
+    }
+  },
   "notFound": {
     "title": "Page not found",
     "message": "The page you are looking for does not exist or has moved.",

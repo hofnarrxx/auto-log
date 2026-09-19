@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
@@ -49,6 +50,16 @@ export class Register {
             400: 'auth.register.errors.passwordWeak',
           },
         });
+      },
+    });
+  }
+
+  tryDemo() {
+    this.authStore.startDemo().subscribe({
+      next: () => this.router.navigate(['/garage']),
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 429) return;
+        this.notifications.notifyError('demo.errors.startFailed');
       },
     });
   }

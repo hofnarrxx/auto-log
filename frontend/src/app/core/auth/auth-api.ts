@@ -4,6 +4,15 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../config/api-base-url.token';
 
 /**
+ * Shape of `GET /api/auth/me`. `auth` is the signed-in user's email; `demo` tells the frontend
+ * whether this session belongs to the shared, read-only demo account.
+ */
+export interface AuthResponse {
+  auth: string;
+  demo: boolean;
+}
+
+/**
  * Pure transport for the auth endpoints. This service holds no authentication state; see
  * {@link AuthStore} for the single source of truth on whether the user is signed in.
  */
@@ -30,8 +39,12 @@ export class AuthApi {
     return this.http.post<void>(`${this.authApi}/logout`, {});
   }
 
-  checkAuth(): Observable<void> {
-    return this.http.get<void>(`${this.authApi}/me`);
+  checkAuth(): Observable<AuthResponse> {
+    return this.http.get<AuthResponse>(`${this.authApi}/me`);
+  }
+
+  startDemo(): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/demo`, {});
   }
 
   requestPasswordReset(email: string, lang: string): Observable<void> {

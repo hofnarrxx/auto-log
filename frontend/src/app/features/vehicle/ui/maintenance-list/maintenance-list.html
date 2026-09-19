@@ -33,7 +33,13 @@
       </button>
 
       @if (showAddButtonValue()) {
-        <button type="button" class="add-record-btn" (click)="requestAdd()">
+        <button
+          type="button"
+          class="add-record-btn"
+          [disabled]="disableAddButtonValue()"
+          [title]="disableAddButtonValue() ? ('demo.readOnly' | translate) : ''"
+          (click)="requestAdd()"
+        >
           {{ getTitleTranslationKey('addRecord') | translate }}
         </button>
       }

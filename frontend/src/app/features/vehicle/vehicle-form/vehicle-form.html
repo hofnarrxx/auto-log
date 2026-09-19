@@ -98,6 +98,8 @@
 
   <app-vehicle-image-picker
     [currentImageUrl]="vehicle?.imageUrl"
+    [disabled]="isDemo()"
+    [disabledTooltip]="'demo.readOnly' | translate"
     (imageSelected)="onImageSelected($event)"
   >
   </app-vehicle-image-picker>
@@ -106,6 +108,13 @@
     <button type="button" class="secondary-btn" (click)="cancel()">
       {{ 'common.cancel' | translate }}
     </button>
-    <button type="submit" class="primary-btn">{{ 'common.save' | translate }}</button>
+    <button
+      type="submit"
+      class="primary-btn"
+      [disabled]="isDemo()"
+      [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
+    >
+      {{ 'common.save' | translate }}
+    </button>
   </div>
 </form>

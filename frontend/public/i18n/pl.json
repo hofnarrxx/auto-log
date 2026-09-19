@@ -113,6 +113,15 @@
       "loadFailed": "Nie można teraz wczytać pojazdów."
     }
   },
+  "demo": {
+    "tryIt": "Wypróbuj demo",
+    "bannerText": "Tryb demo - to konto jest tylko do odczytu.",
+    "signUpCta": "Załóż konto, aby śledzić własny samochód.",
+    "readOnly": "Niedostępne w trybie demo.",
+    "errors": {
+      "startFailed": "Nie udało się uruchomić trybu demo."
+    }
+  },
   "notFound": {
     "title": "Strona nie znaleziona",
     "message": "Strona, której szukasz, nie istnieje lub została przeniesiona.",

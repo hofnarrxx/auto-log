@@ -21,7 +21,12 @@
     </div>
   }
 
-  <div class="vehicle-card add-card" (click)="openModal()">
+  <div
+    class="vehicle-card add-card"
+    [class.disabled]="isDemo()"
+    [attr.title]="isDemo() ? ('demo.readOnly' | translate) : null"
+    (click)="openModal()"
+  >
     <div class="image-wrapper add-image">
       <span class="plus">+</span>
     </div>

@@ -6,6 +6,7 @@ import { pickLatestOdometer } from '../../../../shared/utils/odometer.utils';
 import type { Vehicle } from '../../models';
 import { FuelStore } from '../../fuel-store';
 import { MaintenanceStore } from '../../maintenance-store';
+import { AuthStore } from '../../../../core/auth/auth-store';
 
 @Component({
   selector: 'app-vehicle-details-tab',
@@ -17,6 +18,9 @@ export class VehicleDetailsTab {
   private translate = inject(TranslateService);
   private fuelStore = inject(FuelStore);
   private maintenanceStore = inject(MaintenanceStore);
+  private authStore = inject(AuthStore);
+
+  protected readonly isDemo = this.authStore.isDemo;
 
   @Input({ required: true }) vehicle!: Vehicle;
   @Output() editRequested = new EventEmitter<void>();

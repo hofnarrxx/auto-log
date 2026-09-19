@@ -199,6 +199,12 @@
   transform: translateY(1px);
 }
 
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .share-btn {
   background: rgba(16, 185, 129, 0.18);
   color: #34d399;

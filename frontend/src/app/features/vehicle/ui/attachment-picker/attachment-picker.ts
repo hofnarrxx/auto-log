@@ -13,6 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class AttachmentPicker {
   @Input() pendingFiles: File[] = [];
+  @Input() disabled = false;
+  @Input() disabledTooltip: string | null = null;
   @Output() filesSelected = new EventEmitter<FileList>();
   @Output() pendingRemoved = new EventEmitter<number>();
 
@@ -25,6 +27,9 @@ export class AttachmentPicker {
   }
 
   protected removePending(index: number) {
+    if (this.disabled) {
+      return;
+    }
     this.pendingRemoved.emit(index);
   }
 }

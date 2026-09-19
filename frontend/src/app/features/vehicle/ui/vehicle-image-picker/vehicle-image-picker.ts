@@ -20,6 +20,9 @@ export class VehicleImagePicker implements OnDestroy {
     this.previewUrl.set(value ?? null);
   }
 
+  @Input() disabled = false;
+  @Input() disabledTooltip: string | null = null;
+
   @Output() imageSelected = new EventEmitter<File>();
 
   protected readonly previewUrl = signal<string | null>(null);
@@ -29,6 +32,10 @@ export class VehicleImagePicker implements OnDestroy {
   }
 
   protected onFileSelected(event: Event) {
+    if (this.disabled) {
+      return;
+    }
+
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) {
       return;

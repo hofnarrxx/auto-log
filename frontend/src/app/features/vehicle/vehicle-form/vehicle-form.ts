@@ -11,6 +11,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
 import { toCreateVehicleCommand, toUpdateVehicleCommand } from './vehicle-form.mapper';
 import { VehicleImageService } from '../services/vehicle-image.service';
 import { VehicleImagePicker } from '../ui/vehicle-image-picker/vehicle-image-picker';
+import { AuthStore } from '../../../core/auth/auth-store';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -22,6 +23,8 @@ export class VehicleForm {
   private vehicleStore = inject(VehicleStore);
   private vehicleImageService = inject(VehicleImageService);
   private notifications = inject(NotificationService);
+  private authStore = inject(AuthStore);
+  protected readonly isDemo = this.authStore.isDemo;
   @Input() vehicle?: VehicleModel;
   @Output() closed = new EventEmitter<void>();
   private selectedImageFile: File | null = null;
@@ -67,6 +70,10 @@ export class VehicleForm {
   }
 
   save() {
+    if (this.isDemo()) {
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
