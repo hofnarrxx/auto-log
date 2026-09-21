@@ -3,6 +3,7 @@ package com.hofnarrxx.autolog.controller;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.dto.AuthTokens;
+import com.hofnarrxx.autolog.dto.DemoRequest;
 import com.hofnarrxx.autolog.dto.ForgotPasswordRequest;
 import com.hofnarrxx.autolog.dto.ResetPasswordRequest;
 import com.hofnarrxx.autolog.exception.InvalidPasswordResetTokenException;
@@ -123,8 +124,9 @@ public class AuthController {
     }
 
     @PostMapping("/demo")
-    public ResponseEntity<Void> startDemo(HttpServletResponse response) {
-        AuthTokens tokens = authService.startDemo();
+    public ResponseEntity<Void> startDemo(@RequestBody(required = false) DemoRequest request, HttpServletResponse response) {
+        String lang = request == null ? null : request.lang();
+        AuthTokens tokens = authService.startDemo(lang);
         setAuthCookies(response, tokens);
         return ResponseEntity.ok().build();
     }

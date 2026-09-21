@@ -2,9 +2,10 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthStore } from '../../core/auth/auth-store';
+import { LanguageService } from '../../shared/services/language.service';
 import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
@@ -15,26 +16,20 @@ import { NotificationService } from '../../shared/services/notification.service'
 })
 export class Landing {
   private readonly authStore = inject(AuthStore);
-  private readonly translate = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
 
   readonly isAuthenticated = this.authStore.isAuthenticated;
-
-  selectedLanguage = this.translate.currentLang || this.translate.defaultLang || 'en';
+  readonly isDemo = this.authStore.isDemo;
+  readonly selectedLanguage = this.languageService.selectedLanguage;
 
   onLanguageChange(language: string) {
-    if (language !== 'en' && language !== 'pl') {
-      return;
-    }
-
-    this.selectedLanguage = language;
-    localStorage.setItem('autolog-language', language);
-    this.translate.use(language);
+    this.languageService.setLanguage(language);
   }
 
   tryDemo() {
-    this.authStore.startDemo().subscribe({
+    this.authStore.startDemo(this.selectedLanguage()).subscribe({
       next: () => this.router.navigate(['/garage']),
       error: (err: HttpErrorResponse) => {
         if (err.status === 429) return;

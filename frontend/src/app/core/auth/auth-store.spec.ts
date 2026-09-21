@@ -106,8 +106,9 @@ describe('AuthStore', () => {
   it('marks the session authenticated and demo after starting the demo', () => {
     authApi.startDemo.and.returnValue(of(undefined));
 
-    store.startDemo().subscribe();
+    store.startDemo('en').subscribe();
 
+    expect(authApi.startDemo).toHaveBeenCalledWith('en');
     expect(store.isAuthenticated()).toBe(true);
     expect(store.isDemo()).toBe(true);
   });
@@ -116,7 +117,7 @@ describe('AuthStore', () => {
     authApi.startDemo.and.returnValue(of(undefined));
     authApi.logout.and.returnValue(of(undefined));
 
-    store.startDemo().subscribe();
+    store.startDemo('en').subscribe();
     store.logout().subscribe();
 
     expect(store.isDemo()).toBe(false);
@@ -126,7 +127,7 @@ describe('AuthStore', () => {
     authApi.startDemo.and.returnValue(of(undefined));
     authApi.login.and.returnValue(of(undefined));
 
-    store.startDemo().subscribe();
+    store.startDemo('en').subscribe();
     store.login('a@b.com', 'secret').subscribe();
 
     expect(store.isDemo()).toBe(false);
@@ -135,7 +136,7 @@ describe('AuthStore', () => {
   it('clears isDemo when markUnauthenticated is called', () => {
     authApi.startDemo.and.returnValue(of(undefined));
 
-    store.startDemo().subscribe();
+    store.startDemo('en').subscribe();
     store.markUnauthenticated();
 
     expect(store.isDemo()).toBe(false);

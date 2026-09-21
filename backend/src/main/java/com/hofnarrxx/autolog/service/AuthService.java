@@ -104,8 +104,8 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthTokens startDemo() {
-        User user = userRepository.findByEmail(demoProperties.email())
+    public AuthTokens startDemo(String language) {
+        User user = userRepository.findByEmail(demoProperties.emailFor(language))
                 .orElseThrow(() -> new DemoUserNotFoundException());
                 if(!user.isDemo()) throw new DemoUserNotFoundException();
         return issueTokens(user);

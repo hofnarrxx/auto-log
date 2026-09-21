@@ -25,7 +25,11 @@
                 type="button"
                 class="icon-btn delete-btn"
                 [attr.aria-label]="'vehicle.dashboard.share.delete' | translate"
-                [attr.title]="isDemo() ? ('demo.readOnly' | translate) : ('vehicle.dashboard.share.delete' | translate)"
+                [attr.title]="
+                  isDemo()
+                    ? ('demo.readOnly' | translate)
+                    : ('vehicle.dashboard.share.delete' | translate)
+                "
                 [disabled]="deletingShareLinkId() === link.id || isDemo()"
                 (click)="deleteShareLink(link.id)"
               >
@@ -60,7 +64,9 @@
       <button
         type="button"
         class="create-btn"
-        [disabled]="!canCreateShareLink() || isCreatingShareLink() || isLoadingShareLinks() || isDemo()"
+        [disabled]="
+          !canCreateShareLink() || isCreatingShareLink() || isLoadingShareLinks() || isDemo()
+        "
         [title]="isDemo() ? ('demo.readOnly' | translate) : ''"
         (click)="createShareLink()"
       >

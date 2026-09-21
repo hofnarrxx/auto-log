@@ -36,8 +36,8 @@ export class AuthStore {
     );
   }
 
-  startDemo(): Observable<void> {
-    return this.authApi.startDemo().pipe(
+  startDemo(lang: string): Observable<void> {
+    return this.authApi.startDemo(lang).pipe(
       tap(() => {
         this._isAuthenticated.set(true);
         this._isDemo.set(true);

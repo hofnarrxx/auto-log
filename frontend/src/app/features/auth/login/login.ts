@@ -45,14 +45,4 @@ export class Login {
   googleLogin() {
     window.location.href = `${this.apiBaseUrl}/oauth2/authorization/google`;
   }
-
-  tryDemo() {
-    this.authStore.startDemo().subscribe({
-      next: () => this.router.navigate(['/garage']),
-      error: (err: HttpErrorResponse) => {
-        if (err.status === 429) return;
-        this.notifications.notifyError('demo.errors.startFailed');
-      },
-    });
-  }
 }

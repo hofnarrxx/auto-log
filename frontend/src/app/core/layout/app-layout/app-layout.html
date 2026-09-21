@@ -1,5 +1,5 @@
 <nav class="navbar">
-  <div class="logo">{{ 'common.appName' | translate }}</div>
+  <a routerLink="/" class="logo">{{ 'common.appName' | translate }}</a>
 
   <div class="profile" (click)="toggleMenu($event)">
     <button type="button" class="profile-btn" [attr.aria-expanded]="menuOpen()">

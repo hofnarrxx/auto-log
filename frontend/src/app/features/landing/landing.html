@@ -1,11 +1,11 @@
 <div class="landing-page">
   <header class="landing-header">
-    <div class="logo">{{ 'common.appName' | translate }}</div>
+    <a routerLink="/" class="logo">{{ 'common.appName' | translate }}</a>
 
     <div class="header-actions">
       <select
         class="language-select"
-        [ngModel]="selectedLanguage"
+        [ngModel]="selectedLanguage()"
         (ngModelChange)="onLanguageChange($event)"
         aria-label="Language"
       >
@@ -13,7 +13,7 @@
         <option value="pl">{{ 'settings.languages.pl' | translate }}</option>
       </select>
 
-      @if (isAuthenticated()) {
+      @if (isAuthenticated() && !isDemo()) {
         <a class="header-link" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>
       } @else {
         <a class="header-link" routerLink="/login">{{ 'landing.cta.signIn' | translate }}</a>
@@ -26,13 +26,12 @@
     <p class="subtitle">{{ 'landing.hero.subtitle' | translate }}</p>
 
     <div class="hero-actions">
-      <button type="button" class="cta-primary" (click)="tryDemo()">
-        {{ 'landing.cta.demo' | translate }}
-      </button>
-
-      @if (isAuthenticated()) {
-        <a class="cta-secondary" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>
+      @if (isAuthenticated() && !isDemo()) {
+        <a class="cta-primary" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>
       } @else {
+        <button type="button" class="cta-primary" (click)="tryDemo()">
+          {{ 'landing.cta.demo' | translate }}
+        </button>
         <a class="cta-secondary" routerLink="/register">{{ 'landing.cta.register' | translate }}</a>
       }
     </div>

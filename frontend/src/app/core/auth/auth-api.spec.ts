@@ -72,10 +72,11 @@ describe('AuthApi', () => {
   });
 
   it('posts to the demo endpoint', () => {
-    api.startDemo().subscribe();
+    api.startDemo('pl').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/demo`);
     expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ lang: 'pl' });
     req.flush(null);
   });
 

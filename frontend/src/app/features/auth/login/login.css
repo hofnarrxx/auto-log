@@ -148,8 +148,7 @@ input:focus {
   margin-top: 2px;
 }
 
-.google-btn,
-.demo-btn {
+.google-btn {
   margin-top: 10px;
   width: 100%;
   padding: 10px;
@@ -165,8 +164,7 @@ input:focus {
     background 0.2s ease;
 }
 
-.google-btn:hover,
-.demo-btn:hover {
+.google-btn:hover {
   background: rgba(34, 211, 238, 0.08);
   border-color: rgba(34, 211, 238, 0.5);
 }

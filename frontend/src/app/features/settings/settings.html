@@ -5,7 +5,7 @@
     <label for="language-select">{{ 'settings.selectLanguage' | translate }}</label>
     <select
       id="language-select"
-      [ngModel]="selectedLanguage"
+      [ngModel]="selectedLanguage()"
       (ngModelChange)="onLanguageChange($event)"
     >
       @for (language of languages; track language.code) {

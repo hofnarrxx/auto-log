@@ -43,8 +43,8 @@ export class AuthApi {
     return this.http.get<AuthResponse>(`${this.authApi}/me`);
   }
 
-  startDemo(): Observable<void> {
-    return this.http.post<void>(`${this.authApi}/demo`, {});
+  startDemo(lang: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/demo`, { lang });
   }
 
   requestPasswordReset(email: string, lang: string): Observable<void> {

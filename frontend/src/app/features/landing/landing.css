@@ -27,6 +27,12 @@
   font-weight: 600;
   font-family: var(--font-head);
   letter-spacing: 0.3px;
+  color: inherit;
+}
+
+.logo:hover {
+  color: inherit;
+  opacity: 0.85;
 }
 
 .header-actions {

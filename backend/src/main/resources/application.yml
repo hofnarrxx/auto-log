@@ -53,4 +53,7 @@ app:
   
 demo:
   enabled: true
-  email: ${DEMO_LOGIN}
+  default-language: en
+  emails:
+    en: ${DEMO_LOGIN_EN}
+    pl: ${DEMO_LOGIN_PL}

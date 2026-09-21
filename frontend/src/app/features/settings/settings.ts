@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../shared/services/currency.service';
+import { LanguageService } from '../../shared/services/language.service';
 
 @Component({
   selector: 'app-settings',
@@ -13,10 +14,10 @@ import { CurrencyService } from '../../shared/services/currency.service';
 })
 export class Settings {
   private currencyService = inject(CurrencyService);
-  private translate = inject(TranslateService);
+  private languageService = inject(LanguageService);
 
   selectedCurrency = this.currencyService.selectedCurrency;
-  selectedLanguage = this.translate.currentLang || this.translate.defaultLang || 'en';
+  selectedLanguage = this.languageService.selectedLanguage;
   currencies = ['EUR', 'USD', 'PLN'];
   languages = [
     { code: 'en', labelKey: 'settings.languages.en' },
@@ -28,12 +29,6 @@ export class Settings {
   }
 
   onLanguageChange(language: string) {
-    if (language !== 'en' && language !== 'pl') {
-      return;
-    }
-
-    this.selectedLanguage = language;
-    localStorage.setItem('autolog-language', language);
-    this.translate.use(language);
+    this.languageService.setLanguage(language);
   }
 }
