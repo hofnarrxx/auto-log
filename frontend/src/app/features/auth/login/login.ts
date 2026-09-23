@@ -37,7 +37,12 @@ export class Login {
       next: () => this.router.navigate(['/garage']),
       error: (err: HttpErrorResponse) => {
         if (err.status === 429) return;
-        this.notifications.notifyError('auth.login.errors.invalidCredentials');
+        this.notifications.notifyHttpError(err, {
+          fallback: 'auth.login.errors.invalidCredentials',
+          byStatus: {
+            409: 'auth.login.errors.googleLoginRequired',
+          },
+        });
       },
     });
   }

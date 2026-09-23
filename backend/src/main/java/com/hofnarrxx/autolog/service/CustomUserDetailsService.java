@@ -1,5 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
+import com.hofnarrxx.autolog.exception.GoogleLoginRequiredException;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
@@ -36,13 +37,27 @@ public class CustomUserDetailsService implements UserDetailsService {
                 );
 
         if (!hasLocalLogin) {
-            throw new RuntimeException("Use Google login for this account");
+            throw new GoogleLoginRequiredException();
         }
 
+        return toUserDetails(user);
+    }
+
+    public UserDetails loadUserForToken(String email)
+            throws UsernameNotFoundException {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found"));
+
+        return toUserDetails(user);
+    }
+
+    private UserDetails toUserDetails(User user) {
         return org.springframework.security.core.userdetails.User
                 .builder()
                 .username(user.getEmail())
-                .password(user.getPassword())
+                .password(user.getPassword() != null ? user.getPassword() : "")
                 .roles(user.isDemo() ? "DEMO" : "USER")
                 .build();
     }

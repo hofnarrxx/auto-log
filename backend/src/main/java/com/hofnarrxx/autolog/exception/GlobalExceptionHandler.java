@@ -23,6 +23,15 @@ public class GlobalExceptionHandler {
                                                 "message", ex.getMessage()));
         }
 
+        @ExceptionHandler(GoogleLoginRequiredException.class)
+        public ResponseEntity<?> handleGoogleLoginRequired(GoogleLoginRequiredException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(Map.of(
+                                                "error", "GOOGLE_LOGIN_REQUIRED",
+                                                "message", ex.getMessage()));
+        }
+
         @ExceptionHandler(TooManyRequestsException.class)
         public ResponseEntity<?> handleTooManyRequests(TooManyRequestsException ex) {
                 return ResponseEntity
