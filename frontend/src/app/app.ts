@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthStore } from './core/auth/auth-store';
-import { LanguageService } from './shared/services/language.service';
+import { LanguageService } from './core/i18n/language.service';
 import { ToastHost } from './shared/ui/toast/toast-host';
 
 @Component({
@@ -18,7 +18,7 @@ export class App {
   private languageService = inject(LanguageService);
 
   constructor() {
-    this.translate.addLangs(['pl', 'en']);
+    this.translate.addLangs(['pl', 'en', 'ua']);
     this.translate.setFallbackLang('en');
     this.languageService.applyCurrent();
   }

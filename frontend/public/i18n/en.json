@@ -93,7 +93,7 @@
       },
       "personalize": {
         "title": "Made your way",
-        "description": "Switch between English and Polish and track costs in EUR, USD, or PLN."
+        "description": "Switch between English, Polish, and Ukrainian and track costs in EUR, USD, PLN, or UAH."
       }
     }
   },
@@ -133,7 +133,8 @@
     "selectLanguage": "Select language",
     "languages": {
       "en": "English",
-      "pl": "Polish"
+      "pl": "Polish",
+      "ua": "Ukrainian"
     }
   },
   "auth": {
@@ -156,7 +157,8 @@
         "emailInvalid": "Enter a valid email address.",
         "passwordRequired": "Password is required.",
         "passwordMinLength": "Password must be at least {{minLength}} characters.",
-        "invalidCredentials": "Invalid credentials."
+        "invalidCredentials": "Invalid credentials.",
+        "googleLoginRequired": "This account uses Google sign-in. Please continue with Google."
       }
     },
     "forgotPassword": {

@@ -5,9 +5,9 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
-import { AuthStore } from '../../core/auth/auth-store';
+import { AuthStore } from '../auth/auth-store';
+import { NotificationService } from '../../shared/services/notification.service';
 import { LanguageService } from './language.service';
-import { NotificationService } from './notification.service';
 
 describe('LanguageService', () => {
   const STORAGE_KEY = 'autolog-language';
@@ -58,6 +58,13 @@ describe('LanguageService', () => {
     const service = createService();
 
     expect(service.selectedLanguage()).toBe('pl');
+  });
+
+  it('loads a stored Ukrainian language', () => {
+    localStorage.setItem(STORAGE_KEY, 'ua');
+    const service = createService();
+
+    expect(service.selectedLanguage()).toBe('ua');
   });
 
   it('ignores invalid stored languages', () => {

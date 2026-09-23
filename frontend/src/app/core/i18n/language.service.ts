@@ -3,10 +3,10 @@ import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthStore } from '../../core/auth/auth-store';
-import { NotificationService } from './notification.service';
+import { AuthStore } from '../auth/auth-store';
+import { NotificationService } from '../../shared/services/notification.service';
 
-export type AppLanguage = 'en' | 'pl';
+export type AppLanguage = 'en' | 'pl' | 'ua';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +71,6 @@ export class LanguageService {
   }
 
   private parseLanguage(language: string | null | undefined): AppLanguage | null {
-    return language === 'en' || language === 'pl' ? language : null;
+    return language === 'en' || language === 'pl' || language === 'ua' ? language : null;
   }
 }

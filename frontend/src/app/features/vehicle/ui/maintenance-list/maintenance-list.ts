@@ -29,7 +29,7 @@ import { Modal } from '../../../../shared/ui/modal/modal';
 export const ALL_CURRENCIES = '';
 
 /** Fixed set of currencies the app supports; mirrors the create/edit form's hardcoded options. */
-export const AVAILABLE_CURRENCIES = ['EUR', 'USD', 'PLN'];
+export const AVAILABLE_CURRENCIES = ['EUR', 'USD', 'PLN', 'UAH'];
 
 export interface MaintenanceQueryChange {
   title: string;

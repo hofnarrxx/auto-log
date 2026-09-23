@@ -70,15 +70,44 @@ public record DemoContent(Currency currency,
                     new MaintenanceSeed(MaintenanceCategory.INSPECTION, "Przegląd przed zimą",
                             "Sprawdzono akumulator, światła, wycieraczki i poziomy płynów.", 230.00)));
 
+    public static final DemoContent UKRAINIAN = new DemoContent(
+            Currency.HRYVNIA,
+            List.of("OKKO", "WOG", "Shell", "SOCAR", "UPG", "KLO", "Ukrnafta"),
+            new double[] {
+                    87.41, 88.82, 86.00, 91.65, 90.24, 88.35, 92.12, 90.71, 89.29, 91.18,
+                    93.06, 89.76, 92.59, 93.53, 91.65, 90.24, 94.00, 92.12, 91.18, 93.06
+            },
+            List.of(
+                    new MaintenanceSeed(MaintenanceCategory.OIL_CHANGE, "Заміна оливи та фільтра",
+                            "Синтетична олива 5W-40 і заміна масляного фільтра.", 3200.00),
+                    new MaintenanceSeed(MaintenanceCategory.INSPECTION, "Комплексна діагностика",
+                            "Перевірка ходової, гальм і рівнів рідин; зауважень немає.", 1200.00),
+                    new MaintenanceSeed(MaintenanceCategory.TIRES_AND_WHEELS, "Перевзуття на літню гуму",
+                            "Встановлено літній комплект, збалансовано всі чотири колеса.", 1200.00),
+                    new MaintenanceSeed(MaintenanceCategory.FLUID_REFILL, "Долив охолоджувальної рідини",
+                            "Долито антифриз після незначної втрати.", 650.00),
+                    new MaintenanceSeed(MaintenanceCategory.PART_REPLACEMENT, "Передні гальмівні колодки",
+                            "Замінено зношені передні колодки; диски ще в нормі.", 2400.00),
+                    new MaintenanceSeed(MaintenanceCategory.REPAIR, "Заміна ременя генератора",
+                            "Тріснутий поліклиновий ремінь замінено; перевірено натягувач.", 3200.00),
+                    new MaintenanceSeed(MaintenanceCategory.COSMETIC, "Підфарбування дверей",
+                            "Невелику подряпину на пасажирських дверях усунуто та відполіровано.", 2800.00),
+                    new MaintenanceSeed(MaintenanceCategory.OIL_CHANGE, "Планова заміна оливи",
+                            "Чергова заміна оливи та фільтра приблизно через 5000 км.", 3300.00),
+                    new MaintenanceSeed(MaintenanceCategory.PART_REPLACEMENT, "Салонний фільтр",
+                            "Замінено салонний фільтр перед сезоном алергії.", 900.00),
+                    new MaintenanceSeed(MaintenanceCategory.INSPECTION, "Перевірка перед зимою",
+                            "Перевірено акумулятор, світло, двірники та рівні рідин.", 1500.00)));
+
     public static DemoContent forLanguage(String language) {
         language = RequestValidation.normalizeToNull(language);
         if (language == null)
             return ENGLISH;
 
-        language = language.toLowerCase(Locale.ROOT);
-        if (language.equals("pl"))
-            return POLISH;
-
-        return ENGLISH;
+        return switch (language.toLowerCase(Locale.ROOT)) {
+            case "pl" -> POLISH;
+            case "ua" -> UKRAINIAN;
+            default -> ENGLISH;
+        };
     }
 }

@@ -7,7 +7,8 @@ import java.util.Optional;
 public enum Currency {
     EURO("EUR"),
     US_DOLLAR("USD"),
-    ZLOTY("PLN");
+    ZLOTY("PLN"),
+    HRYVNIA("UAH");
 
     private final String displayName;
 

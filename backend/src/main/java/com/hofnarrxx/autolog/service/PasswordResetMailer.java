@@ -27,17 +27,26 @@ public class PasswordResetMailer {
     public void sendResetEmail(String to, String rawToken, Locale locale) {
         try {
             String link = appProperties.frontendUrl() + "/reset-password?token=" + rawToken;
-            boolean polish = locale != null && "pl".equalsIgnoreCase(locale.getLanguage());
-
-            String subject = polish
-                    ? "Resetowanie hasła w AutoLog"
-                    : "Reset your AutoLog password";
-
-            String body = polish
-                    ? "Aby zresetować hasło, otwórz ten link (ważny 30 minut):\n\n" + link
-                            + "\n\nJeśli nie prosiłeś o reset, zignoruj tę wiadomość."
-                    : "To reset your password, open this link (valid for 30 minutes):\n\n" + link
+            String language = locale != null ? locale.getLanguage() : "en";
+            String subject;
+            String body;
+            switch (language.toLowerCase()) {
+                case "pl" -> {
+                    subject = "Resetowanie hasła w AutoLog";
+                    body = "Aby zresetować hasło, otwórz ten link (ważny 30 minut):\n\n" + link
+                            + "\n\nJeśli nie prosiłeś o reset, zignoruj tę wiadomość.";
+                }
+                case "ua" -> {
+                    subject = "Скидання пароля в AutoLog";
+                    body = "Щоб скинути пароль, відкрийте це посилання (дійсне 30 хвилин):\n\n" + link
+                            + "\n\nЯкщо ви не надсилали цей запит, проігноруйте цей лист.";
+                }
+                default -> {
+                    subject = "Reset your AutoLog password";
+                    body = "To reset your password, open this link (valid for 30 minutes):\n\n" + link
                             + "\n\nIf you didn't request this, you can ignore this email.";
+                }
+            }
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");

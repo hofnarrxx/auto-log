@@ -93,7 +93,7 @@
       },
       "personalize": {
         "title": "Dostosuj do siebie",
-        "description": "Przełączaj się między językiem polskim i angielskim oraz śledź koszty w EUR, USD lub PLN."
+        "description": "Przełączaj się między językiem angielskim, polskim i ukraińskim oraz śledź koszty w EUR, USD, PLN lub UAH."
       }
     }
   },
@@ -133,7 +133,8 @@
     "selectLanguage": "Wybierz język",
     "languages": {
       "en": "Angielski",
-      "pl": "Polski"
+      "pl": "Polski",
+      "ua": "Ukraiński"
     }
   },
   "auth": {
@@ -156,7 +157,8 @@
         "emailInvalid": "Wpisz prawidłowy adres e-mail.",
         "passwordRequired": "Hasło jest wymagane.",
         "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
-        "invalidCredentials": "Nieprawidłowe dane logowania."
+        "invalidCredentials": "Nieprawidłowe dane logowania.",
+        "googleLoginRequired": "To konto korzysta z logowania przez Google. Zaloguj się przez Google."
       }
     },
     "forgotPassword": {

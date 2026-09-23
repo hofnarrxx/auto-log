@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurrencyService } from '../../shared/services/currency.service';
-import { LanguageService } from '../../shared/services/language.service';
+import { LanguageService } from '../../core/i18n/language.service';
 
 @Component({
   selector: 'app-settings',
@@ -18,10 +18,11 @@ export class Settings {
 
   selectedCurrency = this.currencyService.selectedCurrency;
   selectedLanguage = this.languageService.selectedLanguage;
-  currencies = ['EUR', 'USD', 'PLN'];
+  currencies = ['EUR', 'USD', 'PLN', 'UAH'];
   languages = [
     { code: 'en', labelKey: 'settings.languages.en' },
     { code: 'pl', labelKey: 'settings.languages.pl' },
+    { code: 'ua', labelKey: 'settings.languages.ua' },
   ];
 
   onCurrencyChange(currency: string) {

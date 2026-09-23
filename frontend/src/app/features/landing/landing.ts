@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthStore } from '../../core/auth/auth-store';
-import { LanguageService } from '../../shared/services/language.service';
+import { LanguageService } from '../../core/i18n/language.service';
 import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
