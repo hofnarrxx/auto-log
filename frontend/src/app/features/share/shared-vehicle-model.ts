@@ -7,7 +7,7 @@ import type { FuelSummary, MaintenanceSummary } from '../vehicle/models';
  */
 export interface SharedVehicleResponse {
   carId: string;
-  brand: string;
+  make: string;
   model: string;
   fuelType: string | null;
   mileage: number | null;

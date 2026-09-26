@@ -59,7 +59,7 @@ public class PublicVehicleAccessService {
 
         return new PublicVehicleAccessResponse(
                 vehicle.getId(),
-                vehicle.getBrand(),
+                vehicle.getMake(),
                 vehicle.getModel(),
                 vehicle.getFuelType().getDisplayName(),
                 vehicle.getMileage(),

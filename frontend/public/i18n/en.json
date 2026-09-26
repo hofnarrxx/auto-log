@@ -4,13 +4,13 @@
     "all": "All",
     "amount": "Amount",
     "attachments": "Attachments",
-    "brand": "Brand",
+    "make": "Make",
     "cancel": "Cancel",
     "category": "Category",
     "checkMileage": "Check Mileage",
     "close": "Close",
     "cost": "Cost",
-    "created": "Created",
+    "created": "Created at",
     "currency": "Currency",
     "date": "Date",
     "delete": "Delete",
@@ -46,17 +46,17 @@
     "title": "Title",
     "totalCost": "Total cost",
     "update": "Update",
-    "updated": "Updated",
+    "updated": "Last updated at",
     "updating": "Updating...",
     "vehicleNotFound": "Vehicle not found.",
     "year": "Year",
     "sort": {
       "newest": "Newest",
       "oldest": "Oldest",
-      "priceLowHigh": "Price: Low to High",
-      "priceHighLow": "Price: High to Low",
-      "pricePerUnitLowHigh": "Price per unit: Low to High",
-      "pricePerUnitHighLow": "Price per unit: High to Low"
+      "priceLowHigh": "Price - ascending",
+      "priceHighLow": "Price - descending",
+      "pricePerUnitLowHigh": "Price per unit - ascending",
+      "pricePerUnitHighLow": "Price per unit - descending"
     },
     "pagination": {
       "previous": "Previous",
@@ -69,8 +69,8 @@
   },
   "landing": {
     "hero": {
-      "title": "Track every fill-up and service, all in one place",
-      "subtitle": "AutoLog helps you log fuel and maintenance for all your vehicles, so you always know what you spent and when you're due for service."
+      "title": "Your car’s history, all in one place",
+      "subtitle": "AutoLog helps you log fuel and maintenance for all your vehicles, so you can keep your car’s data organized and access it anytime, from any device, wherever you are."
     },
     "cta": {
       "demo": "Try the demo",
@@ -80,20 +80,20 @@
     },
     "features": {
       "fuel": {
-        "title": "Fuel logging",
-        "description": "Record every fill-up with cost, price per litre, and mileage to track consumption over time."
+        "title": "Fuel tracking",
+        "description": "Log fill-ups, track fuel costs and keep an eye on your car’s consumption with simple, organized records."
       },
       "maintenance": {
         "title": "Maintenance history",
         "description": "Keep a full service history with categories, costs, and attachments like invoices and receipts."
       },
       "share": {
-        "title": "Share with anyone",
-        "description": "Generate a read-only link so mechanics or buyers can view a vehicle's history without an account."
+        "title": "Share with one click",
+        "description": "Generate a public link and share selected car information with mechanics or potential buyers."
       },
       "personalize": {
-        "title": "Made your way",
-        "description": "Switch between English, Polish, and Ukrainian and track costs in EUR, USD, PLN, or UAH."
+        "title": "Insights",
+        "description": "See your car’s complete history at a glance with useful stats and detailed spending over time."
       }
     }
   },
@@ -241,9 +241,9 @@
     },
     "dashboard": {
       "share": {
-        "title": "Share link",
-        "description": "Review active share links for this vehicle.",
-        "includeAttachments": "Include service attachments",
+        "title": "Public links",
+        "description": "Share your car data with just one click.",
+        "includeAttachments": "Include uploaded attachments",
         "generatedLink": "Shared vehicle link",
         "copy": "Copy link",
         "copySuccess": "Link copied.",
@@ -251,11 +251,11 @@
         "delete": "Delete link",
         "remainingTime": "Remaining time",
         "loadingLinks": "Loading share links...",
-        "noActiveLinks": "No active share links yet.",
+        "noActiveLinks": "No active links yet.",
         "errors": {
-          "generate": "Could not generate a share link.",
-          "delete": "Could not delete the share link.",
-          "load": "Could not load share links."
+          "generate": "Could not generate a link.",
+          "delete": "Could not delete the link.",
+          "load": "Could not load the links."
         }
       }
     },
@@ -265,7 +265,7 @@
         "edit": "Edit Vehicle"
       },
       "placeholders": {
-        "brand": "Brand",
+        "make": "Make",
         "model": "Model",
         "year": "Year",
         "mileage": "Mileage",
@@ -273,8 +273,8 @@
         "selectFuelType": "Select fuel type"
       },
       "errors": {
-        "brandRequired": "Brand is required.",
-        "brandMaxLength": "Brand cannot exceed 60 characters.",
+        "makeRequired": "Make is required.",
+        "makeMaxLength": "Make cannot exceed 60 characters.",
         "modelRequired": "Model is required.",
         "modelMaxLength": "Model cannot exceed 60 characters.",
         "fuelTypeRequired": "Fuel type is required.",
@@ -346,7 +346,7 @@
         "filtered": "No service records match the current filters.",
         "none": "No service records yet."
       },
-      "detailsTitle": "Service Record Details",
+      "detailsTitle": "Details",
       "modalTitle": {
         "add": "Add Service Record",
         "edit": "Edit Service Record"
@@ -380,12 +380,12 @@
         "serverRejected": "This value was rejected by the server."
       },
       "categories": {
-        "inspection": "Inspection",
-        "oilChange": "Oil change",
+        "inspectionAndDiagnostics": "Inspection & diagnostics",
+        "oilAndFilters": "Oil & filters",
         "repair": "Repair",
         "partReplacement": "Part replacement",
-        "fluidRefill": "Fluid refill",
-        "tiresAndWheels": "Tires and wheels",
+        "fluids": "Fluids",
+        "tiresAndWheels": "Tires & wheels",
         "cosmetic": "Cosmetic work"
       }
     }
@@ -426,7 +426,7 @@
         "filtered": "No service records match the current filters.",
         "none": "No service records yet."
       },
-      "detailsTitle": "Service Record Details",
+      "detailsTitle": "Details",
       "untitled": "Untitled Service",
       "filter": {
         "title": "Filter records",

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public record VehicleResponse(
         UUID id,
-        String brand,
+        String make,
         String model,
         String fuelType,
         Integer mileage,

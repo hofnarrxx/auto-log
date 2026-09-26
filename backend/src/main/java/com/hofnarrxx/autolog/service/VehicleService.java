@@ -98,7 +98,7 @@ public class VehicleService {
         // when creating - we require necessary fields
         // when updating - only fields in request that are not null are applied
         if(allowNulls) {
-            requirePresent(request.brand(), "brand");
+            requirePresent(request.make(), "make");
             requirePresent(request.model(), "model");
             requirePresent(request.fuelType(), "fuelType");
             requirePresent(request.mileage(), "mileage");
@@ -107,8 +107,8 @@ public class VehicleService {
 
         validateYear(request.year());
         
-        if (allowNulls || request.brand() != null) {
-            vehicle.setBrand(request.brand());
+        if (allowNulls || request.make() != null) {
+            vehicle.setMake(request.make());
         }
         if (allowNulls || request.model() != null) {
             vehicle.setModel(request.model());
@@ -151,7 +151,7 @@ public class VehicleService {
 
         return new VehicleResponse(
                 vehicle.getId(),
-                vehicle.getBrand(),
+                vehicle.getMake(),
                 vehicle.getModel(),
                 vehicle.getFuelType().getDisplayName(),
                 vehicle.getMileage(),

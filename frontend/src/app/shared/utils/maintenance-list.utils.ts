@@ -12,16 +12,16 @@ export interface MaintenanceListRecord {
 
 export function getMaintenanceCategoryLabel(category: string): string {
   switch (category.trim().toLowerCase()) {
-    case 'inspection':
-      return 'vehicle.maintenanceTab.categories.inspection';
-    case 'oil change':
-      return 'vehicle.maintenanceTab.categories.oilChange';
+    case 'inspection & diagnostics':
+      return 'vehicle.maintenanceTab.categories.inspectionAndDiagnostics';
+    case 'oil & filters':
+      return 'vehicle.maintenanceTab.categories.oilAndFilters';
     case 'repair':
       return 'vehicle.maintenanceTab.categories.repair';
     case 'part replacement':
       return 'vehicle.maintenanceTab.categories.partReplacement';
-    case 'fluid refill':
-      return 'vehicle.maintenanceTab.categories.fluidRefill';
+    case 'fluids':
+      return 'vehicle.maintenanceTab.categories.fluids';
     case 'tires & wheels':
       return 'vehicle.maintenanceTab.categories.tiresAndWheels';
     case 'cosmetic':
@@ -34,11 +34,11 @@ export function getMaintenanceCategoryLabel(category: string): string {
 export function getMaintenanceCategoryIcon(category: string): string {
   const normalizedCategory = category.trim().toLowerCase();
   const iconMap: Record<string, string> = {
-    inspection: 'search',
-    'oil change': 'droplet',
+    'inspection & diagnostics': 'search',
+    'oil & filters': 'droplet',
     repair: 'wrench',
     'part replacement': 'cog',
-    'fluid refill': 'droplets',
+    fluids: 'droplets',
     'tires & wheels': 'disc',
     cosmetic: 'sparkles',
   };

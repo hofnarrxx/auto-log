@@ -16,7 +16,7 @@ public class Vehicle {
     private UUID id;
 
     @Column(length = 60)
-    private String brand;
+    private String make;
 
     @Column(length = 60)
     private String model;
@@ -44,12 +44,12 @@ public class Vehicle {
         return id;
     }
 
-    public String getBrand() {
-        return brand;
+    public String getMake() {
+        return make;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setMake(String make) {
+        this.make = make;
     }
 
     public String getModel() {

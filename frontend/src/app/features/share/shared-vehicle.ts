@@ -84,16 +84,6 @@ export class SharedVehicle {
     return `${Math.trunc(mileage).toLocaleString()} km`;
   }
 
-  lastOdometerDate(): string {
-    const latest = this.latestOdometer();
-
-    if (!latest) {
-      return '-';
-    }
-
-    return formatAppDate(latest.date);
-  }
-
   setTab(tab: SharedTab) {
     this.activeTab.set(tab);
   }

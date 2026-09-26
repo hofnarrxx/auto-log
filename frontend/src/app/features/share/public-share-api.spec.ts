@@ -33,7 +33,7 @@ describe('PublicShareApi', () => {
   it('requests a shared vehicle by token', () => {
     const response: SharedVehicleResponse = {
       carId: '1',
-      brand: 'Volvo',
+      make: 'Volvo',
       model: 'V60',
       fuelType: 'Diesel',
       mileage: 1000,

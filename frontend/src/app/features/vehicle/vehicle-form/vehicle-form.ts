@@ -38,7 +38,7 @@ export class VehicleForm {
   }
 
   form = new FormGroup({
-    brand: new FormControl('', {
+    make: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(60)],
     }),

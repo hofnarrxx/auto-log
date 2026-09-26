@@ -1,14 +1,12 @@
 <div class="shared-page">
   <div class="shared-card">
-    <p class="eyebrow">{{ 'sharedVehicle.title' | translate }}</p>
-
     @if (isLoading()) {
       <p class="status">{{ 'sharedVehicle.loading' | translate }}</p>
     } @else if (error()) {
       <p class="status error">{{ error() }}</p>
     } @else if (data()) {
       <header class="vehicle-header">
-        <h1>{{ data()!.brand }} {{ data()!.model }}</h1>
+        <h1>{{ data()!.make }} {{ data()!.model }}</h1>
         <p>
           {{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} •
           {{ lastOdometerReading() }}
@@ -52,8 +50,8 @@
       @if (activeTab() === 'details') {
         <section class="section details-section" role="tabpanel">
           <div class="info-item">
-            <label>{{ 'common.brand' | translate }}:</label>
-            <span>{{ data()!.brand }}</span>
+            <label>{{ 'common.make' | translate }}:</label>
+            <span>{{ data()!.make }}</span>
           </div>
           <div class="info-item">
             <label>{{ 'common.model' | translate }}:</label>
@@ -66,10 +64,6 @@
           <div class="info-item">
             <label>{{ 'common.mileage' | translate }}:</label>
             <span>{{ lastOdometerReading() }}</span>
-          </div>
-          <div class="info-item">
-            <label>{{ 'vehicle.details.lastOdometerDate' | translate }}:</label>
-            <span>{{ lastOdometerDate() }}</span>
           </div>
           <div class="info-item">
             <label>{{ 'common.fuelType' | translate }}:</label>

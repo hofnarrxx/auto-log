@@ -2,16 +2,16 @@
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <input
-    [placeholder]="'vehicle.form.placeholders.brand' | translate"
-    formControlName="brand"
+    [placeholder]="'vehicle.form.placeholders.make' | translate"
+    formControlName="make"
     maxlength="60"
   />
-  @if (form.controls.brand.hasError('maxlength') && form.controls.brand.touched) {
-    <div class="error">{{ 'vehicle.form.errors.brandMaxLength' | translate }}</div>
-  } @else if (form.controls.brand.hasError('server') && form.controls.brand.touched) {
+  @if (form.controls.make.hasError('maxlength') && form.controls.make.touched) {
+    <div class="error">{{ 'vehicle.form.errors.makeMaxLength' | translate }}</div>
+  } @else if (form.controls.make.hasError('server') && form.controls.make.touched) {
     <div class="error">{{ 'vehicle.form.errors.serverRejected' | translate }}</div>
-  } @else if (form.controls.brand.invalid && form.controls.brand.touched) {
-    <div class="error">{{ 'vehicle.form.errors.brandRequired' | translate }}</div>
+  } @else if (form.controls.make.invalid && form.controls.make.touched) {
+    <div class="error">{{ 'vehicle.form.errors.makeRequired' | translate }}</div>
   }
 
   <input

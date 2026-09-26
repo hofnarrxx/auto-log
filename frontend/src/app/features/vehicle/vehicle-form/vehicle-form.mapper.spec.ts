@@ -5,7 +5,7 @@ import {
 } from './vehicle-form.mapper';
 
 const completeValue: VehicleFormValue = {
-  brand: 'Volvo',
+  make: 'Volvo',
   model: 'V60',
   year: 2019,
   mileage: 120_000,
@@ -17,7 +17,7 @@ describe('vehicle form mapping', () => {
   describe('toCreateVehicleCommand', () => {
     it('maps a complete form value together with the image key', () => {
       expect(toCreateVehicleCommand(completeValue, 'vehicles/1/image.jpg')).toEqual({
-        brand: 'Volvo',
+        make: 'Volvo',
         model: 'V60',
         year: 2019,
         mileage: 120_000,
@@ -50,7 +50,7 @@ describe('vehicle form mapping', () => {
     it('adds the vehicle id to the mapped fields', () => {
       expect(toUpdateVehicleCommand('7', completeValue, null)).toEqual({
         id: '7',
-        brand: 'Volvo',
+        make: 'Volvo',
         model: 'V60',
         year: 2019,
         mileage: 120_000,

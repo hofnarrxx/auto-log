@@ -37,10 +37,17 @@
 /* title */
 
 .logo {
+  display: inline-block;
   font-size: 28px;
   font-family: var(--font-head);
   letter-spacing: 0.4px;
   margin-bottom: 6px;
+  color: inherit;
+}
+
+.logo:hover {
+  color: inherit;
+  opacity: 0.85;
 }
 
 h2 {

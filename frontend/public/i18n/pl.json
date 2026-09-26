@@ -4,7 +4,7 @@
     "all": "Wszystkie",
     "amount": "Ilość",
     "attachments": "Załączniki",
-    "brand": "Marka",
+    "make": "Marka",
     "cancel": "Anuluj",
     "category": "Kategoria",
     "checkMileage": "Sprawdź przebieg",
@@ -46,17 +46,17 @@
     "title": "Tytuł",
     "totalCost": "Łączny koszt",
     "update": "Aktualizuj",
-    "updated": "Zaktualizowano",
+    "updated": "Ostatnia aktualizacja",
     "updating": "Aktualizowanie...",
     "vehicleNotFound": "Nie znaleziono pojazdu.",
     "year": "Rok",
     "sort": {
       "newest": "Najnowsze",
       "oldest": "Najstarsze",
-      "priceLowHigh": "Cena: od najniższej do najwyższej",
-      "priceHighLow": "Cena: od najwyższej do najniższej",
-      "pricePerUnitLowHigh": "Cena za jednostkę: od najniższej do najwyższej",
-      "pricePerUnitHighLow": "Cena za jednostkę: od najwyższej do najniższej"
+      "priceLowHigh": "Cena - rosnąco",
+      "priceHighLow": "Cena - malejąco",
+      "pricePerUnitLowHigh": "Cena za jednostkę - rosnąco",
+      "pricePerUnitHighLow": "Cena za jednostkę - malejąco"
     },
     "pagination": {
       "previous": "Poprzednia",
@@ -69,8 +69,8 @@
   },
   "landing": {
     "hero": {
-      "title": "Śledź każde tankowanie i serwis w jednym miejscu",
-      "subtitle": "AutoLog pomaga rejestrować tankowania i serwisy dla wszystkich Twoich pojazdów, dzięki czemu zawsze wiesz, ile wydałeś i kiedy czeka Cię kolejny przegląd."
+      "title": "Historia Twojego samochodu w jednym miejscu",
+      "subtitle": "Z AutoLog łatwo zapiszesz tankowania i serwis swoich samochodów, uporządkujesz wszystkie dane i uzyskasz do nich dostęp zawsze, gdy ich potrzebujesz — z dowolnego urządzenia i miejsca."
     },
     "cta": {
       "demo": "Wypróbuj demo",
@@ -80,26 +80,26 @@
     },
     "features": {
       "fuel": {
-        "title": "Rejestr tankowań",
-        "description": "Zapisuj każde tankowanie z kosztem, ceną za litr i przebiegiem, aby śledzić zużycie paliwa w czasie."
+        "title": "Śledzenie tankowań",
+        "description": "Zapisuj tankowania, śledź koszty paliwa i kontroluj zużycie dzięki prostym i uporządkowanym wpisom."
       },
       "maintenance": {
         "title": "Historia serwisowa",
-        "description": "Prowadź pełną historię serwisową z kategoriami, kosztami i załącznikami, takimi jak faktury i paragony."
+        "description": "Zapisuj wszystkie serwisy, naprawy i koszty oraz dodawaj faktury, paragony i inne załączniki."
       },
       "share": {
-        "title": "Udostępniaj każdemu",
-        "description": "Wygeneruj link tylko do odczytu, aby mechanik lub kupujący mógł zobaczyć historię pojazdu bez konta."
+        "title": "Proste udostępnianie",
+        "description": "Wygeneruj link i udostępnij wybrane informacje o samochodzie mechanikom lub potencjalnym kupującym."
       },
       "personalize": {
-        "title": "Dostosuj do siebie",
-        "description": "Przełączaj się między językiem angielskim, polskim i ukraińskim oraz śledź koszty w EUR, USD, PLN lub UAH."
+        "title": "Statystyki",
+        "description": "Miej pełny obraz historii swojego samochodu dzięki przydatnym statystykom i podsumowaniu wydatków."
       }
     }
   },
   "nav": {
-    "details": "Szczegóły",
-    "fuel": "Tankowanie",
+    "details": "Informacje",
+    "fuel": "Paliwo",
     "logout": "Wyloguj",
     "maintenance": "Serwis",
     "myCars": "Moje samochody",
@@ -115,7 +115,7 @@
   },
   "demo": {
     "tryIt": "Wypróbuj demo",
-    "bannerText": "Tryb demo - to konto jest tylko do odczytu.",
+    "bannerText": "Tryb demo - konto tylko do odczytu.",
     "signUpCta": "Załóż konto, aby śledzić własny samochód.",
     "readOnly": "Niedostępne w trybie demo.",
     "errors": {
@@ -230,10 +230,10 @@
       "editVehicle": "Edytuj pojazd",
       "deleteVehicle": "Usuń pojazd",
       "deleteConfirmTitle": "Usunąć pojazd?",
-      "deleteConfirmMessage": "Spowoduje to trwałe usunięcie tego pojazdu wraz z wszystkimi wpisami paliwowymi i serwisowymi. Tej operacji nie można odwrócić.",
+      "deleteConfirmMessage": "Spowoduje to trwałe usunięcie tego pojazdu wraz ze wszystkimi wpisami. Tej operacji nie można odwrócić.",
       "thumbnailAlt": "Miniatura pojazdu",
       "avgEfficiency": "Średnie zużycie paliwa",
-      "lastOdometerReading": "Ostatni odczyt licznika",
+      "lastOdometerReading": "Ostatni odczyt przebiegu",
       "lastOdometerDate": "Zapisano",
       "errors": {
         "deleteFailed": "Nie można teraz usunąć tego pojazdu."
@@ -241,9 +241,9 @@
     },
     "dashboard": {
       "share": {
-        "title": "Link do udostępniania",
-        "description": "Sprawdź aktywne linki udostępniania dla tego pojazdu.",
-        "includeAttachments": "Udostępnij załączniki serwisowe",
+        "title": "Udostępnianie",
+        "description": "Udostępnij dane swojego samochodu jednym kliknięciem.",
+        "includeAttachments": "Udostępnij także załączniki",
         "generatedLink": "Link do udostępnionego pojazdu",
         "copy": "Kopiuj link",
         "copySuccess": "Link został skopiowany.",
@@ -251,7 +251,7 @@
         "delete": "Usuń link",
         "remainingTime": "Pozostały czas",
         "loadingLinks": "Ładowanie linków udostępniania...",
-        "noActiveLinks": "Brak aktywnych linków udostępniania.",
+        "noActiveLinks": "Brak aktywnych linków.",
         "errors": {
           "generate": "Nie udało się wygenerować linku do udostępniania.",
           "delete": "Nie udało się usunąć linku udostępniania.",
@@ -265,7 +265,7 @@
         "edit": "Edytuj pojazd"
       },
       "placeholders": {
-        "brand": "Marka",
+        "make": "Marka",
         "model": "Model",
         "year": "Rok",
         "mileage": "Przebieg",
@@ -273,8 +273,8 @@
         "selectFuelType": "Wybierz rodzaj paliwa"
       },
       "errors": {
-        "brandRequired": "Marka jest wymagana.",
-        "brandMaxLength": "Marka nie może przekraczać 60 znaków.",
+        "makeRequired": "Marka jest wymagana.",
+        "makeMaxLength": "Marka nie może przekraczać 60 znaków.",
         "modelRequired": "Model jest wymagany.",
         "modelMaxLength": "Model nie może przekraczać 60 znaków.",
         "fuelTypeRequired": "Rodzaj paliwa jest wymagany.",
@@ -310,7 +310,7 @@
       "modalTitle": {
         "add": "Dodaj wpis tankowania",
         "edit": "Edytuj wpis tankowania",
-        "details": "Szczegóły wpisu tankowania"
+        "details": "Szczegóły"
       },
       "errors": {
         "dateRequired": "Data jest wymagana.",
@@ -346,7 +346,7 @@
         "filtered": "Brak wpisów serwisowych pasujących do bieżących filtrów.",
         "none": "Brak wpisów serwisowych."
       },
-      "detailsTitle": "Szczegóły wpisu serwisowego",
+      "detailsTitle": "Szczegóły",
       "modalTitle": {
         "add": "Dodaj wpis serwisowy",
         "edit": "Edytuj wpis serwisowy"
@@ -380,11 +380,11 @@
         "serverRejected": "Ta wartość została odrzucona przez serwer."
       },
       "categories": {
-        "inspection": "Przegląd",
-        "oilChange": "Wymiana oleju",
-        "repair": "Naprawa",
+        "inspectionAndDiagnostics": "Przeglądy i diagnostyka",
+        "oilAndFilters": "Oleje i filtry",
+        "repair": "Naprawy",
         "partReplacement": "Wymiana części",
-        "fluidRefill": "Uzupełnienie płynów",
+        "fluids": "Płyny",
         "tiresAndWheels": "Opony i koła",
         "cosmetic": "Prace kosmetyczne"
       }
@@ -395,7 +395,7 @@
     "loading": "Ładowanie udostępnionego pojazdu...",
     "tabs": {
       "ariaLabel": "Sekcje udostępnionego pojazdu",
-      "details": "Szczegóły",
+      "details": "Informacje",
       "maintenance": "Serwis",
       "fuel": "Paliwo"
     },
@@ -412,7 +412,7 @@
         "filtered": "Brak wpisów tankowania pasujących do bieżących filtrów.",
         "none": "Brak wpisów tankowania."
       },
-      "detailsTitle": "Szczegóły wpisu tankowania",
+      "detailsTitle": "Szczegóły",
       "errors": {
         "loadFailed": "Nie udało się wczytać wpisów tankowania."
       }
@@ -426,7 +426,7 @@
         "filtered": "Brak wpisów serwisowych pasujących do bieżących filtrów.",
         "none": "Brak wpisów serwisowych."
       },
-      "detailsTitle": "Szczegóły wpisu serwisowego",
+      "detailsTitle": "Szczegóły",
       "untitled": "Bez tytułu",
       "filter": {
         "title": "Filtruj wpisy",

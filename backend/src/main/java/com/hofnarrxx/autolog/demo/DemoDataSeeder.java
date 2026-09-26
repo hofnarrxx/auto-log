@@ -115,7 +115,7 @@ public class DemoDataSeeder implements ApplicationRunner {
 
         private Vehicle generateVehicle(User user) {
                 Vehicle vehicle = new Vehicle();
-                vehicle.setBrand("Peugeot");
+                vehicle.setMake("Peugeot");
                 vehicle.setModel("406");
                 vehicle.setYear(1997);
                 vehicle.setFuelType(FuelType.PETROL);

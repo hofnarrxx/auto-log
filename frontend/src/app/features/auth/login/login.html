@@ -1,6 +1,6 @@
 <div class="auth-page">
   <div class="auth-card">
-    <h1 class="logo">{{ 'common.appName' | translate }}</h1>
+    <a routerLink="/" class="logo">{{ 'common.appName' | translate }}</a>
 
     <form [formGroup]="form" (ngSubmit)="login()" class="auth-form">
       <div class="form-field">

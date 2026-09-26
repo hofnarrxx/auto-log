@@ -30,7 +30,7 @@ describe('VehicleApi', () => {
 
   it('requests all vehicles from the vehicles endpoint', () => {
     const vehicles: Vehicle[] = [
-      { id: '1', brand: 'Volvo', model: 'V60', year: 2019, fuelType: 'Diesel', mileage: 100 },
+      { id: '1', make: 'Volvo', model: 'V60', year: 2019, fuelType: 'Diesel', mileage: 100 },
     ];
 
     api.getAll().subscribe((result) => expect(result).toEqual(vehicles));
@@ -42,7 +42,7 @@ describe('VehicleApi', () => {
 
   it('posts a create command to the vehicles endpoint', () => {
     const command: CreateVehicleCommand = {
-      brand: 'Volvo',
+      make: 'Volvo',
       model: 'V60',
       year: 2019,
       mileage: 100,
@@ -63,7 +63,7 @@ describe('VehicleApi', () => {
   it('puts an update command to the vehicle-specific endpoint', () => {
     const command: UpdateVehicleCommand = {
       id: '7',
-      brand: 'Volvo',
+      make: 'Volvo',
       model: 'V60',
       year: 2019,
       mileage: 100,

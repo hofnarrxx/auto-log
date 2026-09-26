@@ -90,8 +90,8 @@ export class VehicleDetailsTab {
     return this.translate.instant('vehicle.details.deleteVehicle');
   }
 
-  protected brandLabel(): string {
-    return this.translate.instant('common.brand');
+  protected makeLabel(): string {
+    return this.translate.instant('common.make');
   }
 
   protected modelLabel(): string {

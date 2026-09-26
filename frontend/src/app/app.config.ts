@@ -12,6 +12,8 @@ import { authInterceptor } from './core/auth/auth-interceptor';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import {
+  ChartNoAxesCombined,
+  Cog,
   Disc,
   Droplet,
   Droplets,
@@ -19,10 +21,10 @@ import {
   LucideIconProvider,
   LUCIDE_ICONS,
   Search,
+  Share,
   Sparkles,
   ToolCase,
   Toolbox,
-  Cog,
   Wrench,
 } from 'lucide-angular';
 
@@ -54,6 +56,8 @@ export const appConfig: ApplicationConfig = {
         Disc,
         Sparkles,
         ToolCase,
+        ChartNoAxesCombined,
+        Share,
       }),
     },
   ],

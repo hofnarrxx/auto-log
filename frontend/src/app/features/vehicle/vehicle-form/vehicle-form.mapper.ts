@@ -5,7 +5,7 @@ import type { CreateVehicleCommand, UpdateVehicleCommand } from '../models';
  * or select control holds `null` until the user picks something.
  */
 export interface VehicleFormValue {
-  brand: string;
+  make: string;
   model: string;
   year: number | null;
   mileage: number | null;
@@ -20,13 +20,13 @@ export function toCreateVehicleCommand(
   value: VehicleFormValue,
   imageKey: string | null
 ): CreateVehicleCommand | null {
-  const { brand, model, year, mileage, fuelType, licensePlate } = value;
+  const { make, model, year, mileage, fuelType, licensePlate } = value;
 
   if (year === null || mileage === null || !fuelType) {
     return null;
   }
 
-  return { brand, model, year, mileage, fuelType, licensePlate, imageKey };
+  return { make, model, year, mileage, fuelType, licensePlate, imageKey };
 }
 
 export function toUpdateVehicleCommand(

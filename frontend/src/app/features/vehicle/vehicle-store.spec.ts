@@ -7,7 +7,7 @@ import { ShareLinkApi } from './services/share-link-api';
 
 const VEHICLE: Vehicle = {
   id: '1',
-  brand: 'Volvo',
+  make: 'Volvo',
   model: 'V60',
   year: 2019,
   fuelType: 'Diesel',
@@ -63,7 +63,7 @@ describe('VehicleStore', () => {
 
     store
       .add({
-        brand: 'Volvo',
+        make: 'Volvo',
         model: 'V60',
         year: 2019,
         mileage: 1000,

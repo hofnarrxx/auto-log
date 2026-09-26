@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public record VehicleRequest(
         @Size(min = 1, max = 60)
-        String brand,
+        String make,
         @Size(min = 1, max = 60)
         String model,
         String fuelType,

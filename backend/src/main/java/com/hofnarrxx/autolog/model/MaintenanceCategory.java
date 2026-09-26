@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 public enum MaintenanceCategory {
-    INSPECTION("Inspection"),
-    OIL_CHANGE("Oil change"),
+    INSPECTION_AND_DIAGNOSTICS("Inspection & diagnostics"),
+    OIL_AND_FILTERS("Oil & filters"),
     REPAIR("Repair"),
     PART_REPLACEMENT("Part Replacement"),
-    FLUID_REFILL("Fluid refill"),
+    FLUIDS("Fluids"),
     TIRES_AND_WHEELS("Tires & Wheels"),
     COSMETIC("Cosmetic");
 

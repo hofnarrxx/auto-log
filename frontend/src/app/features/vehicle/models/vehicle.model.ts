@@ -1,6 +1,6 @@
 export interface Vehicle {
   id: string;
-  brand: string;
+  make: string;
   model: string;
   year: number | null;
   fuelType: string | null;
@@ -15,7 +15,7 @@ export interface Vehicle {
  * supply is non-nullable, so a partially filled form cannot be sent by accident.
  */
 export interface CreateVehicleCommand {
-  brand: string;
+  make: string;
   model: string;
   year: number;
   mileage: number;
