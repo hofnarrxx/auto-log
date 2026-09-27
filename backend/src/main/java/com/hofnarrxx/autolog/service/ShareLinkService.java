@@ -36,7 +36,7 @@ public class ShareLinkService {
     }
 
     @Transactional
-    public ShareLink create(UUID carId, Instant expiresAt, Boolean includeAttachments) {
+    public ShareLink create(UUID carId, Instant expiresAt, Boolean includeAttachments, Boolean includeImage) {
         User user = authService.getCurrentUser();
 
         Vehicle vehicle = vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(carId, user.getId())
@@ -60,6 +60,7 @@ public class ShareLinkService {
         shareLink.setExpiresAt(expiresAt);
         shareLink.setRevoked(false);
         shareLink.setIncludeAttachments(includeAttachments == null || includeAttachments);
+        shareLink.setIncludeImage(Boolean.TRUE.equals(includeImage)); // null or false -> false
 
         return shareLinkRepository.save(shareLink);
     }

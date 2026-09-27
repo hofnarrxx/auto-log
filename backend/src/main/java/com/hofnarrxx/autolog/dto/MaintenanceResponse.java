@@ -16,6 +16,7 @@ public record MaintenanceResponse(
         String description,
         BigDecimal cost,
         String currency,
+        boolean hasAttachments,
         List<MaintenanceAttachmentResponse> attachments,
         Instant createdAt,
         Instant updatedAt

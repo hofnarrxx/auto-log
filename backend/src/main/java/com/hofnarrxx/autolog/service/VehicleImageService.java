@@ -104,6 +104,24 @@ public class VehicleImageService {
         return new VehicleImageDownloadUrlResponse(presignedRequest.url().toString());
     }
 
+    public String createDownloadUrlForPublicAccess(UUID vehicleId, String imageKey) {
+        String objectKey = normalize(imageKey);
+
+        if (objectKey == null || objectKey.isBlank() || !objectKey.startsWith(imagePrefix(vehicleId)))
+            return null;
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(properties.bucket())
+                .key(objectKey).build();
+
+        PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(
+                GetObjectPresignRequest.builder()
+                        .signatureDuration(PRESIGNED_URL_TTL)
+                        .getObjectRequest(getObjectRequest)
+                        .build());
+
+        return presignedRequest.url().toString();
+    }
+
     private Vehicle getOwnedVehicle(UUID vehicleId) {
         UUID userId = authService.getCurrentUser().getId();
         return vehicleRepository.findByIdAndUserIdAndDeletedAtIsNull(vehicleId, userId)

@@ -13,6 +13,7 @@ import com.hofnarrxx.autolog.model.Currency;
 import com.hofnarrxx.autolog.model.Maintenance;
 import com.hofnarrxx.autolog.model.MaintenanceCategory;
 import com.hofnarrxx.autolog.model.Vehicle;
+import com.hofnarrxx.autolog.repository.MaintenanceAttachmentRepository;
 import com.hofnarrxx.autolog.repository.MaintenanceRepository;
 import com.hofnarrxx.autolog.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import com.hofnarrxx.autolog.utils.RequestValidation;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -38,13 +40,16 @@ import java.util.UUID;
 public class MaintenanceService {
     private final MaintenanceRepository maintenanceRepository;
     private final VehicleRepository vehicleRepository;
+    private final MaintenanceAttachmentRepository maintenanceAttachmentRepository;
     private final AuthService authService;
 
     public MaintenanceService(MaintenanceRepository maintenanceRepository,
             VehicleRepository vehicleRepository,
+            MaintenanceAttachmentRepository maintenanceAttachmentRepository,
             AuthService authService) {
         this.maintenanceRepository = maintenanceRepository;
         this.vehicleRepository = vehicleRepository;
+        this.maintenanceAttachmentRepository = maintenanceAttachmentRepository;
         this.authService = authService;
     }
 
@@ -60,15 +65,18 @@ public class MaintenanceService {
             categories = List.of("_");
         }
         if (categories != null && categories.isEmpty()) {
-            return PageResponse.from(Page.empty(pageRequest), this::toListResponse);
+            return PageResponse.from(Page.<Maintenance>empty(pageRequest), maintenance -> toListResponse(maintenance, false));
         }
         Page<Maintenance> maintenancePage = maintenanceRepository.findPageForOwner(vehicleId, userId, hasCategories,
                 categories, Currency.fromDisplayName(currency).orElse(null), minCost, maxCost, title, pageRequest);
-        return PageResponse.from(maintenancePage, this::toListResponse);
+        
+        Set<UUID> withAttachments = getAttachmentIds(maintenancePage);
+
+        return PageResponse.from(maintenancePage, maintenance -> toListResponse(maintenance, withAttachments.contains(maintenance.getId())));
     }
 
     PageResponse<MaintenanceResponse> getPageForPublicAccess(UUID vehicleId, Integer page, Integer size, String sort,
-            String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost) {
+            String title, List<String> categories, String currency, BigDecimal minCost, BigDecimal maxCost, boolean includeAttachments) {
         boolean hasCategories = true;
         PageRequestParams pageRequestParams = PageRequestParams.of(page, size);
         Sort maintenanceSort = MaintenanceSort.fromParam(sort).toSort();
@@ -78,11 +86,16 @@ public class MaintenanceService {
             categories = List.of("_");
         }
         if (categories != null && categories.isEmpty()) {
-            return PageResponse.from(Page.empty(pageRequest), this::toListResponse);
+            return PageResponse.from(Page.<Maintenance>empty(pageRequest), maintenance -> toListResponse(maintenance, false));
         }
         Page<Maintenance> maintenancePage = maintenanceRepository.findPageForPublicAccess(vehicleId, hasCategories,
                 categories, Currency.fromDisplayName(currency).orElse(null), minCost, maxCost, title, pageRequest);
-        return PageResponse.from(maintenancePage, this::toListResponse);
+                
+        Set<UUID> withAttachments = includeAttachments
+            ? getAttachmentIds(maintenancePage)
+            : Set.of();
+
+        return PageResponse.from(maintenancePage, maintenance -> toListResponse(maintenance, withAttachments.contains(maintenance.getId())));
     }
 
     public MaintenanceResponse getById(UUID vehicleId, UUID maintenanceId) {
@@ -97,7 +110,7 @@ public class MaintenanceService {
                         .orElseThrow(MaintenanceNotFoundException::new)
                 : maintenanceRepository.findByIdAndVehicleId(maintenanceId, vehicleId)
                         .orElseThrow(MaintenanceNotFoundException::new);
-        return includeAttachments ? toResponse(maintenance) : toListResponse(maintenance);
+        return includeAttachments ? toResponse(maintenance) : toListResponse(maintenance, false);
     }
 
     public MaintenanceSummaryResponse getSummary(UUID vehicleId) {
@@ -140,15 +153,15 @@ public class MaintenanceService {
         return toResponse(savedMaintenance);
     }
 
-    @Transactional 
+    @Transactional
     public void delete(UUID vehicleId, UUID maintenanceId) {
         UUID userId = authService.getCurrentUser().getId();
         Maintenance maintenance = findOwnedMaintenance(vehicleId, maintenanceId, userId);
         Instant now = Instant.now();
 
         maintenance.getAttachments().stream()
-        .filter(attachment -> attachment.getDeletedAt() == null)
-        .forEach(attachment -> attachment.setDeletedAt(now));
+                .filter(attachment -> attachment.getDeletedAt() == null)
+                .forEach(attachment -> attachment.setDeletedAt(now));
 
         maintenance.setDeletedAt(now);
         maintenanceRepository.save(maintenance);
@@ -249,13 +262,15 @@ public class MaintenanceService {
                 maintenance.getDescription(),
                 maintenance.getCost(),
                 maintenance.getCurrency() == null ? null : maintenance.getCurrency().getDisplayName(),
+                !attachments.isEmpty(),
                 attachments,
                 maintenance.getCreatedAt(),
                 maintenance.getUpdatedAt());
     }
 
     // no attachments loaded for a list
-    private MaintenanceResponse toListResponse(Maintenance maintenance) {
+    // hasAttachments is used for showing attachment icons in the list
+    private MaintenanceResponse toListResponse(Maintenance maintenance, boolean hasAttachments) {
         return new MaintenanceResponse(
                 maintenance.getId(),
                 maintenance.getVehicle().getId(),
@@ -266,9 +281,16 @@ public class MaintenanceService {
                 maintenance.getDescription(),
                 maintenance.getCost(),
                 maintenance.getCurrency() == null ? null : maintenance.getCurrency().getDisplayName(),
+                hasAttachments,
                 List.of(),
                 maintenance.getCreatedAt(),
                 maintenance.getUpdatedAt());
+    }
+
+    private Set<UUID> getAttachmentIds(Page<Maintenance> page){
+        if(page.isEmpty()) return Set.of();
+        List<UUID> ids = page.getContent().stream().map(Maintenance::getId).toList();
+        return maintenanceAttachmentRepository.findMaintenanceIdsWithAttachments(ids);
     }
 
     private void updateVehicleMileageIfNeeded(Vehicle vehicle, Integer maintenanceMileage) {

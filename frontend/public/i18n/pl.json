@@ -243,7 +243,8 @@
       "share": {
         "title": "Udostępnianie",
         "description": "Udostępnij dane swojego samochodu jednym kliknięciem.",
-        "includeAttachments": "Udostępnij także załączniki",
+        "includeAttachments": "Udostępnij załączniki",
+        "includeImage": "Udostępnij zdjęcie pojazdu",
         "generatedLink": "Link do udostępnionego pojazdu",
         "copy": "Kopiuj link",
         "copySuccess": "Link został skopiowany.",

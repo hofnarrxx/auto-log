@@ -28,7 +28,7 @@ describe('ShareLinkApi', () => {
     httpMock.verify();
   });
 
-  it('creates a share link with a future expiry and the requested attachment flag', () => {
+  it('creates a share link with a future expiry and the requested attachment and image flags', () => {
     const response: ShareLinkResponse = {
       id: '1',
       token: 'abc',
@@ -38,14 +38,16 @@ describe('ShareLinkApi', () => {
       expiresAt: '2026-01-08T00:00:00.000Z',
       revoked: false,
       includeAttachments: false,
+      includeImage: true,
     };
 
-    api.create('5', false).subscribe((result) => expect(result).toEqual(response));
+    api.create('5', false, true).subscribe((result) => expect(result).toEqual(response));
 
     const req = httpMock.expectOne(`${BASE_URL}/api/share-links`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body.carId).toBe('5');
     expect(req.request.body.includeAttachments).toBe(false);
+    expect(req.request.body.includeImage).toBe(true);
     expect(new Date(req.request.body.expiresAt).getTime()).toBeGreaterThan(Date.now());
     req.flush(response);
   });

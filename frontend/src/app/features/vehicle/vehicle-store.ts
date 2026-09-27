@@ -75,8 +75,12 @@ export class VehicleStore {
     this.load$.next();
   }
 
-  createShareLink(carId: string, includeAttachments = true): Observable<ShareLinkResponse> {
-    return this.shareLinkApi.create(carId, includeAttachments);
+  createShareLink(
+    carId: string,
+    includeAttachments = true,
+    includeImage = true
+  ): Observable<ShareLinkResponse> {
+    return this.shareLinkApi.create(carId, includeAttachments, includeImage);
   }
 
   listShareLinks(carId: string): Observable<ShareLinkResponse[]> {

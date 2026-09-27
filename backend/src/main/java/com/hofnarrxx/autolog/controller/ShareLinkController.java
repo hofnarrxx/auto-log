@@ -31,7 +31,8 @@ public class ShareLinkController {
         ShareLink created = shareLinkService.create(
                 request.carId(),
                 request.expiresAt(),
-                request.includeAttachments()
+                request.includeAttachments(),
+                request.includeImage()
         );
         return toResponse(created);
     }
@@ -58,7 +59,8 @@ public class ShareLinkController {
                 shareLink.getCreatedAt(),
                 shareLink.getExpiresAt(),
             shareLink.isRevoked(),
-            shareLink.isIncludeAttachments()
+            shareLink.isIncludeAttachments(),
+            shareLink.isIncludeImage()
         );
     }
 }

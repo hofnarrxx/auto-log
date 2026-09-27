@@ -6,7 +6,8 @@ import java.util.UUID;
 public record ShareLinkCreateRequest(
         UUID carId,
         Instant expiresAt,
-        Boolean includeAttachments
+        Boolean includeAttachments,
+        Boolean includeImage
 ) {
 }
 

@@ -7,10 +7,12 @@ export interface ShareLinkResponse {
   expiresAt: string | null;
   revoked: boolean;
   includeAttachments: boolean;
+  includeImage: boolean;
 }
 
 export interface CreateShareLinkRequest {
   carId: string;
   expiresAt: string;
   includeAttachments: boolean;
+  includeImage: boolean;
 }

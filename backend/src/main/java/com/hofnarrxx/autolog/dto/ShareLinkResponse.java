@@ -11,7 +11,8 @@ public record ShareLinkResponse(
         Instant createdAt,
         Instant expiresAt,
         boolean revoked,
-        boolean includeAttachments
+        boolean includeAttachments,
+        boolean includeImage
 ) {
 }
 

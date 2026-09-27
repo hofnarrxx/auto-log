@@ -164,6 +164,10 @@
   color: var(--text-muted);
 }
 
+.share-toggle + .share-toggle {
+  margin-top: 8px;
+}
+
 .share-toggle input {
   width: 20px;
   height: 20px;

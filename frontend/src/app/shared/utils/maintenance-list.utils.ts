@@ -8,6 +8,7 @@ export interface MaintenanceListRecord {
   category: string;
   cost: number | null;
   currency?: string;
+  hasAttachments?: boolean;
 }
 
 export function getMaintenanceCategoryLabel(category: string): string {

@@ -52,6 +52,7 @@ describe('PublicShareApi', () => {
         mileageWarningRecordIds: [],
         maxCost: 0,
       },
+      imageUrl: null,
     };
 
     api.getSharedVehicle('token-123').subscribe((result) => expect(result).toEqual(response));

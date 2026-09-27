@@ -10,7 +10,8 @@ public record PublicVehicleAccessResponse(
         Integer mileage,
         Integer year,
         FuelSummaryResponse fuelSummary,
-        MaintenanceSummaryResponse maintenanceSummary
+        MaintenanceSummaryResponse maintenanceSummary,
+        String imageUrl
 ) {
 }
 

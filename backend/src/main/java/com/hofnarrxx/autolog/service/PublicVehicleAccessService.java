@@ -25,6 +25,7 @@ public class PublicVehicleAccessService {
     private final VehicleRepository vehicleRepository;
     private final FuelService fuelService;
     private final MaintenanceService maintenanceService;
+    private final VehicleImageService vehicleImageService;
 
     private record ResolvedShare(ShareLink shareLink, Vehicle vehicle) {
     }
@@ -32,11 +33,13 @@ public class PublicVehicleAccessService {
     public PublicVehicleAccessService(ShareLinkService shareLinkService,
             VehicleRepository vehicleRepository,
             FuelService fuelService,
-            MaintenanceService maintenanceService) {
+            MaintenanceService maintenanceService,
+            VehicleImageService vehicleImageService) {
         this.shareLinkService = shareLinkService;
         this.vehicleRepository = vehicleRepository;
         this.fuelService = fuelService;
         this.maintenanceService = maintenanceService;
+        this.vehicleImageService = vehicleImageService;
     }
 
     private ResolvedShare resolveShare(String token) {
@@ -54,6 +57,10 @@ public class PublicVehicleAccessService {
         ResolvedShare resolved = resolveShare(token);
         Vehicle vehicle = resolved.vehicle();
 
+        String imageUrl = resolved.shareLink().isIncludeImage()
+        ? vehicleImageService.createDownloadUrlForPublicAccess(vehicle.getId(), vehicle.getImage())
+        : null;
+
         FuelSummaryResponse fuelSummary = fuelService.getSummaryForPublicAccess(vehicle.getId());
         MaintenanceSummaryResponse maintenanceSummary = maintenanceService.getSummaryForPublicAccess(vehicle.getId());
 
@@ -65,7 +72,8 @@ public class PublicVehicleAccessService {
                 vehicle.getMileage(),
                 vehicle.getYear(),
                 fuelSummary,
-                maintenanceSummary);
+                maintenanceSummary,
+                imageUrl);
     }
 
     public PageResponse<FuelResponse> getFuelPage(String token, Integer page, Integer size,
@@ -77,9 +85,11 @@ public class PublicVehicleAccessService {
     public PageResponse<MaintenanceResponse> getMaintenancePage(String token, Integer page, Integer size,
             String sort, String title, List<String> categories, String currency,
             BigDecimal minCost, BigDecimal maxCost) {
-        UUID vehicleId = resolveShare(token).vehicle().getId();
+        ResolvedShare resolved = resolveShare(token);
+        UUID vehicleId = resolved.vehicle().getId();
+        boolean includeAttachments = resolved.shareLink.isIncludeAttachments();
         return maintenanceService.getPageForPublicAccess(
-                vehicleId, page, size, sort, title, categories, currency, minCost, maxCost);
+                vehicleId, page, size, sort, title, categories, currency, minCost, maxCost, includeAttachments);
     }
 
     public MaintenanceResponse getMaintenanceById(String token, UUID maintenanceId) {

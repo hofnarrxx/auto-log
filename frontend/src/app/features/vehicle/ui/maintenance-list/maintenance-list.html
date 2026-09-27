@@ -76,6 +76,12 @@
             <span class="entry-cost">{{ entry.cost | money: entry.currency }}</span>
           </div>
 
+          @if (entry.hasAttachments) {
+            <span class="entry-attachment" [attr.aria-label]="'common.attachments' | translate">
+              <lucide-icon name="file" size="16" strokeWidth="2" aria-hidden="true"></lucide-icon>
+            </span>
+          }
+
           @if (hasMileageWarning(entry)) {
             <span
               class="entry-warning-side"

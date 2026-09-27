@@ -5,12 +5,21 @@
     } @else if (error()) {
       <p class="status error">{{ error() }}</p>
     } @else if (data()) {
-      <header class="vehicle-header">
-        <h1>{{ data()!.make }} {{ data()!.model }}</h1>
-        <p>
-          {{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} •
-          {{ lastOdometerReading() }}
-        </p>
+      <header class="vehicle-header" [class.has-photo]="!!data()!.imageUrl">
+        @if (data()!.imageUrl) {
+          <img
+            class="vehicle-photo"
+            [src]="data()!.imageUrl"
+            [alt]="'vehicle.details.thumbnailAlt' | translate"
+          />
+        }
+        <div>
+          <h1>{{ data()!.make }} {{ data()!.model }}</h1>
+          <p>
+            {{ data()!.year || '-' }} • {{ fuelTypeLabel(data()!.fuelType) }} •
+            {{ lastOdometerReading() }}
+          </p>
+        </div>
       </header>
 
       <div

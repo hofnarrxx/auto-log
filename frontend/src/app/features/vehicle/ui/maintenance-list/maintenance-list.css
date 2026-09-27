@@ -41,6 +41,33 @@
   font-size: 13px;
 }
 
+.entry-attachment {
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.maintenance-list .timeline-item {
+  grid-template-columns: 102px 52px auto auto auto;
+}
+
+@media (max-width: 600px) {
+  .maintenance-list .timeline-item {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'icon date date'
+      'icon content file'
+      'icon warn warn';
+  }
+
+  .entry-attachment {
+    grid-area: file;
+    align-self: center;
+  }
+}
+
 .filter-section {
   margin-bottom: 16px;
 }

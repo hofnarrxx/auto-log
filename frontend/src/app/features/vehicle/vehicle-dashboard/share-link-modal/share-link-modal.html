@@ -60,6 +60,17 @@
       <span>{{ 'vehicle.dashboard.share.includeAttachments' | translate }}</span>
     </label>
 
+    <label class="share-toggle">
+      <input
+        type="checkbox"
+        [checked]="shareImage()"
+        [disabled]="isDemo()"
+        [attr.title]="isDemo() ? ('demo.readOnly' | translate) : null"
+        (change)="onShareImageChange($event)"
+      />
+      <span>{{ 'vehicle.dashboard.share.includeImage' | translate }}</span>
+    </label>
+
     <div class="share-modal-actions">
       <button
         type="button"

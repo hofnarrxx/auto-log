@@ -13,11 +13,16 @@ export class ShareLinkApi {
   private readonly http = inject(HttpClient);
   private readonly shareLinkApi = `${inject(API_BASE_URL)}/api/share-links`;
 
-  create(carId: string, includeAttachments: boolean): Observable<ShareLinkResponse> {
+  create(
+    carId: string,
+    includeAttachments: boolean,
+    includeImage: boolean
+  ): Observable<ShareLinkResponse> {
     const request: CreateShareLinkRequest = {
       carId,
       expiresAt: new Date(Date.now() + SHARE_LINK_LIFETIME_MS).toISOString(),
       includeAttachments,
+      includeImage,
     };
 
     return this.http.post<ShareLinkResponse>(this.shareLinkApi, request);

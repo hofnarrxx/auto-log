@@ -14,4 +14,5 @@ export interface SharedVehicleResponse {
   year: number | null;
   fuelSummary: FuelSummary;
   maintenanceSummary: MaintenanceSummary;
+  imageUrl: string | null;
 }

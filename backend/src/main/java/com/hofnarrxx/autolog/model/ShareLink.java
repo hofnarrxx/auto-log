@@ -49,6 +49,9 @@ public class ShareLink {
     @Column(nullable = false)
     private boolean includeAttachments = true;
 
+    @Column(nullable = false)
+    private boolean includeImage = false;
+
     @PrePersist
     public void onCreate() {
         if (this.createdAt == null) {
@@ -115,4 +118,14 @@ public class ShareLink {
     public void setIncludeAttachments(boolean includeAttachments) {
         this.includeAttachments = includeAttachments;
     }
+
+    public boolean isIncludeImage() {
+        return includeImage;
+    }
+
+    public void setIncludeImage(boolean includeImage) {
+        this.includeImage = includeImage;
+    }
+
+    
 }

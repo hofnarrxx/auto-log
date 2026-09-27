@@ -17,6 +17,7 @@ export interface MaintenanceRecord {
   description: string;
   cost: number | null;
   currency?: string;
+  hasAttachments?: boolean;
   attachments?: MaintenanceAttachment[];
   createdAt: string;
   updatedAt: string;

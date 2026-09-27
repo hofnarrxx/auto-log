@@ -244,6 +244,7 @@
         "title": "Public links",
         "description": "Share your car data with just one click.",
         "includeAttachments": "Include uploaded attachments",
+        "includeImage": "Include vehicle photo",
         "generatedLink": "Shared vehicle link",
         "copy": "Copy link",
         "copySuccess": "Link copied.",

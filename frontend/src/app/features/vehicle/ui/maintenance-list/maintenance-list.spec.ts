@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { Cog, Droplet, LUCIDE_ICONS, LucideIconProvider } from 'lucide-angular';
+import { Cog, Droplet, File, LUCIDE_ICONS, LucideIconProvider } from 'lucide-angular';
 import { MaintenanceList, type MaintenanceQueryChange } from './maintenance-list';
 import type { MaintenanceListRecord } from '../../../../shared/utils/maintenance-list.utils';
 
@@ -9,7 +9,7 @@ const RECORD: MaintenanceListRecord = {
   serviceDate: '2026-01-01',
   title: 'Oil change',
   mileage: 1000,
-  category: 'Oil change',
+  category: 'Oil & filters',
   cost: 150,
   currency: 'EUR',
 };
@@ -21,7 +21,11 @@ describe('MaintenanceList', () => {
     TestBed.configureTestingModule({
       imports: [MaintenanceList, TranslateModule.forRoot()],
       providers: [
-        { provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider({ Droplet, Cog }) },
+        {
+          provide: LUCIDE_ICONS,
+          multi: true,
+          useValue: new LucideIconProvider({ Droplet, Cog, File }),
+        },
       ],
     });
     fixture = TestBed.createComponent(MaintenanceList<MaintenanceListRecord>);
@@ -35,6 +39,14 @@ describe('MaintenanceList', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Oil change');
+    expect(fixture.nativeElement.querySelector('lucide-icon[name="file"]')).toBeNull();
+  });
+
+  it('shows a file icon when the record has attachments', () => {
+    fixture.componentInstance.records = [{ ...RECORD, hasAttachments: true }];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('lucide-icon[name="file"]')).toBeTruthy();
   });
 
   it('shows the "no records" empty state when there are none at all', () => {
@@ -106,7 +118,7 @@ describe('MaintenanceList', () => {
   });
 
   it('filters by the selected categories once availableCategories is known', () => {
-    fixture.componentInstance.availableCategories = ['Repair', 'Oil change'];
+    fixture.componentInstance.availableCategories = ['Repair', 'Oil & filters'];
     fixture.detectChanges();
 
     const emitted: MaintenanceQueryChange[] = [];
@@ -121,7 +133,7 @@ describe('MaintenanceList', () => {
     repairCheckbox.click();
 
     expect(emitted.length).toBe(1);
-    expect(emitted[0].categories).toEqual(['Oil change']);
+    expect(emitted[0].categories).toEqual(['Oil & filters']);
   });
 
   it('emits pageChange and sizeChange from the pager', () => {

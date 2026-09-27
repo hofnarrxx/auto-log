@@ -44,6 +44,7 @@ export class ShareLinkModal implements OnInit {
   protected readonly isCreatingShareLink = signal(false);
   protected readonly deletingShareLinkId = signal<string | null>(null);
   protected readonly shareAttachments = signal(true);
+  protected readonly shareImage = signal(true);
   protected readonly canCreateShareLink = computed(
     () => this.shareLinks().length < this.maxActiveShareLinks
   );
@@ -104,7 +105,7 @@ export class ShareLinkModal implements OnInit {
     this.isCreatingShareLink.set(true);
 
     this.vehicleStore
-      .createShareLink(this.vehicleId, this.shareAttachments())
+      .createShareLink(this.vehicleId, this.shareAttachments(), this.shareImage())
       .pipe(finalize(() => this.isCreatingShareLink.set(false)))
       .subscribe({
         next: (response) => {
@@ -139,6 +140,10 @@ export class ShareLinkModal implements OnInit {
 
   protected onShareAttachmentsChange(event: Event) {
     this.shareAttachments.set((event.target as HTMLInputElement).checked);
+  }
+
+  protected onShareImageChange(event: Event) {
+    this.shareImage.set((event.target as HTMLInputElement).checked);
   }
 
   private filterActiveLinks(links: ShareLinkResponse[]): ShareLinkResponse[] {
