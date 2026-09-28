@@ -9,7 +9,7 @@
       (ngModelChange)="onLanguageChange($event)"
     >
       @for (language of languages; track language.code) {
-        <option [value]="language.code">{{ language.labelKey | translate }}</option>
+        <option [value]="language.code">{{ language.label }}</option>
       }
     </select>
   </div>

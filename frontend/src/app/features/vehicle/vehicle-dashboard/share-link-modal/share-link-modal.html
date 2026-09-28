@@ -44,6 +44,14 @@
               {{ 'vehicle.dashboard.share.remainingTime' | translate }}:
               {{ remainingTime(link.expiresAt) }}
             </p>
+            <p class="share-link-meta">
+              {{ 'vehicle.dashboard.share.includeAttachments' | translate }}:
+              {{ (link.includeAttachments ? 'common.yes' : 'common.no') | translate }}
+            </p>
+            <p class="share-link-meta">
+              {{ 'vehicle.dashboard.share.includeImage' | translate }}:
+              {{ (link.includeImage ? 'common.yes' : 'common.no') | translate }}
+            </p>
           </div>
         }
       </div>

@@ -1,9 +1,24 @@
 <div class="shared-page">
+  <header class="shared-header">
+    <a routerLink="/" class="logo">{{ 'common.appName' | translate }}</a>
+
+    <select
+      class="language-select"
+      [ngModel]="selectedLanguage()"
+      (ngModelChange)="onLanguageChange($event)"
+      [attr.aria-label]="'settings.selectLanguage' | translate"
+    >
+      <option value="en">English</option>
+      <option value="pl">Polski</option>
+      <option value="ua">Українська</option>
+    </select>
+  </header>
+
   <div class="shared-card">
     @if (isLoading()) {
       <p class="status">{{ 'sharedVehicle.loading' | translate }}</p>
     } @else if (error()) {
-      <p class="status error">{{ error() }}</p>
+      <p class="status error">{{ error() | translate }}</p>
     } @else if (data()) {
       <header class="vehicle-header" [class.has-photo]="!!data()!.imageUrl">
         @if (data()!.imageUrl) {

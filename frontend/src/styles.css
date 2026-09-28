@@ -199,7 +199,7 @@ a:hover {
     align-items: stretch;
   }
 
-  .header-actions {
+  .tab-header .header-actions {
     flex-direction: column;
     align-items: stretch;
   }

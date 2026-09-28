@@ -50,6 +50,8 @@
     "updating": "Updating...",
     "vehicleNotFound": "Vehicle not found.",
     "year": "Year",
+    "yes": "Yes",
+    "no": "No",
     "sort": {
       "newest": "Newest",
       "oldest": "Oldest",
@@ -130,12 +132,7 @@
   "settings": {
     "title": "Settings",
     "selectCurrency": "Select currency",
-    "selectLanguage": "Select language",
-    "languages": {
-      "en": "English",
-      "pl": "Polish",
-      "ua": "Ukrainian"
-    }
+    "selectLanguage": "Select language"
   },
   "auth": {
     "errors": {

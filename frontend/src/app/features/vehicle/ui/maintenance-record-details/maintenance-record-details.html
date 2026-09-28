@@ -14,7 +14,7 @@
   <div class="detail-row">
     <span class="label">{{ 'common.mileage' | translate }}</span>
     <span>
-      {{ record.mileage ?? '-' }}
+      {{ record.mileage ?? '-' }} km
       @if (hasMileageWarning) {
         <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate">▲</span>
       }

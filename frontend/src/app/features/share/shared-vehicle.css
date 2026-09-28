@@ -3,11 +3,46 @@
   background:
     radial-gradient(900px 700px at 12% -10%, rgba(34, 211, 238, 0.12), transparent 55%),
     linear-gradient(165deg, var(--bg-deep), var(--bg));
-  padding: 24px;
+  padding: 0 0 24px;
+}
+
+.shared-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 28px;
+  padding-top: calc(16px + env(safe-area-inset-top));
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+  font-family: var(--font-head);
+  letter-spacing: 0.3px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.language-select {
+  width: auto;
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(10, 18, 32, 0.6);
+  color: var(--text);
+  font: inherit;
+  padding: 8px 10px;
+  min-height: var(--tap-target);
 }
 
 .shared-card {
   max-width: 980px;
+  width: min(980px, calc(100% - 48px));
   margin: 0 auto;
   background: var(--surface-1);
   border-radius: var(--radius-lg);
@@ -124,10 +159,16 @@
 
 @media (max-width: 768px) {
   .shared-page {
-    padding: 12px;
+    padding: 0 0 12px;
+  }
+
+  .shared-header {
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
   }
 
   .shared-card {
+    width: calc(100% - 24px);
     padding: 16px;
     border-radius: 12px;
   }

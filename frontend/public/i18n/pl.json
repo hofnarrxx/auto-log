@@ -50,6 +50,8 @@
     "updating": "Aktualizowanie...",
     "vehicleNotFound": "Nie znaleziono pojazdu.",
     "year": "Rok",
+    "yes": "Tak",
+    "no": "Nie",
     "sort": {
       "newest": "Najnowsze",
       "oldest": "Najstarsze",
@@ -130,12 +132,7 @@
   "settings": {
     "title": "Ustawienia",
     "selectCurrency": "Wybierz walutę",
-    "selectLanguage": "Wybierz język",
-    "languages": {
-      "en": "Angielski",
-      "pl": "Polski",
-      "ua": "Ukraiński"
-    }
+    "selectLanguage": "Wybierz język"
   },
   "auth": {
     "errors": {

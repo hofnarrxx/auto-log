@@ -43,6 +43,7 @@ describe('MaintenanceRecordDetails', () => {
 
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Oil change');
+    expect(text).toContain('1000 km');
     expect(text).toContain('invoice.pdf');
   });
 

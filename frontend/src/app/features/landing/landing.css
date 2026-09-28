@@ -39,9 +39,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .language-select {
+  width: auto;
+  flex: 0 1 auto;
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(10, 18, 32, 0.6);
@@ -54,10 +58,15 @@
 .header-link {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   min-height: var(--tap-target);
-  padding: 0 4px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(10, 18, 32, 0.6);
   color: var(--text);
   font-weight: 600;
+  white-space: nowrap;
   text-decoration: none;
 }
 
@@ -68,12 +77,11 @@
 /* hero */
 
 .hero {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 64px 24px 48px;
+  padding: 64px 24px 40px;
 }
 
 .hero h1 {
@@ -173,9 +181,16 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .features {
     grid-template-columns: repeat(2, 1fr);
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 48px;
   }
 
   .hero h1 {
@@ -186,8 +201,13 @@
 @media (max-width: 600px) {
   .landing-header {
     flex-wrap: wrap;
-    gap: 12px;
-    padding: 16px 20px;
+    row-gap: 10px;
+    padding: 16px;
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+
+  .header-actions {
+    margin-left: auto;
   }
 
   .hero {

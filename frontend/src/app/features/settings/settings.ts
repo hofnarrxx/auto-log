@@ -20,9 +20,9 @@ export class Settings {
   selectedLanguage = this.languageService.selectedLanguage;
   currencies = ['EUR', 'USD', 'PLN', 'UAH'];
   languages = [
-    { code: 'en', labelKey: 'settings.languages.en' },
-    { code: 'pl', labelKey: 'settings.languages.pl' },
-    { code: 'ua', labelKey: 'settings.languages.ua' },
+    { code: 'en', label: 'English' },
+    { code: 'pl', label: 'Polski' },
+    { code: 'ua', label: 'Українська' },
   ];
 
   onCurrencyChange(currency: string) {

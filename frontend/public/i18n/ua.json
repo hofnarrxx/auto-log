@@ -50,6 +50,8 @@
     "updating": "Оновлення...",
     "vehicleNotFound": "Транспорт не знайдено.",
     "year": "Рік",
+    "yes": "Так",
+    "no": "Ні",
     "sort": {
       "newest": "Найновіші",
       "oldest": "Найстаріші",
@@ -76,7 +78,7 @@
       "demo": "Спробувати демо",
       "signIn": "Увійти",
       "register": "Створити безкоштовний акаунт",
-      "myGarage": "До гаража"
+      "myGarage": "Перейти до гаража"
     },
     "features": {
       "fuel": {
@@ -130,12 +132,7 @@
   "settings": {
     "title": "Налаштування",
     "selectCurrency": "Оберіть валюту",
-    "selectLanguage": "Оберіть мову",
-    "languages": {
-      "en": "Англійська",
-      "pl": "Польська",
-      "ua": "Українська"
-    }
+    "selectLanguage": "Оберіть мову"
   },
   "auth": {
     "errors": {

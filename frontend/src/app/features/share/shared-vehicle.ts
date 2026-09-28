@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../../core/i18n/language.service';
 import { formatAppDate } from '../../shared/utils/date-format.utils';
 import { getFuelTypeLabelKey } from '../../shared/utils/fuel-type.utils';
 import { pickLatestOdometer } from '../../shared/utils/odometer.utils';
@@ -16,7 +18,14 @@ type SharedTab = 'details' | 'maintenance' | 'fuel';
 @Component({
   selector: 'app-shared-vehicle',
   standalone: true,
-  imports: [CommonModule, SharedVehicleMaintenanceTab, SharedVehicleFuelTab, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    SharedVehicleMaintenanceTab,
+    SharedVehicleFuelTab,
+    TranslateModule,
+  ],
   templateUrl: './shared-vehicle.html',
   styleUrl: './shared-vehicle.css',
 })
@@ -24,6 +33,9 @@ export class SharedVehicle {
   private readonly route = inject(ActivatedRoute);
   private readonly publicShareApi = inject(PublicShareApi);
   private readonly translate = inject(TranslateService);
+  private readonly languageService = inject(LanguageService);
+
+  readonly selectedLanguage = this.languageService.selectedLanguage;
 
   private readonly tokenParamMap = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
@@ -86,5 +98,9 @@ export class SharedVehicle {
 
   setTab(tab: SharedTab) {
     this.activeTab.set(tab);
+  }
+
+  onLanguageChange(language: string) {
+    this.languageService.setLanguage(language);
   }
 }
