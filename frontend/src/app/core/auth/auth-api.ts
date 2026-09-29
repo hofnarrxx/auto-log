@@ -12,6 +12,11 @@ export interface AuthResponse {
   demo: boolean;
 }
 
+/** Email waiting for a password before a Google identity can be linked. */
+export interface LinkGoogleResponse {
+  email: string;
+}
+
 /**
  * Pure transport for the auth endpoints. This service holds no authentication state; see
  * {@link AuthStore} for the single source of truth on whether the user is signed in.
@@ -57,5 +62,17 @@ export class AuthApi {
 
   resetPassword(token: string, password: string): Observable<void> {
     return this.http.post<void>(`${this.authApi}/reset-password`, { token, password });
+  }
+
+  pendingGoogleLink(): Observable<LinkGoogleResponse> {
+    return this.http.get<LinkGoogleResponse>(`${this.authApi}/link-google`);
+  }
+
+  linkGoogle(password: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/link-google`, { password });
+  }
+
+  cancelGoogleLink(): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/link-google/cancel`, {});
   }
 }

@@ -1,10 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -25,6 +21,7 @@ import com.hofnarrxx.autolog.repository.RefreshTokenRepository;
 import com.hofnarrxx.autolog.repository.UserRepository;
 import com.hofnarrxx.autolog.utils.PasswordPolicy;
 import com.hofnarrxx.autolog.utils.SecureTokenGenerator;
+import com.hofnarrxx.autolog.utils.TokenHasher;
 
 import io.github.bucket4j.ConsumptionProbe;
 
@@ -37,6 +34,7 @@ public class PasswordResetService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordResetMailer passwordResetMailer;
     private final SecureTokenGenerator secureTokenGenerator;
+    private final TokenHasher tokenHasher;
     private final PasswordPolicy passwordPolicy;
     private final PasswordEncoder passwordEncoder;
     private final AppProperties appProperties;
@@ -47,7 +45,7 @@ public class PasswordResetService {
             PasswordResetTokenRepository passwordResetTokenRepository, PasswordResetMailer passwordResetMailer,
             SecureTokenGenerator secureTokenGenerator, PasswordPolicy passwordPolicy,
             PasswordEncoder passwordEncoder, AppProperties appProperties,
-            RateLimiterRegistry rateLimiterRegistry) {
+            RateLimiterRegistry rateLimiterRegistry, TokenHasher tokenHasher) {
         this.userRepository = userRepository;
         this.authProviderRepository = authProviderRepository;
         this.refreshTokenRepository = refreshTokenRepository;
@@ -58,6 +56,7 @@ public class PasswordResetService {
         this.passwordEncoder = passwordEncoder;
         this.appProperties = appProperties;
         this.rateLimiterRegistry = rateLimiterRegistry;
+        this.tokenHasher = tokenHasher;
     }
 
     @Transactional
@@ -76,7 +75,7 @@ public class PasswordResetService {
 
         String rawToken = secureTokenGenerator.generateToken();
         PasswordResetToken token = new PasswordResetToken();
-        token.setTokenHash(hash(rawToken));
+        token.setTokenHash(tokenHasher.sha256Hex(rawToken));
         token.setUser(user);
         token.setExpiresAt(Instant.now().plusMillis(appProperties.passwordReset().tokenExpiration()));
 
@@ -106,17 +105,7 @@ public class PasswordResetService {
         if (rawToken == null || rawToken.isBlank()) {
             return Optional.empty();
         }
-        return passwordResetTokenRepository.findByTokenHash(hash(rawToken))
+        return passwordResetTokenRepository.findByTokenHash(tokenHasher.sha256Hex(rawToken))
                 .filter(t -> t.getExpiresAt().isAfter(Instant.now()));
-    }
-
-    private String hash(String rawToken) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(hashed);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(e);
-        }
     }
 }

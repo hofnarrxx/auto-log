@@ -5,9 +5,12 @@ import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.dto.AuthTokens;
 import com.hofnarrxx.autolog.dto.DemoRequest;
 import com.hofnarrxx.autolog.dto.ForgotPasswordRequest;
+import com.hofnarrxx.autolog.dto.LinkGoogleRequest;
+import com.hofnarrxx.autolog.dto.LinkGoogleResponse;
 import com.hofnarrxx.autolog.dto.ResetPasswordRequest;
 import com.hofnarrxx.autolog.exception.InvalidPasswordResetTokenException;
 import com.hofnarrxx.autolog.service.AuthService;
+import com.hofnarrxx.autolog.service.GoogleLinkService;
 import com.hofnarrxx.autolog.service.PasswordResetService;
 import com.hofnarrxx.autolog.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
@@ -32,6 +35,7 @@ public class AuthController {
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetService passwordResetService;
+    private final GoogleLinkService googleLinkService;
 
     @Value("${jwt.expiration}")
     private long accessTokenExpirationMs;
@@ -40,10 +44,12 @@ public class AuthController {
     private long refreshTokenExpirationMs;
 
     public AuthController(AuthService authService,
-            RefreshTokenService refreshTokenService, PasswordResetService passwordResetService) {
+            RefreshTokenService refreshTokenService, PasswordResetService passwordResetService,
+            GoogleLinkService googleLinkService) {
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
         this.passwordResetService = passwordResetService;
+        this.googleLinkService = googleLinkService;
     }
 
     @PostMapping("/register")
@@ -124,11 +130,35 @@ public class AuthController {
     }
 
     @PostMapping("/demo")
-    public ResponseEntity<Void> startDemo(@RequestBody(required = false) DemoRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> startDemo(@RequestBody(required = false) DemoRequest request,
+            HttpServletResponse response) {
         String lang = request == null ? null : request.lang();
         AuthTokens tokens = authService.startDemo(lang);
         setAuthCookies(response, tokens);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/link-google")
+    public ResponseEntity<LinkGoogleResponse> linkGoogle(HttpServletRequest request) {
+        return googleLinkService.findPendingEmail(getCookieValue(request, "google_link"))
+                .map(email -> ResponseEntity.ok(new LinkGoogleResponse(email)))
+                .orElseGet(() -> ResponseEntity.status(401).build());
+    }
+
+    @PostMapping("/link-google")
+    public ResponseEntity<Void> linkGoogle(@RequestBody LinkGoogleRequest body, HttpServletRequest request,
+            HttpServletResponse response) {
+        AuthTokens tokens = authService.linkGoogle(getCookieValue(request, "google_link"), body.password());
+        setAuthCookies(response, tokens);
+        response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("google_link", "", 0).toString());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("link-google/cancel")
+    public ResponseEntity<Void> cancelLinkGoogle(HttpServletRequest request, HttpServletResponse response) {
+        googleLinkService.cancel(getCookieValue(request, "google_link"));
+        response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("google_link", "", 0).toString());
+        return ResponseEntity.noContent().build();
     }
 
     private void setAuthCookies(HttpServletResponse response, AuthTokens tokens) {

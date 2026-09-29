@@ -193,6 +193,22 @@
         "resetFailed": "Unable to reset your password right now."
       }
     },
+    "linkGoogle": {
+      "checking": "Checking your Google sign-in...",
+      "explanation": "An account for {{email}} already exists. Enter its password to link Google.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Link Google",
+      "cancel": "Cancel",
+      "rejected": "This Google account cannot be linked. Sign in with your password, or use a different Google account.",
+      "errors": {
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password must be at least {{minLength}} characters.",
+        "invalidPassword": "Invalid password.",
+        "expired": "This link has expired. Sign in with Google again.",
+        "alreadyLinked": "This Google account is already linked. Sign in with Google."
+      }
+    },
     "register": {
       "title": "Create Account",
       "emailLabel": "Email",

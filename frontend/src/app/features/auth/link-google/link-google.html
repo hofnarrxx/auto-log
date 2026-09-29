@@ -1,0 +1,49 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <a routerLink="/" class="logo">{{ 'common.appName' | translate }}</a>
+
+    @if (linkState() === 'checking') {
+      <p class="auth-switch">{{ 'auth.linkGoogle.checking' | translate }}</p>
+    } @else {
+      <p class="auth-switch">
+        {{ 'auth.linkGoogle.explanation' | translate: { email: email() } }}
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+        <div class="form-field">
+          <label>{{ 'auth.linkGoogle.passwordLabel' | translate }}</label>
+          <input
+            type="password"
+            [placeholder]="'auth.linkGoogle.passwordPlaceholder' | translate"
+            formControlName="password"
+          />
+
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <div class="error">
+              @if (form.controls.password.errors?.['required']) {
+                <span>{{ 'auth.linkGoogle.errors.passwordRequired' | translate }}</span>
+              }
+
+              @if (form.controls.password.errors?.['minlength']) {
+                <span>
+                  {{
+                    'auth.linkGoogle.errors.passwordMinLength'
+                      | translate: { minLength: passwordMinLength }
+                  }}
+                </span>
+              }
+            </div>
+          }
+        </div>
+
+        <button class="auth-button" type="submit" [disabled]="form.invalid || isSubmitting()">
+          {{ 'auth.linkGoogle.submit' | translate }}
+        </button>
+      </form>
+
+      <button class="google-btn" type="button" (click)="cancel()">
+        {{ 'auth.linkGoogle.cancel' | translate }}
+      </button>
+    }
+  </div>
+</div>

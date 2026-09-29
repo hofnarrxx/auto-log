@@ -15,6 +15,7 @@ describe('AuthStore', () => {
       'checkAuth',
       'refreshSession',
       'startDemo',
+      'linkGoogle',
     ]);
 
     TestBed.configureTestingModule({
@@ -34,6 +35,16 @@ describe('AuthStore', () => {
     store.login('a@b.com', 'secret').subscribe();
 
     expect(store.isAuthenticated()).toBe(true);
+  });
+
+  it('marks the user authenticated after linking Google', () => {
+    authApi.linkGoogle.and.returnValue(of(undefined));
+
+    store.linkGoogle('secret').subscribe();
+
+    expect(authApi.linkGoogle).toHaveBeenCalledWith('secret');
+    expect(store.isAuthenticated()).toBe(true);
+    expect(store.isDemo()).toBe(false);
   });
 
   it('marks the user authenticated after a successful register', () => {

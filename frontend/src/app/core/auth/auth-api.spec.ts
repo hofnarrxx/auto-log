@@ -105,4 +105,33 @@ describe('AuthApi', () => {
     expect(req.request.body).toEqual({ token: 'raw-token', password: 'NewPass1!' });
     req.flush(null);
   });
+
+  it('reads the pending Google link', () => {
+    let response: { email: string } | undefined;
+    api.pendingGoogleLink().subscribe((res) => (response = res));
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/link-google`);
+    expect(req.request.method).toBe('GET');
+    req.flush({ email: 'a@b.com' });
+
+    expect(response).toEqual({ email: 'a@b.com' });
+  });
+
+  it('posts the password to link Google', () => {
+    api.linkGoogle('secret').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/link-google`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ password: 'secret' });
+    req.flush(null);
+  });
+
+  it('posts to the cancel Google link endpoint', () => {
+    api.cancelGoogleLink().subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/link-google/cancel`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({});
+    req.flush(null);
+  });
 });

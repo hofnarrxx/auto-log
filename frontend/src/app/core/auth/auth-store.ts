@@ -27,6 +27,15 @@ export class AuthStore {
     );
   }
 
+  linkGoogle(password: string): Observable<void> {
+    return this.authApi.linkGoogle(password).pipe(
+      tap(() => {
+        this._isAuthenticated.set(true);
+        this._isDemo.set(false);
+      })
+    );
+  }
+
   register(email: string, password: string): Observable<void> {
     return this.authApi.register(email, password).pipe(
       tap(() => {

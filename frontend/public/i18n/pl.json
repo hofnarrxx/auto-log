@@ -193,6 +193,22 @@
         "resetFailed": "Nie udało się teraz zresetować hasła."
       }
     },
+    "linkGoogle": {
+      "checking": "Sprawdzanie logowania Google...",
+      "explanation": "Konto {{email}} już istnieje. Wpisz jego hasło, aby połączyć Google.",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Wpisz hasło",
+      "submit": "Połącz z Google",
+      "cancel": "Anuluj",
+      "rejected": "Tego konta Google nie można połączyć. Zaloguj się hasłem albo innym kontem Google.",
+      "errors": {
+        "passwordRequired": "Hasło jest wymagane.",
+        "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
+        "invalidPassword": "Nieprawidłowe hasło.",
+        "expired": "Ten link wygasł. Zaloguj się przez Google ponownie.",
+        "alreadyLinked": "To konto Google jest już połączone. Zaloguj się przez Google."
+      }
+    },
     "register": {
       "title": "Utwórz konto",
       "emailLabel": "E-mail",

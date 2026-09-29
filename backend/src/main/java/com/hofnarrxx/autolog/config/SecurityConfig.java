@@ -1,15 +1,12 @@
 package com.hofnarrxx.autolog.config;
 
 import com.hofnarrxx.autolog.ratelimit.RateLimitFilter;
-import com.hofnarrxx.autolog.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.http.HttpStatus;
@@ -25,17 +22,14 @@ public class SecurityConfig {
         private final AppProperties appProperties;
         private final JwtAuthenticationFilter jwtFilter;
         private final RateLimitFilter rateLimitFilter;
-        private final CustomOAuth2UserService oauth2UserService;
         private final OAuth2JwtSuccessHandler oauth2JwtSuccessHandler;
 
         public SecurityConfig(AppProperties appProperties, JwtAuthenticationFilter jwtFilter,
                         RateLimitFilter rateLimitFilter,
-                        CustomOAuth2UserService oauth2UserService,
                         OAuth2JwtSuccessHandler oauth2JwtSuccessHandler) {
                 this.appProperties = appProperties;
                 this.jwtFilter = jwtFilter;
                 this.rateLimitFilter = rateLimitFilter;
-                this.oauth2UserService = oauth2UserService;
                 this.oauth2JwtSuccessHandler = oauth2JwtSuccessHandler;
         }
 
@@ -63,9 +57,7 @@ public class SecurityConfig {
                                                 }))
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                                 .addFilterBefore(rateLimitFilter, JwtAuthenticationFilter.class)
-                                .oauth2Login(oauth -> oauth
-                                                .userInfoEndpoint(user -> user.userService(oauth2UserService))
-                                                .successHandler(oauth2JwtSuccessHandler));
+                                .oauth2Login(oauth -> oauth.successHandler(oauth2JwtSuccessHandler));
 
                 return http.build();
         }
@@ -74,11 +66,6 @@ public class SecurityConfig {
         public AuthenticationManager authenticationManager(
                         AuthenticationConfiguration config) throws Exception {
                 return config.getAuthenticationManager();
-        }
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
         }
 
         @Bean

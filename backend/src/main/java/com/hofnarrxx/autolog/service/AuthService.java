@@ -35,6 +35,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
     private final RefreshTokenService refreshTokenService;
+    private final GoogleLinkService googleLinkService;
     private final PasswordPolicy passwordPolicy;
     private final RateLimiterRegistry rateLimiterRegistry;
     private final DemoProperties demoProperties;
@@ -45,6 +46,7 @@ public class AuthService {
             JwtService jwtService,
             AuthenticationManager authManager,
             RefreshTokenService refreshTokenService,
+            GoogleLinkService googleLinkService,
             PasswordPolicy passwordPolicy,
             RateLimiterRegistry rateLimiterRegistry,
             DemoProperties demoProperties) {
@@ -54,6 +56,7 @@ public class AuthService {
         this.jwtService = jwtService;
         this.authManager = authManager;
         this.refreshTokenService = refreshTokenService;
+        this.googleLinkService = googleLinkService;
         this.passwordPolicy = passwordPolicy;
         this.rateLimiterRegistry = rateLimiterRegistry;
         this.demoProperties = demoProperties;
@@ -130,6 +133,11 @@ public class AuthService {
 
         return userRepository.findByEmail(email)
                 .orElseThrow();
+    }
+
+    public AuthTokens linkGoogle(String rawToken, String password){
+        User user = googleLinkService.confirm(rawToken, password);
+        return issueTokens(user);
     }
 
     private AuthTokens issueTokens(User user) {

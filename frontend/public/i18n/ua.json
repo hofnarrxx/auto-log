@@ -193,6 +193,22 @@
         "resetFailed": "Зараз не вдалося скинути пароль."
       }
     },
+    "linkGoogle": {
+      "checking": "Перевіряємо вхід через Google...",
+      "explanation": "Акаунт {{email}} уже існує. Введіть його пароль, щоб прив’язати Google.",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введіть пароль",
+      "submit": "Прив’язати Google",
+      "cancel": "Скасувати",
+      "rejected": "Цей акаунт Google не можна прив’язати. Увійдіть паролем або іншим акаунтом Google.",
+      "errors": {
+        "passwordRequired": "Пароль обов’язковий.",
+        "passwordMinLength": "Пароль має містити щонайменше {{minLength}} символів.",
+        "invalidPassword": "Невірний пароль.",
+        "expired": "Це посилання прострочене. Увійдіть через Google ще раз.",
+        "alreadyLinked": "Цей акаунт Google уже прив’язано. Увійдіть через Google."
+      }
+    },
     "register": {
       "title": "Створити акаунт",
       "emailLabel": "Електронна пошта",

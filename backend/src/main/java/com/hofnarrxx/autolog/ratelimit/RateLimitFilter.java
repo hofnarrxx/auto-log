@@ -75,6 +75,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 return RateLimitPolicy.AUTH_REFRESH;
             if (uri.equals("/api/auth/demo"))
                 return RateLimitPolicy.AUTH_DEMO;
+            if (uri.equals("/api/auth/link-google"))
+                return RateLimitPolicy.AUTH_LOGIN;
         }
         if (HttpMethod.GET.matches(method)) {
             if (uri.equals("/api/auth/me"))

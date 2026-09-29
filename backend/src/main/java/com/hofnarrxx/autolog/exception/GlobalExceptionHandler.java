@@ -60,6 +60,33 @@ public class GlobalExceptionHandler {
                                                 "message", ex.getMessage()));
         }
 
+        @ExceptionHandler(InvalidGoogleLinkTokenException.class)
+        public ResponseEntity<?> handleInvalidGoogleLinkToken(InvalidGoogleLinkTokenException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "error", "INVALID_GOOGLE_LINK_TOKEN",
+                                                "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(GoogleAlreadyLinkedException.class)
+        public ResponseEntity<?> handleGoogleAlreadyLinked(GoogleAlreadyLinkedException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(Map.of(
+                                                "error", "GOOGLE_ALREADY_LINKED",
+                                                "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(InvalidCredentialsException.class)
+        public ResponseEntity<?> handleInvalidCredentials(InvalidCredentialsException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.UNAUTHORIZED)
+                                .body(Map.of(
+                                                "error", "INVALID_CREDENTIALS",
+                                                "message", ex.getMessage()));
+        }
+
         @ExceptionHandler(VehicleNotFoundException.class)
         public ResponseEntity<?> handleVehicleNotFound(VehicleNotFoundException ex) {
                 return ResponseEntity

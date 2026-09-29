@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
@@ -14,12 +14,19 @@ import { PASSWORD_MIN_LENGTH } from '../../../shared/utils/password.validator';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
   private authStore = inject(AuthStore);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private notifications = inject(NotificationService);
   private readonly apiBaseUrl = inject(API_BASE_URL);
+
+  ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get('error') === 'google_link_rejected') {
+      this.notifications.notifyError('auth.linkGoogle.rejected');
+    }
+  }
 
   readonly passwordMinLength = PASSWORD_MIN_LENGTH;
 
