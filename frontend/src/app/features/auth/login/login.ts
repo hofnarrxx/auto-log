@@ -44,6 +44,11 @@ export class Login implements OnInit {
       next: () => this.router.navigate(['/garage']),
       error: (err: HttpErrorResponse) => {
         if (err.status === 429) return;
+        if (err.status === 403 && err.error?.error === 'EMAIL_NOT_VERIFIED') {
+          this.notifications.notifyError('auth.login.errors.emailNotVerified');
+          this.router.navigate(['/verify-email/sent'], { state: { email } });
+          return;
+        }
         this.notifications.notifyHttpError(err, {
           fallback: 'auth.login.errors.invalidCredentials',
           byStatus: {

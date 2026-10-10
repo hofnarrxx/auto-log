@@ -18,6 +18,15 @@ export const authRoutes: Routes = [
     loadComponent: () => import('./reset-password/reset-password').then((m) => m.ResetPassword),
   },
   {
+    path: 'verify-email',
+    loadComponent: () => import('./verify-email/verify-email').then((m) => m.VerifyEmail),
+  },
+  {
+    path: 'verify-email/sent',
+    loadComponent: () =>
+      import('./verify-email-sent/verify-email-sent').then((m) => m.VerifyEmailSent),
+  },
+  {
     path: 'link-google',
     loadComponent: () => import('./link-google/link-google').then((m) => m.LinkGoogle),
   },

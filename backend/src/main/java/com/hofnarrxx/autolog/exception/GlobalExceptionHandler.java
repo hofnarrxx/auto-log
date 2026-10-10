@@ -23,6 +23,15 @@ public class GlobalExceptionHandler {
                                                 "message", ex.getMessage()));
         }
 
+        @ExceptionHandler(EmailNotVerifiedException.class)
+        public ResponseEntity<?> handleEmailNotVerified(EmailNotVerifiedException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(Map.of(
+                                                "error", "EMAIL_NOT_VERIFIED",
+                                                "message", ex.getMessage()));
+        }
+
         @ExceptionHandler(GoogleLoginRequiredException.class)
         public ResponseEntity<?> handleGoogleLoginRequired(GoogleLoginRequiredException ex) {
                 return ResponseEntity
@@ -66,6 +75,15 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.BAD_REQUEST)
                                 .body(Map.of(
                                                 "error", "INVALID_GOOGLE_LINK_TOKEN",
+                                                "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(InvalidEmailVerificationTokenException.class)
+        public ResponseEntity<?> handleInvalidEmailVerificationToken(InvalidEmailVerificationTokenException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "error", "INVALID_EMAIL_VERIFICATION_TOKEN",
                                                 "message", ex.getMessage()));
         }
 

@@ -37,10 +37,29 @@ describe('AuthApi', () => {
   });
 
   it('posts credentials to the register endpoint', () => {
-    api.register('a@b.com', 'secret').subscribe();
+    api.register('a@b.com', 'secret', 'pl').subscribe();
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/register`);
     expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'a@b.com', password: 'secret', lang: 'pl' });
+    req.flush(null);
+  });
+
+  it('posts the token to the verify-email endpoint', () => {
+    api.verifyEmail('raw-token').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/verify-email`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ token: 'raw-token' });
+    req.flush(null);
+  });
+
+  it('posts the email and language to the resend verification endpoint', () => {
+    api.resendVerification('a@b.com', 'uk').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/verify-email/resend`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'a@b.com', lang: 'uk' });
     req.flush(null);
   });
 

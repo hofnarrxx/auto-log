@@ -1,0 +1,49 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="logo">{{ 'common.appName' | translate }}</h1>
+
+    @switch (state()) {
+      @case ('checking') {
+        <p class="auth-switch">{{ 'auth.verifyEmail.checking' | translate }}</p>
+      }
+      @case ('invalid') {
+        <p class="auth-switch">{{ 'auth.verifyEmail.invalidLink' | translate }}</p>
+
+        @if (!isResent()) {
+          <form [formGroup]="form" (ngSubmit)="resend()" class="auth-form">
+            <div class="form-field">
+              <label>{{ 'auth.verifyEmail.emailLabel' | translate }}</label>
+              <input
+                type="email"
+                [placeholder]="'auth.verifyEmail.emailPlaceholder' | translate"
+                formControlName="email"
+              />
+
+              @if (form.controls.email.touched && form.controls.email.invalid) {
+                <div class="error">
+                  @if (form.controls.email.errors?.['required']) {
+                    <span>{{ 'auth.verifyEmail.errors.emailRequired' | translate }}</span>
+                  }
+
+                  @if (form.controls.email.errors?.['email']) {
+                    <span>{{ 'auth.verifyEmail.errors.emailInvalid' | translate }}</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <button class="auth-button" type="submit" [disabled]="form.invalid || isSubmitting()">
+              {{ 'auth.verifyEmail.resend' | translate }}
+            </button>
+          </form>
+        } @else {
+          <p class="auth-switch">{{ 'auth.verifyEmail.resent' | translate }}</p>
+        }
+      }
+    }
+
+    <p class="auth-switch">
+      <a routerLink="/login">{{ 'auth.verifyEmail.backToLogin' | translate }}</a>
+    </p>
+  </div>
+</div>

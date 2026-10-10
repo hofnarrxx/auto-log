@@ -77,6 +77,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 return RateLimitPolicy.AUTH_DEMO;
             if (uri.equals("/api/auth/link-google"))
                 return RateLimitPolicy.AUTH_LOGIN;
+            if (uri.equals("/api/auth/verify-email"))
+                return RateLimitPolicy.AUTH_VERIFY_EMAIL;
+            if (uri.equals("/api/auth/verify-email/resend"))
+                return RateLimitPolicy.AUTH_RESEND_VERIFICATION;
         }
         if (HttpMethod.GET.matches(method)) {
             if (uri.equals("/api/auth/me"))

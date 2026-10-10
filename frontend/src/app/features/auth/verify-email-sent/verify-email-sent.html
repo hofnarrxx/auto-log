@@ -1,0 +1,30 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1 class="logo">{{ 'common.appName' | translate }}</h1>
+
+    <h2>{{ 'auth.verifyEmail.sentTitle' | translate }}</h2>
+
+    <p class="auth-switch">
+      {{ 'auth.verifyEmail.sentMessage' | translate: { email: email() } }}
+    </p>
+
+    <div class="auth-form">
+      <button
+        class="auth-button"
+        type="button"
+        (click)="resend()"
+        [disabled]="isSubmitting() || cooldown() > 0"
+      >
+        @if (cooldown() > 0) {
+          {{ 'auth.verifyEmail.resendIn' | translate: { seconds: cooldown() } }}
+        } @else {
+          {{ 'auth.verifyEmail.resend' | translate }}
+        }
+      </button>
+    </div>
+
+    <p class="auth-switch">
+      <a routerLink="/login">{{ 'auth.verifyEmail.backToLogin' | translate }}</a>
+    </p>
+  </div>
+</div>

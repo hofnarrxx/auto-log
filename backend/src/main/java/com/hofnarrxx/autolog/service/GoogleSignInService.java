@@ -10,6 +10,7 @@ import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
+import com.hofnarrxx.autolog.repository.EmailVerificationRepository;
 import com.hofnarrxx.autolog.repository.UserRepository;
 
 @Service
@@ -25,14 +26,16 @@ public class GoogleSignInService {
         }
     }
 
-    private AuthProviderRepository providerRepository;
-    private UserRepository userRepository;
-    private GoogleLinkService googleLinkService;
+    private final AuthProviderRepository providerRepository;
+    private final UserRepository userRepository;
+    private final EmailVerificationRepository emailVerificationRepository;
+    private final GoogleLinkService googleLinkService;
 
     public GoogleSignInService(AuthProviderRepository providerRepository, UserRepository userRepository,
-            GoogleLinkService googleLinkService) {
+            EmailVerificationRepository emailVerificationRepository, GoogleLinkService googleLinkService) {
         this.providerRepository = providerRepository;
         this.userRepository = userRepository;
+        this.emailVerificationRepository = emailVerificationRepository;
         this.googleLinkService = googleLinkService;
     }
 
@@ -42,15 +45,17 @@ public class GoogleSignInService {
                 || !Boolean.TRUE.equals(emailVerified))
             return new Result.Rejected();
 
-        String normalized = email.trim().toLowerCase(Locale.ROOT);
+        String normalizedEmail = email.trim().toLowerCase(Locale.ROOT);
         Optional<AuthProvider> providerOpt = providerRepository.findByProviderTypeAndProviderId(AuthProviderType.GOOGLE,
                 googleSub);
         if (providerOpt.isPresent())
             return new Result.Session(providerOpt.get().getUser());
 
-        Optional<User> userOpt = userRepository.findByEmail(normalized);
+        Optional<User> userOpt = userRepository.findByEmail(normalizedEmail);
         if (userOpt.isEmpty()) {
-            User user = userRepository.save(new User(normalized));
+            User user = new User(normalizedEmail);
+            user.setEmailVerified(true);
+            userRepository.save(user);
             attachGoogle(user, googleSub);
             return new Result.Session(user);
         }
@@ -59,8 +64,18 @@ public class GoogleSignInService {
         if (user.isDemo())
             return new Result.Rejected();
 
-        if (providerRepository.existsByUserAndProviderType(user, AuthProviderType.LOCAL))
-            return new Result.LinkRequired(googleLinkService.begin(user, googleSub));
+        if (providerRepository.existsByUserAndProviderType(user, AuthProviderType.LOCAL)) {
+            if (user.isEmailVerified()) {
+                return new Result.LinkRequired(googleLinkService.begin(user, googleSub));
+            } else {
+                user.setEmailVerified(true);
+                user.setPassword(null);
+                providerRepository.deleteByUserAndProviderType(user, AuthProviderType.LOCAL);
+                emailVerificationRepository.deleteByUser(user);
+                attachGoogle(user, googleSub);
+                return new Result.Session(user);
+            }
+        }
 
         return new Result.Rejected();
     }

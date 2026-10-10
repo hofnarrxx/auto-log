@@ -1,10 +1,9 @@
 package com.hofnarrxx.autolog.demo;
 
+import com.hofnarrxx.autolog.model.AppLanguage;
 import com.hofnarrxx.autolog.model.Currency;
 import com.hofnarrxx.autolog.model.MaintenanceCategory;
-import com.hofnarrxx.autolog.utils.RequestValidation;
 import java.util.List;
-import java.util.Locale;
 
 public record DemoContent(Currency currency,
         List<String> gasStations,
@@ -99,15 +98,11 @@ public record DemoContent(Currency currency,
                     new MaintenanceSeed(MaintenanceCategory.INSPECTION_AND_DIAGNOSTICS, "Перевірка перед зимою",
                             "Перевірено акумулятор, світло, двірники та рівні рідин.", 1500.00)));
 
-    public static DemoContent forLanguage(String language) {
-        language = RequestValidation.normalizeToNull(language);
-        if (language == null)
-            return ENGLISH;
-
-        return switch (language.toLowerCase(Locale.ROOT)) {
-            case "pl" -> POLISH;
-            case "ua" -> UKRAINIAN;
-            default -> ENGLISH;
+    public static DemoContent forLanguage(AppLanguage language) {
+        return switch (language) {
+            case PL -> POLISH;
+            case UK -> UKRAINIAN;
+            case EN -> ENGLISH;
         };
     }
 }

@@ -6,8 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record AppProperties(
         String frontendUrl,
         Mail mail,
-        PasswordReset passwordReset
+        PasswordReset passwordReset,
+        EmailVerification emailVerification
 ) {
     public record Mail(String from) {}
     public record PasswordReset(long tokenExpiration) {}
+    public record EmailVerification(long tokenExpiration) {}
 }

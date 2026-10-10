@@ -94,6 +94,10 @@
       </button>
     </form>
 
+    <button class="google-btn" type="button" (click)="googleLogin()">
+      {{ 'auth.register.google' | translate }}
+    </button>
+
     <p class="auth-switch">
       {{ 'auth.register.switchPrompt' | translate }}
       <a routerLink="/login">{{ 'auth.register.switchLink' | translate }}</a>

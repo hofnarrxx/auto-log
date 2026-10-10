@@ -182,7 +182,8 @@
         "passwordRequired": "Password is required.",
         "passwordMinLength": "Password must be at least {{minLength}} characters.",
         "invalidCredentials": "Invalid credentials.",
-        "googleLoginRequired": "This account uses Google sign-in. Please continue with Google."
+        "googleLoginRequired": "This account uses Google sign-in. Please continue with Google.",
+        "emailNotVerified": "Please confirm your email address before logging in."
       }
     },
     "forgotPassword": {
@@ -220,6 +221,24 @@
         "resetFailed": "Unable to reset your password right now."
       }
     },
+    "verifyEmail": {
+      "sentTitle": "Check your email",
+      "sentMessage": "We sent a confirmation link to {{email}}. Open it to finish setting up your account.",
+      "resend": "Resend email",
+      "resendIn": "Resend available in {{seconds}}s",
+      "resent": "A new confirmation link has been sent if the account is still waiting for confirmation.",
+      "checking": "Confirming your email...",
+      "invalidLink": "This confirmation link is invalid or has expired. Enter your email to get a new one.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "success": "Your email is confirmed. Welcome to AutoLog!",
+      "backToLogin": "Back to log in",
+      "errors": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email address.",
+        "resendFailed": "Unable to send the confirmation email right now."
+      }
+    },
     "linkGoogle": {
       "checking": "Checking your Google sign-in...",
       "explanation": "An account for {{email}} already exists. Enter its password to link Google.",
@@ -246,6 +265,7 @@
       "confirmPasswordLabel": "Confirm password",
       "confirmPasswordPlaceholder": "Repeat your password",
       "submit": "Register",
+      "google": "Sign up with Google",
       "switchPrompt": "Already have an account?",
       "switchLink": "Log In",
       "errors": {

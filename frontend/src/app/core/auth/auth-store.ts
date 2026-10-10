@@ -42,8 +42,13 @@ export class AuthStore {
     );
   }
 
-  register(email: string, password: string): Observable<void> {
-    return this.authApi.register(email, password).pipe(
+  /** Registering only sends a verification email; the user is not signed in until they verify. */
+  register(email: string, password: string, lang: string): Observable<void> {
+    return this.authApi.register(email, password, lang);
+  }
+
+  verifyEmail(token: string): Observable<void> {
+    return this.authApi.verifyEmail(token).pipe(
       tap(() => {
         this._isAuthenticated.set(true);
         this._isDemo.set(false);

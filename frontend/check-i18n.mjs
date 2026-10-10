@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 const localeFiles = {
   en: new URL('./public/i18n/en.json', import.meta.url),
   pl: new URL('./public/i18n/pl.json', import.meta.url),
-  ua: new URL('./public/i18n/ua.json', import.meta.url),
+  uk: new URL('./public/i18n/uk.json', import.meta.url),
 };
 
 function flattenKeys(value, prefix = '') {

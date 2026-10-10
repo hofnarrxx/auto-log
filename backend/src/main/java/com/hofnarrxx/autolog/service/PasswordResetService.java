@@ -1,7 +1,6 @@
 package com.hofnarrxx.autolog.service;
 
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hofnarrxx.autolog.config.AppProperties;
 import com.hofnarrxx.autolog.exception.InvalidPasswordResetTokenException;
+import com.hofnarrxx.autolog.model.AppLanguage;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.PasswordResetToken;
 import com.hofnarrxx.autolog.model.User;
@@ -60,7 +60,7 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public void requestReset(String email, Locale locale) {
+    public void requestReset(String email, AppLanguage appLanguage) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty())
             return;
@@ -80,7 +80,7 @@ public class PasswordResetService {
         token.setExpiresAt(Instant.now().plusMillis(appProperties.passwordReset().tokenExpiration()));
 
         passwordResetTokenRepository.save(token);
-        passwordResetMailer.sendResetEmail(user.getEmail(), rawToken, locale);
+        passwordResetMailer.sendResetEmail(user.getEmail(), rawToken, appLanguage);
     }
 
     public boolean validateToken(String rawToken) {
@@ -95,6 +95,7 @@ public class PasswordResetService {
 
         User user = token.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
+        user.setEmailVerified(true);
         userRepository.save(user);
 
         passwordResetTokenRepository.deleteByUser(user);

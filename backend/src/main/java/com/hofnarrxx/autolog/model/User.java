@@ -18,6 +18,9 @@ public class User {
     private String password;
 
     @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    @Column(nullable = false)
     private boolean demo = false;
 
     public User() {
@@ -53,6 +56,14 @@ public class User {
 
     public void setDemo(boolean demo) {
         this.demo = demo;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 
     private static String normalizeEmail(String email) {

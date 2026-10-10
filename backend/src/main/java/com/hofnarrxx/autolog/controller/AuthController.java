@@ -8,21 +8,24 @@ import com.hofnarrxx.autolog.dto.DemoRequest;
 import com.hofnarrxx.autolog.dto.ForgotPasswordRequest;
 import com.hofnarrxx.autolog.dto.LinkGoogleRequest;
 import com.hofnarrxx.autolog.dto.LinkGoogleResponse;
+import com.hofnarrxx.autolog.dto.RegisterRequest;
+import com.hofnarrxx.autolog.dto.ResendVerificationRequest;
 import com.hofnarrxx.autolog.dto.ResetPasswordRequest;
 import com.hofnarrxx.autolog.dto.SetPasswordRequest;
+import com.hofnarrxx.autolog.dto.VerifyEmailRequest;
 import com.hofnarrxx.autolog.exception.InvalidPasswordResetTokenException;
+import com.hofnarrxx.autolog.model.AppLanguage;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
 import com.hofnarrxx.autolog.repository.AuthProviderRepository;
 import com.hofnarrxx.autolog.service.AuthService;
+import com.hofnarrxx.autolog.service.EmailVerificationService;
 import com.hofnarrxx.autolog.service.GoogleLinkService;
 import com.hofnarrxx.autolog.service.PasswordResetService;
 import com.hofnarrxx.autolog.service.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +44,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetService passwordResetService;
     private final GoogleLinkService googleLinkService;
+    private final EmailVerificationService emailVerificationService;
     private final AuthProviderRepository providerRepository;
 
     @Value("${jwt.expiration}")
@@ -51,20 +55,20 @@ public class AuthController {
 
     public AuthController(AuthService authService,
             RefreshTokenService refreshTokenService, PasswordResetService passwordResetService,
-            GoogleLinkService googleLinkService, AuthProviderRepository providerRepository) {
+            GoogleLinkService googleLinkService, EmailVerificationService emailVerificationService,
+            AuthProviderRepository providerRepository) {
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
         this.passwordResetService = passwordResetService;
         this.googleLinkService = googleLinkService;
+        this.emailVerificationService = emailVerificationService;
         this.providerRepository = providerRepository;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody AuthRequest request, HttpServletResponse response) {
-        AuthTokens tokens = authService.register(request);
-        setAuthCookies(response, tokens);
-
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/login")
@@ -132,9 +136,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-        Locale locale = Locale
-                .forLanguageTag(request.lang() != null && !request.lang().isBlank() ? request.lang() : "en");
-        passwordResetService.requestReset(request.email(), locale);
+        passwordResetService.requestReset(request.email(), AppLanguage.from(request.lang()));
         return ResponseEntity.noContent().build();
     }
 
@@ -152,11 +154,24 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<Void> verifyEmail(@RequestBody VerifyEmailRequest request,
+            HttpServletResponse response) {
+        AuthTokens tokens = authService.verifyEmail(request.token());
+        setAuthCookies(response, tokens);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-email/resend")
+    public ResponseEntity<Void> resendVerifyEmail(@RequestBody ResendVerificationRequest request) {
+        emailVerificationService.resend(request.email(), AppLanguage.from(request.lang()));
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/demo")
     public ResponseEntity<Void> startDemo(@RequestBody(required = false) DemoRequest request,
             HttpServletResponse response) {
-        String lang = request == null ? null : request.lang();
-        AuthTokens tokens = authService.startDemo(lang);
+        AuthTokens tokens = authService.startDemo(AppLanguage.from(request.lang()));
         setAuthCookies(response, tokens);
         return ResponseEntity.ok().build();
     }

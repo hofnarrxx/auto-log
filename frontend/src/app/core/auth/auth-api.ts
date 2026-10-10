@@ -34,8 +34,18 @@ export class AuthApi {
     return this.http.post<void>(`${this.authApi}/login`, { email, password });
   }
 
-  register(email: string, password: string): Observable<void> {
-    return this.http.post<void>(`${this.authApi}/register`, { email, password });
+  /** Creates the account and emails a verification link. The server issues no session. */
+  register(email: string, password: string, lang: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/register`, { email, password, lang });
+  }
+
+  /** Redeems an email verification token; on success the server sets the auth cookies. */
+  verifyEmail(token: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/verify-email`, { token });
+  }
+
+  resendVerification(email: string, lang: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/verify-email/resend`, { email, lang });
   }
 
   refreshSession(): Observable<void> {

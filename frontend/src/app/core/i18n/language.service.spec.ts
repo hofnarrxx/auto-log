@@ -61,10 +61,10 @@ describe('LanguageService', () => {
   });
 
   it('loads a stored Ukrainian language', () => {
-    localStorage.setItem(STORAGE_KEY, 'ua');
+    localStorage.setItem(STORAGE_KEY, 'uk');
     const service = createService();
 
-    expect(service.selectedLanguage()).toBe('ua');
+    expect(service.selectedLanguage()).toBe('uk');
   });
 
   it('ignores invalid stored languages', () => {

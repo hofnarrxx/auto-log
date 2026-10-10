@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 import {
   PASSWORD_MIN_LENGTH,
   passwordStrengthValidator,
@@ -20,6 +21,8 @@ export class Register {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private notifications = inject(NotificationService);
+  private translate = inject(TranslateService);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
 
   readonly passwordMinLength = PASSWORD_MIN_LENGTH;
 
@@ -38,8 +41,10 @@ export class Register {
     const { email, password, confirmPassword } = this.form.value;
     if (password !== confirmPassword) return;
 
-    this.authStore.register(email!, password!).subscribe({
-      next: () => this.router.navigate(['/garage']),
+    const lang = this.translate.currentLang || this.translate.defaultLang || 'en';
+
+    this.authStore.register(email!, password!, lang).subscribe({
+      next: () => this.router.navigate(['/verify-email/sent'], { state: { email } }),
       error: (err) => {
         if (err.status === 429) return;
         this.notifications.notifyHttpError(err, {
@@ -51,5 +56,9 @@ export class Register {
         });
       },
     });
+  }
+
+  googleLogin() {
+    window.location.href = `${this.apiBaseUrl}/oauth2/authorization/google`;
   }
 }

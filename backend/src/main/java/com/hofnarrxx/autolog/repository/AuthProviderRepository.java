@@ -14,5 +14,7 @@ public interface AuthProviderRepository extends JpaRepository<AuthProvider, UUID
             String providerId
     );
 
+    void deleteByUserAndProviderType(User user, AuthProviderType providerType);
+
     boolean existsByUserAndProviderType(User user, AuthProviderType providerType);
 }

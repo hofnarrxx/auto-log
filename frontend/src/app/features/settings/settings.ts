@@ -25,7 +25,7 @@ export class Settings {
   languages = [
     { code: 'en', label: 'English' },
     { code: 'pl', label: 'Polski' },
-    { code: 'ua', label: 'Українська' },
+    { code: 'uk', label: 'Українська' },
   ];
 
   readonly isDemo = this.authStore.isDemo;

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hofnarrxx.autolog.config.DemoProperties;
 import com.hofnarrxx.autolog.config.R2Properties;
 import com.hofnarrxx.autolog.demo.DemoContent.MaintenanceSeed;
+import com.hofnarrxx.autolog.model.AppLanguage;
 import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.Currency;
@@ -88,15 +89,16 @@ public class DemoDataSeeder implements ApplicationRunner {
                                 continue;
                         if (userRepository.existsByEmail(email))
                                 continue;
-                        seed(language, email);
+                        seed(AppLanguage.from(language), email);
                 }
         }
 
-        private void seed(String language, String email) {
+        private void seed(AppLanguage language, String email) {
                 User demo = new User();
                 demo.setEmail(email);
                 demo.setPassword(passwordEncoder.encode(secureTokenGenerator.generateToken()));
                 demo.setDemo(true);
+                demo.setEmailVerified(true);
                 userRepository.save(demo);
 
                 AuthProvider provider = new AuthProvider();

@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '../auth/auth-store';
 import { NotificationService } from '../../shared/services/notification.service';
 
-export type AppLanguage = 'en' | 'pl' | 'ua';
+export type AppLanguage = 'en' | 'pl' | 'uk';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +71,6 @@ export class LanguageService {
   }
 
   private parseLanguage(language: string | null | undefined): AppLanguage | null {
-    return language === 'en' || language === 'pl' || language === 'ua' ? language : null;
+    return language === 'en' || language === 'pl' || language === 'uk' ? language : null;
   }
 }

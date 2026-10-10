@@ -11,6 +11,7 @@ describe('AuthStore', () => {
     authApi = jasmine.createSpyObj<AuthApi>('AuthApi', [
       'login',
       'register',
+      'verifyEmail',
       'logout',
       'checkAuth',
       'refreshSession',
@@ -49,12 +50,32 @@ describe('AuthStore', () => {
     expect(store.isDemo()).toBe(false);
   });
 
-  it('marks the user authenticated after a successful register', () => {
+  it('does not authenticate the user after a successful register', () => {
     authApi.register.and.returnValue(of(undefined));
 
-    store.register('a@b.com', 'secret').subscribe();
+    store.register('a@b.com', 'secret', 'en').subscribe();
 
+    expect(authApi.register).toHaveBeenCalledWith('a@b.com', 'secret', 'en');
+    expect(store.isAuthenticated()).toBe(false);
+  });
+
+  it('marks the user authenticated after verifying the email', () => {
+    authApi.verifyEmail.and.returnValue(of(undefined));
+
+    store.verifyEmail('raw-token').subscribe();
+
+    expect(authApi.verifyEmail).toHaveBeenCalledWith('raw-token');
     expect(store.isAuthenticated()).toBe(true);
+    expect(store.isDemo()).toBe(false);
+    expect(store.hasLocalLogin()).toBe(true);
+  });
+
+  it('stays unauthenticated when verifying the email fails', () => {
+    authApi.verifyEmail.and.returnValue(throwError(() => new Error('invalid')));
+
+    store.verifyEmail('bad-token').subscribe({ error: () => undefined });
+
+    expect(store.isAuthenticated()).toBe(false);
   });
 
   it('marks the user unauthenticated after logout', () => {

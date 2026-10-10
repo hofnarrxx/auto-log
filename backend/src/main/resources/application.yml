@@ -49,12 +49,13 @@ app:
   mail:
     from: ${MAIL_FROM}
   password-reset:
-    token-expiration: 1800000 # 30 minutes'
-  
+    token-expiration: 1800000 # 30 minutes
+  email-verification:
+    token-expiration: 86400000 # 24 h
+
 demo:
   enabled: true
-  default-language: en
   emails:
     en: ${DEMO_LOGIN_EN}
     pl: ${DEMO_LOGIN_PL}
-    ua: ${DEMO_LOGIN_UA}
+    uk: ${DEMO_LOGIN_UK}

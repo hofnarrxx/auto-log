@@ -182,7 +182,8 @@
         "passwordRequired": "Hasło jest wymagane.",
         "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
         "invalidCredentials": "Nieprawidłowe dane logowania.",
-        "googleLoginRequired": "To konto korzysta z logowania przez Google. Zaloguj się przez Google."
+        "googleLoginRequired": "To konto korzysta z logowania przez Google. Zaloguj się przez Google.",
+        "emailNotVerified": "Potwierdź swój adres e-mail przed zalogowaniem."
       }
     },
     "forgotPassword": {
@@ -220,6 +221,24 @@
         "resetFailed": "Nie udało się teraz zresetować hasła."
       }
     },
+    "verifyEmail": {
+      "sentTitle": "Sprawdź skrzynkę e-mail",
+      "sentMessage": "Wysłaliśmy link potwierdzający na adres {{email}}. Otwórz go, aby dokończyć zakładanie konta.",
+      "resend": "Wyślij ponownie",
+      "resendIn": "Ponowne wysłanie za {{seconds}} s",
+      "resent": "Jeśli konto nadal czeka na potwierdzenie, wysłaliśmy nowy link potwierdzający.",
+      "checking": "Potwierdzanie adresu e-mail...",
+      "invalidLink": "Ten link potwierdzający jest nieprawidłowy lub wygasł. Wpisz e-mail, aby otrzymać nowy.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "Wpisz e-mail",
+      "success": "Twój adres e-mail został potwierdzony. Witaj w AutoLog!",
+      "backToLogin": "Powrót do logowania",
+      "errors": {
+        "emailRequired": "E-mail jest wymagany.",
+        "emailInvalid": "Wpisz prawidłowy adres e-mail.",
+        "resendFailed": "Nie udało się teraz wysłać wiadomości potwierdzającej."
+      }
+    },
     "linkGoogle": {
       "checking": "Sprawdzanie logowania Google...",
       "explanation": "Konto {{email}} już istnieje. Wpisz jego hasło, aby połączyć Google.",
@@ -246,6 +265,7 @@
       "confirmPasswordLabel": "Potwierdź hasło",
       "confirmPasswordPlaceholder": "Powtórz hasło",
       "submit": "Zarejestruj się",
+      "google": "Zarejestruj się przez Google",
       "switchPrompt": "Masz już konto?",
       "switchLink": "Zaloguj się",
       "errors": {

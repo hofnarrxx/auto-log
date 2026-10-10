@@ -18,7 +18,7 @@ export class App {
   private languageService = inject(LanguageService);
 
   constructor() {
-    this.translate.addLangs(['pl', 'en', 'ua']);
+    this.translate.addLangs(['pl', 'en', 'uk']);
     this.translate.setFallbackLang('en');
     this.languageService.applyCurrent();
   }
