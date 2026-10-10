@@ -18,11 +18,16 @@ export class AuthStore {
   private readonly _isDemo = signal(false);
   readonly isDemo = this._isDemo.asReadonly();
 
+  /** Whether the account can sign in with email + password. False for Google-only accounts. */
+  private readonly _hasLocalLogin = signal(false);
+  readonly hasLocalLogin = this._hasLocalLogin.asReadonly();
+
   login(email: string, password: string): Observable<void> {
     return this.authApi.login(email, password).pipe(
       tap(() => {
         this._isAuthenticated.set(true);
         this._isDemo.set(false);
+        this._hasLocalLogin.set(true);
       })
     );
   }
@@ -32,6 +37,7 @@ export class AuthStore {
       tap(() => {
         this._isAuthenticated.set(true);
         this._isDemo.set(false);
+        this._hasLocalLogin.set(true);
       })
     );
   }
@@ -41,6 +47,7 @@ export class AuthStore {
       tap(() => {
         this._isAuthenticated.set(true);
         this._isDemo.set(false);
+        this._hasLocalLogin.set(true);
       })
     );
   }
@@ -50,6 +57,7 @@ export class AuthStore {
       tap(() => {
         this._isAuthenticated.set(true);
         this._isDemo.set(true);
+        this._hasLocalLogin.set(true);
       })
     );
   }
@@ -59,6 +67,7 @@ export class AuthStore {
       tap(() => {
         this._isAuthenticated.set(false);
         this._isDemo.set(false);
+        this._hasLocalLogin.set(false);
       })
     );
   }
@@ -68,18 +77,30 @@ export class AuthStore {
       tap((response) => {
         this._isAuthenticated.set(true);
         this._isDemo.set(response.demo);
+        this._hasLocalLogin.set(response.local);
       })
     );
   }
 
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.authApi.changePassword(currentPassword, newPassword);
+  }
+
+  /** A Google-only account gains a local login, so the Settings form switches to "change". */
+  setPassword(newPassword: string): Observable<void> {
+    return this.authApi.setPassword(newPassword).pipe(tap(() => this._hasLocalLogin.set(true)));
+  }
+
   refreshAndAuthenticate(): Observable<void> {
-    // No body to read `demo` from here, so `_isDemo` is left untouched: it was already set
-    // correctly by the `checkAuth()`/`startDemo()` call that started this session.
+    // No body to read `demo`/`local` from here, so `_isDemo` and `_hasLocalLogin` are left
+    // untouched: they were already set correctly by the `checkAuth()`/`startDemo()` call that
+    // started this session.
     return this.authApi.refreshSession().pipe(tap(() => this._isAuthenticated.set(true)));
   }
 
   markUnauthenticated(): void {
     this._isAuthenticated.set(false);
     this._isDemo.set(false);
+    this._hasLocalLogin.set(false);
   }
 }

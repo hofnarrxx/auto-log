@@ -3,12 +3,17 @@ package com.hofnarrxx.autolog.controller;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.dto.AuthTokens;
+import com.hofnarrxx.autolog.dto.ChangePasswordRequest;
 import com.hofnarrxx.autolog.dto.DemoRequest;
 import com.hofnarrxx.autolog.dto.ForgotPasswordRequest;
 import com.hofnarrxx.autolog.dto.LinkGoogleRequest;
 import com.hofnarrxx.autolog.dto.LinkGoogleResponse;
 import com.hofnarrxx.autolog.dto.ResetPasswordRequest;
+import com.hofnarrxx.autolog.dto.SetPasswordRequest;
 import com.hofnarrxx.autolog.exception.InvalidPasswordResetTokenException;
+import com.hofnarrxx.autolog.model.AuthProviderType;
+import com.hofnarrxx.autolog.model.User;
+import com.hofnarrxx.autolog.repository.AuthProviderRepository;
 import com.hofnarrxx.autolog.service.AuthService;
 import com.hofnarrxx.autolog.service.GoogleLinkService;
 import com.hofnarrxx.autolog.service.PasswordResetService;
@@ -36,6 +41,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetService passwordResetService;
     private final GoogleLinkService googleLinkService;
+    private final AuthProviderRepository providerRepository;
 
     @Value("${jwt.expiration}")
     private long accessTokenExpirationMs;
@@ -45,11 +51,12 @@ public class AuthController {
 
     public AuthController(AuthService authService,
             RefreshTokenService refreshTokenService, PasswordResetService passwordResetService,
-            GoogleLinkService googleLinkService) {
+            GoogleLinkService googleLinkService, AuthProviderRepository providerRepository) {
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
         this.passwordResetService = passwordResetService;
         this.googleLinkService = googleLinkService;
+        this.providerRepository = providerRepository;
     }
 
     @PostMapping("/register")
@@ -95,7 +102,9 @@ public class AuthController {
 
         String email = authentication.getName();
         boolean demo = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEMO"));
-        return ResponseEntity.ok(new AuthResponse(email, demo));
+        User user = authService.getCurrentUser();
+        boolean local = providerRepository.existsByUserAndProviderType(user, AuthProviderType.LOCAL);
+        return ResponseEntity.ok(new AuthResponse(email, demo, local));
     }
 
     @PostMapping("/logout")
@@ -105,6 +114,20 @@ public class AuthController {
         clearAuthCookies(response);
 
         return ResponseEntity.ok().build();
+    }
+
+    // change in settings
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request.currentPassword(), request.newPassword());
+        return ResponseEntity.noContent().build();
+    }
+
+    // set in settings - if account is google only
+    @PostMapping("/set-password")
+    public ResponseEntity<Void> setPassword(@RequestBody SetPasswordRequest request) {
+        authService.setPassword(request.newPassword());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/forgot-password")
@@ -154,7 +177,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("link-google/cancel")
+    @PostMapping("/link-google/cancel")
     public ResponseEntity<Void> cancelLinkGoogle(HttpServletRequest request, HttpServletResponse response) {
         googleLinkService.cancel(getCookieValue(request, "google_link"));
         response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("google_link", "", 0).toString());

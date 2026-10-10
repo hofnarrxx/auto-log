@@ -61,14 +61,32 @@ describe('AuthApi', () => {
   });
 
   it('requests the current session from the me endpoint', () => {
-    let response: { auth: string; demo: boolean } | undefined;
+    let response: { auth: string; demo: boolean; local: boolean } | undefined;
     api.checkAuth().subscribe((res) => (response = res));
 
     const req = httpMock.expectOne(`${BASE_URL}/api/auth/me`);
     expect(req.request.method).toBe('GET');
-    req.flush({ auth: 'a@b.com', demo: true });
+    req.flush({ auth: 'a@b.com', demo: true, local: true });
 
-    expect(response).toEqual({ auth: 'a@b.com', demo: true });
+    expect(response).toEqual({ auth: 'a@b.com', demo: true, local: true });
+  });
+
+  it('posts the current and new password to the change-password endpoint', () => {
+    api.changePassword('OldPass1!', 'NewPass1!').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/change-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ currentPassword: 'OldPass1!', newPassword: 'NewPass1!' });
+    req.flush(null);
+  });
+
+  it('posts the new password to the set-password endpoint', () => {
+    api.setPassword('NewPass1!').subscribe();
+
+    const req = httpMock.expectOne(`${BASE_URL}/api/auth/set-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ newPassword: 'NewPass1!' });
+    req.flush(null);
   });
 
   it('posts to the demo endpoint', () => {

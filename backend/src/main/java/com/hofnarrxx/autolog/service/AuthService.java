@@ -13,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hofnarrxx.autolog.config.DemoProperties;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthTokens;
+import com.hofnarrxx.autolog.exception.DemoReadOnlyException;
 import com.hofnarrxx.autolog.exception.DemoUserNotFoundException;
 import com.hofnarrxx.autolog.exception.EmailAlreadyExistsException;
 import com.hofnarrxx.autolog.exception.TooManyRequestsException;
+import com.hofnarrxx.autolog.exception.WrongPasswordException;
 import com.hofnarrxx.autolog.model.AuthProvider;
 import com.hofnarrxx.autolog.model.AuthProviderType;
 import com.hofnarrxx.autolog.model.User;
@@ -110,7 +112,8 @@ public class AuthService {
     public AuthTokens startDemo(String language) {
         User user = userRepository.findByEmail(demoProperties.emailFor(language))
                 .orElseThrow(() -> new DemoUserNotFoundException());
-                if(!user.isDemo()) throw new DemoUserNotFoundException();
+        if (!user.isDemo())
+            throw new DemoUserNotFoundException();
         return issueTokens(user);
     }
 
@@ -125,6 +128,51 @@ public class AuthService {
         return Optional.of(issueTokens(user.get()));
     }
 
+    @Transactional
+    public void changePassword(String currentPassword, String newPassword) {
+        User user = getCurrentUser();
+
+        if (user.isDemo())
+            throw new DemoReadOnlyException();
+
+        if (!providerRepository.existsByUserAndProviderType(user, AuthProviderType.LOCAL))
+            throw new IllegalArgumentException("Local login is required");
+
+        if (currentPassword == null || user.getPassword() == null || !encoder.matches(currentPassword, user.getPassword())) {
+            ConsumptionProbe probe = rateLimiterRegistry.tryConsume(RateLimitPolicy.LOGIN_FAILURES, user.getEmail());
+            if (!probe.isConsumed()) {
+                double retryAfterSeconds = Math.ceil(probe.getNanosToWaitForRefill() / 1_000_000_000.0);
+                throw new TooManyRequestsException((long) retryAfterSeconds);
+            }
+            throw new WrongPasswordException();
+        }
+
+        rateLimiterRegistry.reset(RateLimitPolicy.LOGIN_FAILURES, user.getEmail());
+        passwordPolicy.validate(newPassword);
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void setPassword(String newPassword) {
+        User user = getCurrentUser();
+
+        if (user.isDemo())
+            throw new DemoReadOnlyException();
+
+        if (providerRepository.existsByUserAndProviderType(user, AuthProviderType.LOCAL))
+            throw new IllegalArgumentException("Local login already exists");
+
+        passwordPolicy.validate(newPassword);
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
+
+        AuthProvider provider = new AuthProvider();
+        provider.setProviderType(AuthProviderType.LOCAL);
+        provider.setUser(user);
+        providerRepository.save(provider);
+    }
+
     public User getCurrentUser() {
         String email = SecurityContextHolder
                 .getContext()
@@ -135,7 +183,7 @@ public class AuthService {
                 .orElseThrow();
     }
 
-    public AuthTokens linkGoogle(String rawToken, String password){
+    public AuthTokens linkGoogle(String rawToken, String password) {
         User user = googleLinkService.confirm(rawToken, password);
         return issueTokens(user);
     }

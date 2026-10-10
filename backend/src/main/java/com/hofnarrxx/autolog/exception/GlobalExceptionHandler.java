@@ -87,6 +87,24 @@ public class GlobalExceptionHandler {
                                                 "message", ex.getMessage()));
         }
 
+        @ExceptionHandler(WrongPasswordException.class)
+        public ResponseEntity<?> handleWrongPassword(WrongPasswordException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of(
+                                                "error", "WRONG_PASSWORD",
+                                                "message", ex.getMessage()));
+        }
+
+        @ExceptionHandler(DemoReadOnlyException.class)
+        public ResponseEntity<?> handleDemoReadOnly(DemoReadOnlyException ex) {
+                return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(Map.of(
+                                                "error", "DEMO_READ_ONLY",
+                                                "message", ex.getMessage()));
+        }
+
         @ExceptionHandler(VehicleNotFoundException.class)
         public ResponseEntity<?> handleVehicleNotFound(VehicleNotFoundException ex) {
                 return ResponseEntity

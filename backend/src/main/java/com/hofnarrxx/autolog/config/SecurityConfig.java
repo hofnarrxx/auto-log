@@ -42,6 +42,8 @@ public class SecurityConfig {
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/api/auth/change-password", "/api/auth/set-password")
+                                                .authenticated()
                                                 .requestMatchers("/api/auth/**", "/oauth2/**", "/share/**").permitAll()
                                                 .requestMatchers(HttpMethod.GET, "/vehicles/**", "/metadata/**")
                                                 .hasAnyRole("USER", "DEMO")

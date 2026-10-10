@@ -132,7 +132,34 @@
   "settings": {
     "title": "Ustawienia",
     "selectCurrency": "Wybierz walutę",
-    "selectLanguage": "Wybierz język"
+    "selectLanguage": "Wybierz język",
+    "password": {
+      "title": "Hasło",
+      "setDescription": "Twoje konto korzysta obecnie tylko z logowania przez Google. Ustaw hasło, aby logować się także za pomocą adresu e-mail z Google i hasła.",
+      "currentLabel": "Obecne hasło",
+      "currentPlaceholder": "Wpisz obecne hasło",
+      "newLabel": "Nowe hasło",
+      "newPlaceholder": "Utwórz nowe hasło",
+      "hint": "Co najmniej {{minLength}} znaków, w tym jedna wielka litera i jeden znak specjalny.",
+      "confirmLabel": "Potwierdź nowe hasło",
+      "confirmPlaceholder": "Powtórz nowe hasło",
+      "changeSubmit": "Zmień hasło",
+      "setSubmit": "Ustaw hasło",
+      "changeSuccess": "Hasło zostało zmienione.",
+      "setSuccess": "Hasło zostało ustawione. Możesz teraz logować się adresem e-mail i hasłem.",
+      "errors": {
+        "currentRequired": "Obecne hasło jest wymagane.",
+        "wrongPassword": "Obecne hasło jest nieprawidłowe.",
+        "passwordRequired": "Hasło jest wymagane.",
+        "passwordMinLength": "Hasło musi mieć co najmniej {{minLength}} znaków.",
+        "passwordUppercase": "Hasło musi zawierać co najmniej jedną wielką literę.",
+        "passwordSpecialChar": "Hasło musi zawierać co najmniej jeden znak specjalny.",
+        "confirmRequired": "Potwierdź hasło.",
+        "passwordMismatch": "Hasła nie są zgodne.",
+        "changeFailed": "Nie udało się teraz zmienić hasła.",
+        "setFailed": "Nie udało się teraz ustawić hasła."
+      }
+    }
   },
   "auth": {
     "errors": {

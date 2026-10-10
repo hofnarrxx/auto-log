@@ -5,11 +5,13 @@ import { API_BASE_URL } from '../config/api-base-url.token';
 
 /**
  * Shape of `GET /api/auth/me`. `auth` is the signed-in user's email; `demo` tells the frontend
- * whether this session belongs to the shared, read-only demo account.
+ * whether this session belongs to the shared, read-only demo account; `local` says whether the
+ * account can sign in with an email and password (false for Google-only accounts).
  */
 export interface AuthResponse {
   auth: string;
   demo: boolean;
+  local: boolean;
 }
 
 /** Email waiting for a password before a Google identity can be linked. */
@@ -62,6 +64,17 @@ export class AuthApi {
 
   resetPassword(token: string, password: string): Observable<void> {
     return this.http.post<void>(`${this.authApi}/reset-password`, { token, password });
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/change-password`, {
+      currentPassword,
+      newPassword,
+    });
+  }
+
+  setPassword(newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.authApi}/set-password`, { newPassword });
   }
 
   pendingGoogleLink(): Observable<LinkGoogleResponse> {

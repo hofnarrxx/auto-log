@@ -26,4 +26,20 @@
       }
     </select>
   </div>
+
+  @if (!isDemo()) {
+    <div class="settings-section password-section">
+      <span class="settings-label">{{ 'settings.password.title' | translate }}</span>
+      <button type="button" class="password-open-btn" (click)="openPasswordModal()">
+        {{
+          (hasLocalLogin() ? 'settings.password.changeSubmit' : 'settings.password.setSubmit')
+            | translate
+        }}
+      </button>
+    </div>
+  }
 </div>
+
+@if (isPasswordModalOpen() && !isDemo()) {
+  <app-password-modal (closed)="closePasswordModal()" />
+}

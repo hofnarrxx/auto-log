@@ -16,6 +16,8 @@ describe('AuthStore', () => {
       'refreshSession',
       'startDemo',
       'linkGoogle',
+      'changePassword',
+      'setPassword',
     ]);
 
     TestBed.configureTestingModule({
@@ -66,15 +68,77 @@ describe('AuthStore', () => {
   });
 
   it('marks the user authenticated after a successful session check', () => {
-    authApi.checkAuth.and.returnValue(of({ auth: 'a@b.com', demo: false }));
+    authApi.checkAuth.and.returnValue(of({ auth: 'a@b.com', demo: false, local: true }));
 
     store.checkAuth().subscribe();
 
     expect(store.isAuthenticated()).toBe(true);
   });
 
+  it('sets hasLocalLogin from the session check response', () => {
+    authApi.checkAuth.and.returnValue(of({ auth: 'g@b.com', demo: false, local: false }));
+
+    store.checkAuth().subscribe();
+
+    expect(store.hasLocalLogin()).toBe(false);
+
+    authApi.checkAuth.and.returnValue(of({ auth: 'a@b.com', demo: false, local: true }));
+
+    store.checkAuth().subscribe();
+
+    expect(store.hasLocalLogin()).toBe(true);
+  });
+
+  it('marks the account as having a local login after a password login', () => {
+    authApi.login.and.returnValue(of(undefined));
+
+    store.login('a@b.com', 'secret').subscribe();
+
+    expect(store.hasLocalLogin()).toBe(true);
+  });
+
+  it('marks a Google-only account as local after setting a password', () => {
+    authApi.checkAuth.and.returnValue(of({ auth: 'g@b.com', demo: false, local: false }));
+    authApi.setPassword.and.returnValue(of(undefined));
+
+    store.checkAuth().subscribe();
+    store.setPassword('NewPass1!').subscribe();
+
+    expect(authApi.setPassword).toHaveBeenCalledWith('NewPass1!');
+    expect(store.hasLocalLogin()).toBe(true);
+  });
+
+  it('keeps hasLocalLogin unchanged when setting a password fails', () => {
+    authApi.checkAuth.and.returnValue(of({ auth: 'g@b.com', demo: false, local: false }));
+    authApi.setPassword.and.returnValue(throwError(() => new Error('rejected')));
+
+    store.checkAuth().subscribe();
+    store.setPassword('NewPass1!').subscribe({ error: () => undefined });
+
+    expect(store.hasLocalLogin()).toBe(false);
+  });
+
+  it('delegates changing the password to the api without touching the session', () => {
+    authApi.changePassword.and.returnValue(of(undefined));
+
+    store.changePassword('OldPass1!', 'NewPass1!').subscribe();
+
+    expect(authApi.changePassword).toHaveBeenCalledWith('OldPass1!', 'NewPass1!');
+    expect(store.isAuthenticated()).toBe(false);
+  });
+
+  it('clears hasLocalLogin on logout', () => {
+    authApi.login.and.returnValue(of(undefined));
+    authApi.logout.and.returnValue(of(undefined));
+
+    store.login('a@b.com', 'secret').subscribe();
+    store.logout().subscribe();
+
+    expect(store.hasLocalLogin()).toBe(false);
+  });
+
   it('sets isDemo from the session check response', () => {
-    authApi.checkAuth.and.returnValue(of({ auth: 'demo@autolog.app', demo: true }));
+    authApi.checkAuth.and.returnValue(of({ auth: 'demo@autolog.app', demo: true, local: true }));
 
     store.checkAuth().subscribe();
 

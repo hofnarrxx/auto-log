@@ -132,7 +132,34 @@
   "settings": {
     "title": "Settings",
     "selectCurrency": "Select currency",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "password": {
+      "title": "Password",
+      "setDescription": "Your account currently signs in with Google only. Set a password to also sign in with your Google email and a password.",
+      "currentLabel": "Current password",
+      "currentPlaceholder": "Enter your current password",
+      "newLabel": "New password",
+      "newPlaceholder": "Create a new password",
+      "hint": "At least {{minLength}} characters, with one uppercase letter and one special character.",
+      "confirmLabel": "Confirm new password",
+      "confirmPlaceholder": "Repeat your new password",
+      "changeSubmit": "Change password",
+      "setSubmit": "Set password",
+      "changeSuccess": "Your password has been changed.",
+      "setSuccess": "Your password has been set. You can now sign in with your email and password.",
+      "errors": {
+        "currentRequired": "Current password is required.",
+        "wrongPassword": "Current password is incorrect.",
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password must be at least {{minLength}} characters.",
+        "passwordUppercase": "Password must include at least one uppercase letter.",
+        "passwordSpecialChar": "Password must include at least one special character.",
+        "confirmRequired": "Please confirm your password.",
+        "passwordMismatch": "Passwords do not match.",
+        "changeFailed": "Unable to change your password right now.",
+        "setFailed": "Unable to set your password right now."
+      }
+    }
   },
   "auth": {
     "errors": {
