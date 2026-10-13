@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, finalize, shareReplay, tap } from 'rxjs';
 import { AuthApi, type AuthResponse } from './auth-api';
 
 /**
@@ -96,11 +96,22 @@ export class AuthStore {
     return this.authApi.setPassword(newPassword).pipe(tap(() => this._hasLocalLogin.set(true)));
   }
 
+  /**
+   * Refresh tokens are single-use, so concurrent callers (e.g. several parallel requests that all
+   * got a 401) must share one in-flight refresh instead of each sending their own.
+   */
+  private refreshInFlight$: Observable<void> | null = null;
+
   refreshAndAuthenticate(): Observable<void> {
     // No body to read `demo`/`local` from here, so `_isDemo` and `_hasLocalLogin` are left
     // untouched: they were already set correctly by the `checkAuth()`/`startDemo()` call that
     // started this session.
-    return this.authApi.refreshSession().pipe(tap(() => this._isAuthenticated.set(true)));
+    this.refreshInFlight$ ??= this.authApi.refreshSession().pipe(
+      tap(() => this._isAuthenticated.set(true)),
+      finalize(() => (this.refreshInFlight$ = null)),
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+    return this.refreshInFlight$;
   }
 
   markUnauthenticated(): void {

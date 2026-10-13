@@ -28,8 +28,7 @@ public class RefreshTokenService {
 
     @Transactional
     public String createForUser(User user) {
-        if (!user.isDemo())
-            refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.deleteInactiveByUser(user, Instant.now());
         RefreshToken token = new RefreshToken();
         token.setToken(secureTokenGenerator.generateToken());
         token.setUser(user);
@@ -41,23 +40,12 @@ public class RefreshTokenService {
 
     @Transactional
     public Optional<User> rotate(String rawToken) {
-        Optional<RefreshToken> tokenOpt = refreshTokenRepository.findByTokenAndRevokedFalse(rawToken);
-
-        if (tokenOpt.isEmpty()) {
+        Optional<User> userOpt = refreshTokenRepository.findUserByToken(rawToken);
+        if (userOpt.isEmpty())
             return Optional.empty();
-        }
-
-        RefreshToken token = tokenOpt.get();
-
-        if (token.getExpiresAt().isBefore(Instant.now())) {
-            token.setRevoked(true);
-            refreshTokenRepository.save(token);
+        if (refreshTokenRepository.revokeIfActive(rawToken, Instant.now()) == 0)
             return Optional.empty();
-        }
-
-        token.setRevoked(true);
-        refreshTokenRepository.save(token);
-        return Optional.of(token.getUser());
+        return userOpt;
     }
 
     @Transactional
@@ -66,10 +54,6 @@ public class RefreshTokenService {
             return;
         }
 
-        refreshTokenRepository.findByTokenAndRevokedFalse(rawToken)
-                .ifPresent(token -> {
-                    token.setRevoked(true);
-                    refreshTokenRepository.save(token);
-                });
+        refreshTokenRepository.revokeIfActive(rawToken, Instant.now());
     }
 }

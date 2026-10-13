@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { AuthApi } from './auth-api';
 import { AuthStore } from './auth-store';
 
@@ -179,6 +179,52 @@ describe('AuthStore', () => {
 
     store.refreshAndAuthenticate().subscribe();
 
+    expect(store.isAuthenticated()).toBe(true);
+  });
+
+  it('shares a single refresh request between overlapping callers', () => {
+    const response$ = new Subject<void>();
+    authApi.refreshSession.and.returnValue(response$);
+    const completed: number[] = [];
+
+    store.refreshAndAuthenticate().subscribe({ complete: () => completed.push(1) });
+    store.refreshAndAuthenticate().subscribe({ complete: () => completed.push(2) });
+
+    expect(authApi.refreshSession).toHaveBeenCalledTimes(1);
+
+    response$.next();
+    response$.complete();
+
+    expect(completed).toEqual([1, 2]);
+    expect(store.isAuthenticated()).toBe(true);
+  });
+
+  it('starts a new refresh once the previous one has completed', () => {
+    authApi.refreshSession.and.returnValue(of(undefined));
+
+    store.refreshAndAuthenticate().subscribe();
+    store.refreshAndAuthenticate().subscribe();
+
+    expect(authApi.refreshSession).toHaveBeenCalledTimes(2);
+  });
+
+  it('propagates a refresh failure to all callers and allows a new attempt afterwards', () => {
+    const response$ = new Subject<void>();
+    authApi.refreshSession.and.returnValue(response$);
+    const errors: unknown[] = [];
+
+    store.refreshAndAuthenticate().subscribe({ error: (e) => errors.push(e) });
+    store.refreshAndAuthenticate().subscribe({ error: (e) => errors.push(e) });
+    response$.error(new Error('expired'));
+
+    expect(authApi.refreshSession).toHaveBeenCalledTimes(1);
+    expect(errors.length).toBe(2);
+    expect(store.isAuthenticated()).toBe(false);
+
+    authApi.refreshSession.and.returnValue(of(undefined));
+    store.refreshAndAuthenticate().subscribe();
+
+    expect(authApi.refreshSession).toHaveBeenCalledTimes(2);
     expect(store.isAuthenticated()).toBe(true);
   });
 
