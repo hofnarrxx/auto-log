@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080',
+  apiBaseUrl: 'https://api.autolog.cc',
   // Public origin of the frontend (no trailing slash). Used for canonical / og:url tags.
-  siteUrl: 'https://yourdomain.com',
+  siteUrl: 'https://autolog.cc',
   // Shown on the privacy policy and terms pages.
-  contactEmail: 'contact@yourdomain.com',
+  contactEmail: 'autolog.help@gmail.com',
 };

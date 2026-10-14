@@ -1,0 +1,60 @@
+# Run from the deploy/ directory:  docker compose up -d --build
+# Compose reads deploy/.env automatically (copy .env.example to .env and fill it in).
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No "ports:" on purpose: the database is only reachable from other containers.
+
+  backend:
+    build: ../backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      # Drives CORS, OAuth redirects and links in emails.
+      FRONTEND_URL: https://${DOMAIN}
+    # "expose" is container-to-container only; Caddy is the single public entry point.
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Output of `ng build` (built on your machine or in CI, then copied to the server).
+      - ../frontend/dist/frontend/browser:/srv:ro
+      - caddy_data:/data      # certificates: keep this volume, or you'll hit Let's Encrypt limits
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
