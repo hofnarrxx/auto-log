@@ -83,7 +83,7 @@ public class OAuth2JwtSuccessHandler implements AuthenticationSuccessHandler {
     private ResponseCookie buildCookie(String name, String value, long maxAgeMs) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(false)
+                .secure(appProperties.cookie().secure())
                 .path("/")
                 .maxAge(Math.max(maxAgeMs, 0) / 1000)
                 .sameSite("Lax")

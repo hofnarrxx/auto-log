@@ -26,9 +26,13 @@ spring:
       mail.smtp.starttls.enable: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
 
 jwt:
   secret: ${JWT_SECRET}
@@ -52,6 +56,8 @@ app:
     token-expiration: 1800000 # 30 minutes
   email-verification:
     token-expiration: 86400000 # 24 h
+  cookie:
+    secure: ${COOKIE_SECURE:false}
 
 demo:
   enabled: true

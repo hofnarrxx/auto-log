@@ -12,7 +12,7 @@
 	<artifactId>autolog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>autolog</name>
-	<description>Demo project for Spring Boot</description>
+	<description>AutoLog app</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -69,11 +69,13 @@
     		<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
 		<dependency>
-			<groupId>io.github.cdimascio</groupId>
-			<artifactId>dotenv-java</artifactId>
-			<version>3.0.0</version>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-flyway</artifactId>
+		</dependency>
+		<dependency>
+    		<groupId>org.flywaydb</groupId>
+    		<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 
 		<dependency>

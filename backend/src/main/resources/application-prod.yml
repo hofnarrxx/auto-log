@@ -1,0 +1,21 @@
+# Activate with SPRING_PROFILES_ACTIVE=prod.
+
+server:
+  forward-headers-strategy: framework
+
+spring:
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+app:
+  cookie:
+    secure: true
+
+logging:
+  level:
+    root: INFO
+    com.hofnarrxx.autolog: INFO
+    org.hibernate.SQL: WARN
+    org.springframework.security: WARN

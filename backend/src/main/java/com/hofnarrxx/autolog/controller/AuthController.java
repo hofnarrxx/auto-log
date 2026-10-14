@@ -1,5 +1,6 @@
 package com.hofnarrxx.autolog.controller;
 
+import com.hofnarrxx.autolog.config.AppProperties;
 import com.hofnarrxx.autolog.dto.AuthRequest;
 import com.hofnarrxx.autolog.dto.AuthResponse;
 import com.hofnarrxx.autolog.dto.AuthTokens;
@@ -46,6 +47,7 @@ public class AuthController {
     private final GoogleLinkService googleLinkService;
     private final EmailVerificationService emailVerificationService;
     private final AuthProviderRepository providerRepository;
+    private final AppProperties appProperties;
 
     @Value("${jwt.expiration}")
     private long accessTokenExpirationMs;
@@ -56,13 +58,14 @@ public class AuthController {
     public AuthController(AuthService authService,
             RefreshTokenService refreshTokenService, PasswordResetService passwordResetService,
             GoogleLinkService googleLinkService, EmailVerificationService emailVerificationService,
-            AuthProviderRepository providerRepository) {
+            AuthProviderRepository providerRepository, AppProperties appProperties) {
         this.authService = authService;
         this.refreshTokenService = refreshTokenService;
         this.passwordResetService = passwordResetService;
         this.googleLinkService = googleLinkService;
         this.emailVerificationService = emailVerificationService;
         this.providerRepository = providerRepository;
+        this.appProperties = appProperties;
     }
 
     @PostMapping("/register")
@@ -169,7 +172,7 @@ public class AuthController {
     }
 
     @PostMapping("/demo")
-    public ResponseEntity<Void> startDemo(@RequestBody(required = false) DemoRequest request,
+    public ResponseEntity<Void> startDemo(@RequestBody DemoRequest request,
             HttpServletResponse response) {
         AuthTokens tokens = authService.startDemo(AppLanguage.from(request.lang()));
         setAuthCookies(response, tokens);
@@ -216,7 +219,7 @@ public class AuthController {
     private ResponseCookie buildCookie(String name, String value, long maxAgeMs) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(false)
+                .secure(appProperties.cookie().secure())
                 .path("/")
                 .maxAge(Math.max(maxAgeMs, 0) / 1000)
                 .sameSite("Lax")

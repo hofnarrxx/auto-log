@@ -14,8 +14,6 @@ import java.time.Instant;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
-    Optional<RefreshToken> findByTokenAndRevokedFalse(String token);
-
     void deleteByUser(User user);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
