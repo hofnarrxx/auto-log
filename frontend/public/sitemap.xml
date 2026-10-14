@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NOTE: replace https://yourdomain.com with the production domain. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://yourdomain.com/</loc>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/privacy</loc>
+  </url>
+  <url>
+    <loc>https://yourdomain.com/terms</loc>
+  </url>
+</urlset>

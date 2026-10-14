@@ -1,11 +1,15 @@
 import {
   ApplicationConfig,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, TitleStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
+import { AppTitleStrategy } from './core/seo/app-title.strategy';
+import { SeoService } from './core/seo/seo.service';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/auth/auth-interceptor';
 
@@ -34,6 +38,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
+    { provide: TitleStrategy, useExisting: AppTitleStrategy },
+    provideAppInitializer(() => inject(SeoService).init()),
     provideHttpClient(withInterceptors([authInterceptor])),
     ...provideTranslateService({
       loader: provideTranslateHttpLoader({

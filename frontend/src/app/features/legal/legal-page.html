@@ -1,0 +1,42 @@
+<div class="legal-page">
+  <header class="legal-header">
+    <a routerLink="/" class="logo">{{ 'common.appName' | translate }}</a>
+
+    <select
+      class="language-select"
+      [ngModel]="selectedLanguage()"
+      (ngModelChange)="onLanguageChange($event)"
+      [attr.aria-label]="'settings.selectLanguage' | translate"
+    >
+      <option value="en">English</option>
+      <option value="pl">Polski</option>
+      <option value="uk">Українська</option>
+    </select>
+  </header>
+
+  <main class="legal-content">
+    <h1>{{ 'legal.' + docType + '.title' | translate }}</h1>
+    <p class="updated">{{ 'legal.lastUpdated' | translate: { date: lastUpdated } }}</p>
+    <p class="intro">{{ 'legal.' + docType + '.intro' | translate }}</p>
+
+    @for (section of sections(); track section.heading) {
+      <section>
+        <h2>{{ section.heading }}</h2>
+
+        @for (paragraph of section.paragraphs ?? []; track $index) {
+          <p>{{ paragraph }}</p>
+        }
+
+        @if (section.items?.length) {
+          <ul>
+            @for (item of section.items; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        }
+      </section>
+    }
+  </main>
+
+  <app-site-footer></app-site-footer>
+</div>

@@ -7,10 +7,11 @@ import { LucideAngularModule } from 'lucide-angular';
 import { AuthStore } from '../../core/auth/auth-store';
 import { LanguageService } from '../../core/i18n/language.service';
 import { NotificationService } from '../../shared/services/notification.service';
+import { SiteFooter } from '../../shared/ui/site-footer/site-footer';
 
 @Component({
   selector: 'app-landing',
-  imports: [FormsModule, RouterLink, TranslateModule, LucideAngularModule],
+  imports: [FormsModule, RouterLink, TranslateModule, LucideAngularModule, SiteFooter],
   templateUrl: './landing.html',
   styleUrl: './landing.css',
 })

@@ -181,6 +181,10 @@
   margin: 0;
 }
 
+app-site-footer {
+  margin-top: auto;
+}
+
 @media (max-width: 1024px) {
   .features {
     grid-template-columns: repeat(2, 1fr);

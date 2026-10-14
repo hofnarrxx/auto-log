@@ -86,6 +86,32 @@ describe('LanguageService', () => {
     expect(assign).not.toHaveBeenCalled();
   });
 
+  it('keeps the <html lang> attribute in sync with the applied language', () => {
+    const documentElement = { lang: 'en' };
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        LanguageService,
+        { provide: TranslateService, useValue: translate },
+        { provide: NotificationService, useValue: notifications },
+        { provide: AuthStore, useValue: { isDemo: isDemo.asReadonly(), startDemo } },
+        { provide: DOCUMENT, useValue: { documentElement, defaultView: { location: { assign } } } },
+        { provide: Router, useValue: router },
+      ],
+    });
+    const service = TestBed.inject(LanguageService);
+
+    service.setLanguage('pl');
+    expect(documentElement.lang).toBe('pl');
+
+    service.setLanguage('uk');
+    expect(documentElement.lang).toBe('uk');
+
+    documentElement.lang = 'en';
+    service.applyCurrent();
+    expect(documentElement.lang).toBe('uk');
+  });
+
   it('ignores unsupported languages', () => {
     const service = createService();
 

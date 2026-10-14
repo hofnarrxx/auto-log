@@ -99,6 +99,198 @@
       }
     }
   },
+  "seo": {
+    "defaultTitle": "AutoLog – Car maintenance and fuel log",
+    "defaultDescription": "AutoLog is a free car maintenance and fuel log. Track fuel fill-ups, service history, costs and receipts for all your vehicles, and share them with a link."
+  },
+  "titles": {
+    "login": "Log in",
+    "register": "Create account",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "Reset password",
+    "verifyEmail": "Verify email",
+    "linkGoogle": "Link Google account",
+    "garage": "My cars",
+    "settings": "Settings",
+    "addVehicle": "Add vehicle",
+    "vehicle": "Vehicle",
+    "share": "Shared vehicle",
+    "notFound": "Page not found",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: {{date}}",
+    "footer": {
+      "navLabel": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "How AutoLog collects, uses and protects your personal data, including account details, vehicle records and attachments.",
+      "intro": "This Privacy Policy explains what personal data AutoLog collects, why we collect it, and what choices you have.",
+      "sections": [
+        {
+          "heading": "1. Who we are",
+          "paragraphs": [
+            "AutoLog is a web application for logging fuel and maintenance records of your vehicles. The service is operated by the AutoLog owner (\"we\", \"us\"), who is the controller of your personal data.",
+            "You can contact us about anything related to your data at {{email}}."
+          ]
+        },
+        {
+          "heading": "2. Data we collect",
+          "paragraphs": ["We process the following categories of data:"],
+          "items": [
+            "Account data: your email address, a hashed version of your password (we never store it in plain text) and your preferred language.",
+            "Google sign-in: if you sign in with Google, we receive your email address and basic profile information from Google. We do not receive your Google password.",
+            "Content you add: vehicle details (such as make, model, year, license plate and mileage), vehicle photos, fuel records, maintenance records (titles, costs, notes) and attachments such as invoices and receipts.",
+            "Technical data: your IP address and standard server logs, used to keep the service secure and to limit abuse (for example, rate limiting)."
+          ]
+        },
+        {
+          "heading": "3. How we use your data",
+          "paragraphs": [
+            "We do not sell your personal data and we do not use it for advertising. We use it only to:"
+          ],
+          "items": [
+            "provide the service: sign you in, store and display your records and generate statistics;",
+            "send service emails, such as email verification and password reset messages;",
+            "make the vehicle information you choose to share available through share links;",
+            "protect the service from abuse and fix technical problems."
+          ]
+        },
+        {
+          "heading": "4. Legal bases",
+          "paragraphs": [
+            "We process your data to perform our contract with you (providing the service), to comply with legal obligations, and for our legitimate interests in keeping the service secure and reliable."
+          ]
+        },
+        {
+          "heading": "5. Share links",
+          "paragraphs": [
+            "If you create a share link for a vehicle, anyone who has the link can view the vehicle details, records and attachments included in it until you delete the link. Share pages are marked so that search engines do not index them, but you should only send links to people you trust."
+          ]
+        },
+        {
+          "heading": "6. Cookies and local storage",
+          "paragraphs": [
+            "AutoLog only uses cookies and browser storage that are strictly necessary for the service to work. We currently do not use analytics or advertising cookies."
+          ],
+          "items": [
+            "access_token and refresh_token: secure, HTTP-only cookies that keep you signed in (up to 1 hour and 7 days respectively).",
+            "google_link: a short-lived cookie (10 minutes) used only while you link a Google account to an existing account.",
+            "autolog-language: a browser storage entry that remembers your language."
+          ]
+        },
+        {
+          "heading": "7. Service providers",
+          "paragraphs": [
+            "We use trusted providers to run AutoLog: hosting and database services, Cloudflare R2 for storing vehicle photos and attachments, an email delivery provider for service emails, and Google for optional sign-in. They process data only on our behalf and as needed to provide their services. Some providers may process data outside the European Economic Area under appropriate safeguards."
+          ]
+        },
+        {
+          "heading": "8. Retention",
+          "paragraphs": [
+            "We keep your data while your account exists. You can delete vehicles, records, attachments and share links yourself in the app. To delete your account and all associated data, email us at {{email}}; we will process the request within 30 days. We may keep limited data where the law requires it."
+          ]
+        },
+        {
+          "heading": "9. Your rights",
+          "paragraphs": [
+            "Under the GDPR you have the right to access your data, correct it, delete it, restrict or object to its processing, and receive a copy of it in a portable format. To exercise these rights, contact us at {{email}}. You also have the right to lodge a complaint with your data protection authority."
+          ]
+        },
+        {
+          "heading": "10. Security",
+          "paragraphs": [
+            "We use measures such as encrypted connections, hashed passwords and HTTP-only cookies to protect your data. No system is perfectly secure, so please use a strong, unique password."
+          ]
+        },
+        {
+          "heading": "11. Children",
+          "paragraphs": [
+            "AutoLog is not intended for children under 16, and we do not knowingly collect their data."
+          ]
+        },
+        {
+          "heading": "12. Changes to this policy",
+          "paragraphs": [
+            "We may update this policy from time to time. The date of the latest update is shown at the top of this page."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "description": "The terms for using AutoLog, a free car maintenance and fuel log.",
+      "intro": "By creating an account or using AutoLog, you agree to these Terms of Service. If you do not agree, please do not use the service.",
+      "sections": [
+        {
+          "heading": "1. The service",
+          "paragraphs": [
+            "AutoLog lets you record fuel, maintenance and related documents for your vehicles and share selected information through links. The service is provided free of charge and may change over time."
+          ]
+        },
+        {
+          "heading": "2. Your account",
+          "paragraphs": [
+            "You must provide accurate information and keep your login details confidential. You are responsible for activity under your account. The demo mode is read-only and intended only for trying out the service."
+          ]
+        },
+        {
+          "heading": "3. Your content",
+          "paragraphs": [
+            "You keep all rights to the data and files you add. You give us permission to store, process and display them as needed to run the service, including showing them through share links that you create. You are responsible for the content you add and for the links you share."
+          ]
+        },
+        {
+          "heading": "4. Acceptable use",
+          "paragraphs": ["You agree not to:"],
+          "items": [
+            "upload unlawful content, malware or files you have no right to share;",
+            "try to access other users' data or accounts without permission;",
+            "overload, scrape, attack or otherwise disrupt the service, or bypass its rate limits;",
+            "use the service for any purpose that violates applicable law."
+          ]
+        },
+        {
+          "heading": "5. Accuracy of information",
+          "paragraphs": [
+            "Records and statistics in AutoLog are based on what you enter and are provided for information only. They are not an official service history or odometer certificate, and we do not guarantee their accuracy or that they will affect the value of a vehicle."
+          ]
+        },
+        {
+          "heading": "6. Availability and changes",
+          "paragraphs": [
+            "We try to keep AutoLog available, but we do not guarantee uninterrupted operation. We may change, suspend or discontinue features at any time. Please keep your own copies of important documents."
+          ]
+        },
+        {
+          "heading": "7. Suspension and termination",
+          "paragraphs": [
+            "We may suspend or delete accounts that violate these terms or harm the service. You may stop using AutoLog at any time and ask us to delete your account by emailing {{email}}."
+          ]
+        },
+        {
+          "heading": "8. Disclaimer and liability",
+          "paragraphs": [
+            "AutoLog is provided \"as is\" without warranties of any kind. To the extent permitted by law, we are not liable for indirect or consequential losses or for loss of data. Nothing in these terms limits any rights you have as a consumer under mandatory law."
+          ]
+        },
+        {
+          "heading": "9. Changes to these terms",
+          "paragraphs": [
+            "We may update these terms. If you keep using AutoLog after a change takes effect, you accept the updated terms. The date of the latest update is shown at the top of this page."
+          ]
+        },
+        {
+          "heading": "10. Contact",
+          "paragraphs": ["Questions about these terms? Email us at {{email}}."]
+        }
+      ]
+    }
+  },
   "nav": {
     "details": "Details",
     "fuel": "Fuel",

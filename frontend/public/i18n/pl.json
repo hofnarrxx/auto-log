@@ -99,6 +99,198 @@
       }
     }
   },
+  "seo": {
+    "defaultTitle": "AutoLog – Książka serwisowa i dziennik tankowań",
+    "defaultDescription": "AutoLog to darmowa książka serwisowa i dziennik tankowań. Zapisuj tankowania, historię serwisową, koszty i paragony wszystkich swoich pojazdów i udostępniaj je przez link."
+  },
+  "titles": {
+    "login": "Logowanie",
+    "register": "Zakładanie konta",
+    "forgotPassword": "Nie pamiętam hasła",
+    "resetPassword": "Resetowanie hasła",
+    "verifyEmail": "Weryfikacja adresu e-mail",
+    "linkGoogle": "Połącz konto Google",
+    "garage": "Moje samochody",
+    "settings": "Ustawienia",
+    "addVehicle": "Dodaj pojazd",
+    "vehicle": "Pojazd",
+    "share": "Udostępniony pojazd",
+    "notFound": "Strona nie znaleziona",
+    "privacy": "Polityka prywatności",
+    "terms": "Regulamin"
+  },
+  "legal": {
+    "lastUpdated": "Ostatnia aktualizacja: {{date}}",
+    "footer": {
+      "navLabel": "Dokumenty prawne",
+      "privacy": "Polityka prywatności",
+      "terms": "Regulamin"
+    },
+    "privacy": {
+      "title": "Polityka prywatności",
+      "description": "Jak AutoLog zbiera, wykorzystuje i chroni Twoje dane osobowe, w tym dane konta, wpisy o pojazdach i załączniki.",
+      "intro": "Niniejsza Polityka prywatności wyjaśnia, jakie dane osobowe zbiera AutoLog, w jakim celu oraz jakie masz możliwości wyboru.",
+      "sections": [
+        {
+          "heading": "1. Kim jesteśmy",
+          "paragraphs": [
+            "AutoLog to aplikacja internetowa do zapisywania tankowań i serwisu Twoich pojazdów. Usługę prowadzi właściciel AutoLog („my”), który jest administratorem Twoich danych osobowych.",
+            "W sprawach dotyczących Twoich danych możesz skontaktować się z nami pod adresem {{email}}."
+          ]
+        },
+        {
+          "heading": "2. Jakie dane zbieramy",
+          "paragraphs": ["Przetwarzamy następujące kategorie danych:"],
+          "items": [
+            "Dane konta: adres e-mail, zahaszowana wersja hasła (nigdy nie przechowujemy go w postaci jawnej) oraz preferowany język.",
+            "Logowanie przez Google: jeśli logujesz się kontem Google, otrzymujemy od Google Twój adres e-mail i podstawowe informacje profilowe. Nie otrzymujemy Twojego hasła do Google.",
+            "Treści, które dodajesz: dane pojazdu (np. marka, model, rok, numer rejestracyjny i przebieg), zdjęcia pojazdów, wpisy o tankowaniach i serwisie (tytuły, koszty, notatki) oraz załączniki, takie jak faktury i paragony.",
+            "Dane techniczne: adres IP i standardowe logi serwera, wykorzystywane do zapewnienia bezpieczeństwa usługi i ograniczania nadużyć (np. limity liczby żądań)."
+          ]
+        },
+        {
+          "heading": "3. Jak wykorzystujemy Twoje dane",
+          "paragraphs": [
+            "Nie sprzedajemy Twoich danych osobowych i nie wykorzystujemy ich do celów reklamowych. Używamy ich wyłącznie, aby:"
+          ],
+          "items": [
+            "świadczyć usługę: logować Cię, przechowywać i wyświetlać Twoje wpisy oraz tworzyć statystyki;",
+            "wysyłać wiadomości serwisowe, np. potwierdzenie adresu e-mail i reset hasła;",
+            "udostępniać przez linki informacje o pojeździe, które zdecydujesz się udostępnić;",
+            "chronić usługę przed nadużyciami i usuwać problemy techniczne."
+          ]
+        },
+        {
+          "heading": "4. Podstawy prawne",
+          "paragraphs": [
+            "Przetwarzamy Twoje dane w celu wykonania umowy z Tobą (świadczenia usługi), wypełnienia obowiązków prawnych oraz w ramach naszego prawnie uzasadnionego interesu polegającego na zapewnieniu bezpieczeństwa i niezawodności usługi."
+          ]
+        },
+        {
+          "heading": "5. Linki udostępniające",
+          "paragraphs": [
+            "Jeśli utworzysz link udostępniający pojazd, każdy, kto go ma, może zobaczyć dane pojazdu, wpisy i załączniki objęte linkiem, dopóki go nie usuniesz. Strony udostępnione są oznaczone tak, aby wyszukiwarki ich nie indeksowały, ale linki wysyłaj wyłącznie osobom, którym ufasz."
+          ]
+        },
+        {
+          "heading": "6. Pliki cookie i pamięć przeglądarki",
+          "paragraphs": [
+            "AutoLog używa wyłącznie plików cookie i pamięci przeglądarki, które są niezbędne do działania usługi. Obecnie nie stosujemy plików cookie analitycznych ani reklamowych."
+          ],
+          "items": [
+            "access_token i refresh_token: bezpieczne pliki cookie HTTP-only utrzymujące Twoje logowanie (odpowiednio do 1 godziny i do 7 dni).",
+            "google_link: krótkotrwały plik cookie (10 minut) używany tylko podczas łączenia konta Google z istniejącym kontem.",
+            "autolog-language: wpis w pamięci przeglądarki zapamiętujący wybrany język."
+          ]
+        },
+        {
+          "heading": "7. Dostawcy usług",
+          "paragraphs": [
+            "Do działania AutoLog korzystamy z zaufanych dostawców: usług hostingu i bazy danych, Cloudflare R2 do przechowywania zdjęć pojazdów i załączników, dostawcy poczty e-mail do wiadomości serwisowych oraz Google do opcjonalnego logowania. Przetwarzają oni dane wyłącznie w naszym imieniu i w zakresie niezbędnym do świadczenia swoich usług. Niektórzy dostawcy mogą przetwarzać dane poza Europejskim Obszarem Gospodarczym, z zastosowaniem odpowiednich zabezpieczeń."
+          ]
+        },
+        {
+          "heading": "8. Okres przechowywania",
+          "paragraphs": [
+            "Przechowujemy Twoje dane, dopóki istnieje Twoje konto. Pojazdy, wpisy, załączniki i linki udostępniające możesz usuwać samodzielnie w aplikacji. Aby usunąć konto wraz z wszystkimi danymi, napisz do nas na adres {{email}}; rozpatrzymy wniosek w ciągu 30 dni. Możemy zachować ograniczony zakres danych, jeśli wymaga tego prawo."
+          ]
+        },
+        {
+          "heading": "9. Twoje prawa",
+          "paragraphs": [
+            "Na podstawie RODO masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, sprzeciwu wobec przetwarzania oraz otrzymania ich kopii w ustrukturyzowanym formacie. Aby skorzystać z tych praw, napisz do nas na adres {{email}}. Masz także prawo wnieść skargę do organu ochrony danych osobowych."
+          ]
+        },
+        {
+          "heading": "10. Bezpieczeństwo",
+          "paragraphs": [
+            "Chronimy Twoje dane m.in. szyfrowanym połączeniem, haszowaniem haseł i plikami cookie HTTP-only. Żaden system nie jest w pełni bezpieczny, dlatego używaj silnego, unikalnego hasła."
+          ]
+        },
+        {
+          "heading": "11. Dzieci",
+          "paragraphs": [
+            "AutoLog nie jest przeznaczony dla dzieci poniżej 16. roku życia i świadomie nie zbieramy ich danych."
+          ]
+        },
+        {
+          "heading": "12. Zmiany polityki",
+          "paragraphs": [
+            "Możemy od czasu do czasu aktualizować tę politykę. Data ostatniej aktualizacji jest widoczna na górze tej strony."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Regulamin",
+      "description": "Zasady korzystania z AutoLog, darmowej książki serwisowej i dziennika tankowań.",
+      "intro": "Zakładając konto lub korzystając z AutoLog, akceptujesz niniejszy Regulamin. Jeśli się z nim nie zgadzasz, nie korzystaj z usługi.",
+      "sections": [
+        {
+          "heading": "1. Usługa",
+          "paragraphs": [
+            "AutoLog umożliwia zapisywanie tankowań, serwisu i powiązanych dokumentów Twoich pojazdów oraz udostępnianie wybranych informacji przez linki. Usługa jest bezpłatna i może się zmieniać w czasie."
+          ]
+        },
+        {
+          "heading": "2. Twoje konto",
+          "paragraphs": [
+            "Musisz podawać prawdziwe dane i zachować poufność danych logowania. Odpowiadasz za działania wykonane na Twoim koncie. Tryb demo jest tylko do odczytu i służy wyłącznie do wypróbowania usługi."
+          ]
+        },
+        {
+          "heading": "3. Twoje treści",
+          "paragraphs": [
+            "Zachowujesz wszelkie prawa do danych i plików, które dodajesz. Udzielasz nam zgody na ich przechowywanie, przetwarzanie i wyświetlanie w zakresie potrzebnym do działania usługi, w tym pokazywanie ich przez tworzone przez Ciebie linki udostępniające. Odpowiadasz za dodawane treści oraz za udostępniane linki."
+          ]
+        },
+        {
+          "heading": "4. Zasady korzystania",
+          "paragraphs": ["Zobowiązujesz się nie:"],
+          "items": [
+            "wgrywać treści niezgodnych z prawem, złośliwego oprogramowania ani plików, do których udostępniania nie masz prawa;",
+            "próbować uzyskać dostępu do danych lub kont innych użytkowników bez zgody;",
+            "przeciążać usługi, masowo pobierać z niej danych, atakować jej ani w inny sposób zakłócać jej działania oraz omijać jej limitów;",
+            "wykorzystywać usługi w celach sprzecznych z obowiązującym prawem."
+          ]
+        },
+        {
+          "heading": "5. Dokładność informacji",
+          "paragraphs": [
+            "Wpisy i statystyki w AutoLog opierają się na danych, które wprowadzasz, i mają charakter wyłącznie informacyjny. Nie stanowią oficjalnej historii serwisowej ani poświadczenia przebiegu, a my nie gwarantujemy ich dokładności ani wpływu na wartość pojazdu."
+          ]
+        },
+        {
+          "heading": "6. Dostępność i zmiany",
+          "paragraphs": [
+            "Staramy się, aby AutoLog był dostępny, ale nie gwarantujemy nieprzerwanego działania. Możemy w dowolnym momencie zmieniać, zawieszać lub wycofywać funkcje. Ważne dokumenty przechowuj również we własnych kopiach."
+          ]
+        },
+        {
+          "heading": "7. Zawieszenie i zakończenie",
+          "paragraphs": [
+            "Możemy zawiesić lub usunąć konta naruszające niniejszy Regulamin lub szkodzące usłudze. Możesz w każdej chwili przestać korzystać z AutoLog i poprosić o usunięcie konta, pisząc na adres {{email}}."
+          ]
+        },
+        {
+          "heading": "8. Wyłączenie gwarancji i odpowiedzialność",
+          "paragraphs": [
+            "AutoLog jest udostępniany w stanie „takim, w jakim jest”, bez jakichkolwiek gwarancji. W zakresie dozwolonym przez prawo nie ponosimy odpowiedzialności za szkody pośrednie ani za utratę danych. Żadne postanowienie Regulaminu nie ogranicza przysługujących Ci praw konsumenta wynikających z przepisów bezwzględnie obowiązujących."
+          ]
+        },
+        {
+          "heading": "9. Zmiany Regulaminu",
+          "paragraphs": [
+            "Możemy zmieniać Regulamin. Dalsze korzystanie z AutoLog po wejściu zmian w życie oznacza ich akceptację. Data ostatniej aktualizacji jest widoczna na górze tej strony."
+          ]
+        },
+        {
+          "heading": "10. Kontakt",
+          "paragraphs": ["Masz pytania dotyczące Regulaminu? Napisz do nas na adres {{email}}."]
+        }
+      ]
+    }
+  },
   "nav": {
     "details": "Informacje",
     "fuel": "Paliwo",

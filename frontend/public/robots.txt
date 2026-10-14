@@ -1,0 +1,12 @@
+# NOTE: replace https://yourdomain.com with the production domain.
+#
+# Private, authenticated areas are not worth crawling. Do NOT disallow /share/ or the
+# auth pages: they are marked noindex at runtime, and crawlers must be able to fetch
+# them to see that tag (a robots.txt block could still leave the bare URL indexed).
+User-agent: *
+Disallow: /garage
+Disallow: /settings
+Disallow: /vehicles
+Disallow: /add-vehicle
+
+Sitemap: https://yourdomain.com/sitemap.xml

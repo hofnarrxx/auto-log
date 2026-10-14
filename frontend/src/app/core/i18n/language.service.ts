@@ -24,7 +24,7 @@ export class LanguageService {
   readonly selectedLanguage = signal<AppLanguage>(this.loadLanguage());
 
   applyCurrent(): void {
-    this.translate.use(this.selectedLanguage());
+    this.useLanguage(this.selectedLanguage());
   }
 
   setLanguage(language: string): void {
@@ -40,7 +40,7 @@ export class LanguageService {
       this.authStore.startDemo(lang).subscribe({
         next: () => this.assignGarage(),
         error: (err: HttpErrorResponse) => {
-          this.translate.use(lang);
+          this.useLanguage(lang);
           if (err.status !== 429) {
             this.notifications.notifyError('demo.errors.startFailed');
           }
@@ -49,7 +49,17 @@ export class LanguageService {
       return;
     }
 
+    this.useLanguage(lang);
+  }
+
+  /** Switches the UI language and keeps `<html lang>` in sync (SEO and screen readers). */
+  private useLanguage(lang: AppLanguage): void {
     this.translate.use(lang);
+
+    const root = this.document.documentElement;
+    if (root) {
+      root.lang = lang;
+    }
   }
 
   private isInAppRoute(): boolean {
