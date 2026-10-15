@@ -42,6 +42,38 @@
 
 * {
   box-sizing: border-box;
+  /* Remove the default blue/gray flash on tap (iOS Safari / Android Chrome).
+     Pressed state is shown via explicit :active styles instead. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Avoid double-tap-to-zoom delay and accidental text selection / long-press
+   callouts on tappable controls. */
+button,
+[role='button'],
+a {
+  touch-action: manipulation;
+}
+
+button,
+[role='button'] {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Don't show a focus ring after a mouse/touch click; keep it for keyboard. */
+button:focus:not(:focus-visible),
+[role='button']:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Give shared buttons visible press feedback now that the tap highlight is gone. */
+.add-record-btn:active:not(:disabled),
+.primary-btn:active:not([disabled]),
+.secondary-btn:active:not([disabled]),
+.danger-btn:active:not([disabled]) {
+  opacity: 0.85;
 }
 
 body {

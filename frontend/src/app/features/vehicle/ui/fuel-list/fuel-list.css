@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .fuel-list {
   animation: fadeIn 0.3s ease;
   color: var(--text);

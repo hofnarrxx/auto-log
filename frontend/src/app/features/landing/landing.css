@@ -74,6 +74,14 @@
   color: var(--accent);
 }
 
+/* The icon is only shown on phones, where the label is hidden. */
+.header-link-icon {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
 /* hero */
 
 .hero {
@@ -212,6 +220,21 @@ app-site-footer {
 
   .header-actions {
     margin-left: auto;
+  }
+
+  /* Icon-only header link on phones (label stays available via aria-label). */
+  .header-link {
+    justify-content: center;
+    width: var(--tap-target);
+    padding: 0;
+  }
+
+  .header-link-label {
+    display: none;
+  }
+
+  .header-link-icon {
+    display: inline-flex;
   }
 
   .hero {

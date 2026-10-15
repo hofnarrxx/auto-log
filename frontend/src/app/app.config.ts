@@ -23,6 +23,7 @@ import {
   Droplets,
   File,
   Fuel,
+  LogIn,
   LucideIconProvider,
   LUCIDE_ICONS,
   Search,
@@ -30,6 +31,7 @@ import {
   Sparkles,
   ToolCase,
   Toolbox,
+  Warehouse,
   Wrench,
 } from 'lucide-angular';
 
@@ -66,6 +68,8 @@ export const appConfig: ApplicationConfig = {
         ChartNoAxesCombined,
         Share,
         File,
+        LogIn,
+        Warehouse,
       }),
     },
   ],

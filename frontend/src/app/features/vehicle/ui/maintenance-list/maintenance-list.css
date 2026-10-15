@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .maintenance-list {
   animation: fadeIn 0.3s ease;
   color: var(--text);

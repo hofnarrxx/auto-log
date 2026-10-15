@@ -80,8 +80,34 @@ export class Modal implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const target = this.focusableElements()[0] ?? panel;
-    target.focus();
+    const first = this.focusableElements()[0];
+
+    // Never auto-focus a text field: on touch devices it pops up the on-screen keyboard (and
+    // scrolls/zooms the page) the moment the modal opens, and on desktop it's an unexpected
+    // pre-selected field. Keep focus on the panel itself instead so the user chooses which field
+    // to edit. Focus is still moved into the dialog for accessibility.
+    const target = !first || this.isTextEntry(first) ? panel : first;
+    target.focus({ preventScroll: true });
+  }
+
+  private isTextEntry(element: HTMLElement): boolean {
+    if (element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
+      return true;
+    }
+    if (element instanceof HTMLInputElement) {
+      return ![
+        'button',
+        'submit',
+        'reset',
+        'checkbox',
+        'radio',
+        'file',
+        'image',
+        'range',
+        'color',
+      ].includes(element.type);
+    }
+    return element.isContentEditable;
   }
 
   private focusableElements(): HTMLElement[] {

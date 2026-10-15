@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
+  ElementRef,
   EventEmitter,
   Input,
   Output,
@@ -17,6 +18,7 @@ import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/fuel-record.utils';
+import { scrollToStartOf } from '../../../../shared/utils/scroll.utils';
 import type { FuelListRecord, FuelSortOption } from '../../../../shared/utils/fuel-list.utils';
 
 export interface FuelQueryChange {
@@ -45,6 +47,7 @@ export interface FuelQueryChange {
 export class FuelList<T extends FuelListRecord> {
   private readonly currencyService = inject(CurrencyService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly searchInput$ = new Subject<string>();
 
   protected readonly fuelRecords = signal<T[]>([]);
@@ -203,6 +206,7 @@ export class FuelList<T extends FuelListRecord> {
 
   protected onPageChange(page: number) {
     this.pageChange.emit(page);
+    scrollToStartOf(this.host.nativeElement);
   }
 
   protected onSizeChange(size: number) {

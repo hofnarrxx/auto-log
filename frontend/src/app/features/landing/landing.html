@@ -15,9 +15,35 @@
       </select>
 
       @if (isAuthenticated() && !isDemo()) {
-        <a class="header-link" routerLink="/garage">{{ 'landing.cta.myGarage' | translate }}</a>
+        <a
+          class="header-link"
+          routerLink="/garage"
+          [attr.aria-label]="'landing.cta.myGarage' | translate"
+        >
+          <lucide-icon
+            class="header-link-icon"
+            name="warehouse"
+            size="20"
+            strokeWidth="2"
+            aria-hidden="true"
+          ></lucide-icon>
+          <span class="header-link-label">{{ 'landing.cta.myGarage' | translate }}</span>
+        </a>
       } @else {
-        <a class="header-link" routerLink="/login">{{ 'landing.cta.signIn' | translate }}</a>
+        <a
+          class="header-link"
+          routerLink="/login"
+          [attr.aria-label]="'landing.cta.signIn' | translate"
+        >
+          <lucide-icon
+            class="header-link-icon"
+            name="log-in"
+            size="20"
+            strokeWidth="2"
+            aria-hidden="true"
+          ></lucide-icon>
+          <span class="header-link-label">{{ 'landing.cta.signIn' | translate }}</span>
+        </a>
       }
     </div>
   </header>

@@ -22,3 +22,9 @@
   box-shadow: var(--shadow-lg);
   z-index: 1001;
 }
+
+/* The panel receives programmatic focus when the first control is a text field (to avoid
+   pre-selecting it / opening the keyboard); it isn't an interactive control, so no focus ring. */
+.modal:focus {
+  outline: none;
+}

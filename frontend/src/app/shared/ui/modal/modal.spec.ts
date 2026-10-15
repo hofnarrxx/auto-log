@@ -18,6 +18,29 @@ class HostComponent {
   open = false;
 }
 
+@Component({
+  imports: [Modal],
+  template: `
+    <app-modal>
+      <input id="name" type="text" />
+      <button id="save">Save</button>
+    </app-modal>
+  `,
+})
+class FormHostComponent {}
+
+describe('Modal with a text field first', () => {
+  it('focuses the panel instead of the text field', () => {
+    const fixture = TestBed.createComponent(FormHostComponent);
+    fixture.detectChanges();
+
+    const active = document.activeElement as HTMLElement | null;
+    expect(active?.id).not.toBe('name');
+    expect(active?.getAttribute('role')).toBe('dialog');
+    fixture.destroy();
+  });
+});
+
 describe('Modal', () => {
   let fixture: ComponentFixture<HostComponent>;
 

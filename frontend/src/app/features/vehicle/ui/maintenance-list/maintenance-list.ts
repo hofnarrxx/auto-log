@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
+  ElementRef,
   EventEmitter,
   Input,
   Output,
@@ -25,6 +26,7 @@ import type {
   MaintenanceSortOption,
 } from '../../../../shared/utils/maintenance-list.utils';
 import { Modal } from '../../../../shared/ui/modal/modal';
+import { scrollToStartOf } from '../../../../shared/utils/scroll.utils';
 
 export const ALL_CURRENCIES = '';
 
@@ -64,6 +66,7 @@ export interface MaintenanceQueryChange {
 })
 export class MaintenanceList<T extends MaintenanceListRecord> {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly titleSearchInput$ = new Subject<string>();
   private readonly priceRangeInput$ = new Subject<void>();
   // `availableCategories` and `maxAvailablePrice` load independently (separate async calls) and
@@ -315,6 +318,7 @@ export class MaintenanceList<T extends MaintenanceListRecord> {
 
   protected onPageChange(page: number) {
     this.pageChange.emit(page);
+    scrollToStartOf(this.host.nativeElement);
   }
 
   protected onSizeChange(size: number) {
