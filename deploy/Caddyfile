@@ -1,38 +1,35 @@
-# Caddy is the reverse proxy: it terminates HTTPS (certificates from Let's Encrypt are obtained
-# and renewed automatically) and forwards traffic. It also sets X-Forwarded-For / -Proto / -Host,
-# which Spring reads because of `server.forward-headers-strategy: framework`.
-#
-# DOMAIN comes from deploy/.env (for example: autolog.example.com).
-
-# --- Angular app: https://DOMAIN ---------------------------------------------------------------
 {$DOMAIN} {
-	root * /srv
-	encode zstd gzip
+root \* /srv
+encode zstd gzip
 
-	# Defense in depth. Raise HSTS max-age (e.g. 31536000) once you're sure HTTPS works everywhere.
-	header {
-		X-Content-Type-Options "nosniff"
-		Strict-Transport-Security "max-age=3600"
-	}
+    # Defense in depth. Raise HSTS max-age (e.g. 31536000) once you're sure HTTPS works everywhere.
+    header {
+    	X-Content-Type-Options "nosniff"
+    	Strict-Transport-Security "max-age=3600"
+    }
 
-	# Hashed build output never changes under the same name, so cache it for a year.
-	@hashed path_regexp hashed ^/(chunk|main|styles|polyfills)-[A-Za-z0-9]+\.(js|css)$
-	header @hashed Cache-Control "public, max-age=31536000, immutable"
+    # Hashed build output never changes under the same name, so cache it for a year.
+    @hashed path_regexp hashed ^/(chunk|main|styles|polyfills)-[A-Za-z0-9]+\.(js|css)$
+    header @hashed Cache-Control "public, max-age=31536000, immutable"
 
-	# index.html references the hashed files, so browsers must always re-check it.
-	@html path / /index.html
-	header @html Cache-Control "no-cache"
+    # index.html references the hashed files, so browsers must always re-check it.
+    @html path / /index.html
+    header @html Cache-Control "no-cache"
 
-	# SPA fallback: serve a real file if it exists, then a prerendered folder, otherwise
-	# index.html so deep links like /share/<token> or /garage reach the Angular router.
-	try_files {path} {path}/index.html /index.html
-	file_server
+    # SPA fallback: serve a real file if it exists, then a prerendered folder, otherwise
+    # index.html so deep links like /share/<token> or /garage reach the Angular router.
+    try_files {path} {path}/index.html /index.html
+    file_server
+
 }
 
 # --- Spring Boot API: https://api.DOMAIN -------------------------------------------------------
+
 # A separate subdomain (same site as DOMAIN, so SameSite=Lax cookies keep working) is required
+
 # because the SPA and the API share URL paths: /share/{token} and /vehicles exist in both.
+
 api.{$DOMAIN} {
-	encode zstd gzip
-	reverse_proxy backend:8080
+encode zstd gzip
+reverse_proxy backend:8080
 }
