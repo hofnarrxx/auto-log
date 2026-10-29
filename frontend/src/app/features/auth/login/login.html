@@ -25,11 +25,13 @@
 
       <div class="form-field">
         <label>{{ 'auth.login.passwordLabel' | translate }}</label>
-        <input
-          type="password"
-          [placeholder]="'auth.login.passwordPlaceholder' | translate"
-          formControlName="password"
-        />
+        <app-password-field>
+          <input
+            type="password"
+            [placeholder]="'auth.login.passwordPlaceholder' | translate"
+            formControlName="password"
+          />
+        </app-password-field>
 
         @if (form.controls.password.touched && form.controls.password.invalid) {
           <div class="error">

@@ -10,6 +10,7 @@ import {
   passwordStrengthValidator,
   passwordsMatchValidator,
 } from '../../../shared/utils/password.validator';
+import { PasswordField } from '../../../shared/ui/password-field/password-field';
 
 /**
  * Self-contained dialog for changing the account password, or setting a first one on a
@@ -17,7 +18,7 @@ import {
  */
 @Component({
   selector: 'app-password-modal',
-  imports: [Modal, ReactiveFormsModule, TranslateModule],
+  imports: [Modal, ReactiveFormsModule, TranslateModule, PasswordField],
   templateUrl: './password-modal.html',
   styleUrl: './password-modal.css',
 })

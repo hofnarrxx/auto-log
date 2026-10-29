@@ -1,0 +1,55 @@
+:host {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--danger);
+  cursor: pointer;
+}
+
+:host(.warn) {
+  color: var(--warn);
+}
+
+.trigger {
+  /* Generous tap target for touch devices. */
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.bubble {
+  display: none;
+  position: absolute;
+  /* Opens beside the triangle, vertically centred on it. By default it extends to the left;
+     hosts can flip it with --tip-left / --tip-right (e.g. `--tip-left: 100%; --tip-right: auto`). */
+  top: 50%;
+  transform: translateY(-50%);
+  left: var(--tip-left, auto);
+  right: var(--tip-right, 100%);
+  z-index: 20;
+  width: max-content;
+  max-width: min(240px, 70vw);
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+}
+
+:host(.open) .bubble {
+  display: block;
+}
+
+@media (hover: hover) {
+  :host(:hover) .bubble {
+    display: block;
+  }
+}

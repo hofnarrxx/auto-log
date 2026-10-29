@@ -384,14 +384,12 @@ a:hover {
   max-width: min(560px, 100%);
 }
 
+/* Warning triangle (<app-warning-tip>) shown to the right of a timeline entry. */
 .entry-warning-side {
-  color: var(--danger);
-  font-size: 14px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+  justify-self: center;
+  /* On wide screens there is free space to the right of the entry, so open the popup there. */
+  --tip-left: 100%;
+  --tip-right: auto;
 }
 
 @media (max-width: 600px) {
@@ -404,11 +402,10 @@ a:hover {
   }
 
   .timeline-item {
-    grid-template-columns: 40px minmax(0, 1fr);
+    grid-template-columns: 40px minmax(0, 1fr) auto;
     grid-template-areas:
-      'icon date'
-      'icon content'
-      'icon warn';
+      'icon date date'
+      'icon content warn';
     column-gap: 10px;
     row-gap: 4px;
   }
@@ -434,6 +431,10 @@ a:hover {
 
   .entry-warning-side {
     grid-area: warn;
-    justify-content: flex-start;
+    align-self: center;
+    justify-self: end;
+    /* The triangle hugs the right screen edge on mobile, so open the popup to the left. */
+    --tip-left: auto;
+    --tip-right: 100%;
   }
 }

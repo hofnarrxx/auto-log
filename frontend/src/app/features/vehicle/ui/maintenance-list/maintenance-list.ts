@@ -21,6 +21,7 @@ import {
   MoneyPipe,
 } from '../../../../shared/pipes';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { WarningTip } from '../../../../shared/ui/warning-tip/warning-tip';
 import type {
   MaintenanceListRecord,
   MaintenanceSortOption,
@@ -60,6 +61,7 @@ export interface MaintenanceQueryChange {
     DateFormatPipe,
     MoneyPipe,
     Pagination,
+    WarningTip,
   ],
   templateUrl: './maintenance-list.html',
   styleUrl: './maintenance-list.css',
@@ -327,6 +329,10 @@ export class MaintenanceList<T extends MaintenanceListRecord> {
 
   protected hasMileageWarning(record: T): boolean {
     return this.mileageWarningRecordIdsValue().has(record.id);
+  }
+
+  protected hasMissingMileage(record: T): boolean {
+    return record.mileage === null || record.mileage === undefined;
   }
 
   protected requestAdd() {

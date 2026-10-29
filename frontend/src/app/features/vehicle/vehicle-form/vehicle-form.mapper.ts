@@ -15,6 +15,7 @@ export interface VehicleFormValue {
 
 /**
  * Returns `null` when a required field is still empty, so callers never build a partial payload.
+ * Mileage is optional and passes through as `null` when left blank.
  */
 export function toCreateVehicleCommand(
   value: VehicleFormValue,
@@ -22,7 +23,7 @@ export function toCreateVehicleCommand(
 ): CreateVehicleCommand | null {
   const { make, model, year, mileage, fuelType, licensePlate } = value;
 
-  if (year === null || mileage === null || !fuelType) {
+  if (year === null || !fuelType) {
     return null;
   }
 

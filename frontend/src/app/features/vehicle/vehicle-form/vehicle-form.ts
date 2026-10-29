@@ -53,7 +53,6 @@ export class VehicleForm {
       integerValidator,
     ]),
     mileage: new FormControl<number | null>(null, [
-      Validators.required,
       Validators.min(0),
       Validators.max(MAX_MILEAGE),
       integerValidator,

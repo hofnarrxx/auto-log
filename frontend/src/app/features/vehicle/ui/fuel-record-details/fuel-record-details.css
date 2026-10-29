@@ -22,9 +22,3 @@
   color: var(--text-muted);
   font-weight: 600;
 }
-
-.detail-warning {
-  color: var(--danger);
-  font-size: 12px;
-  margin-left: 6px;
-}

@@ -60,7 +60,6 @@ export class VehicleFuelTab {
       maxDecimalsValidator(2),
     ]),
     mileage: new FormControl<number | null>(null, [
-      Validators.required,
       Validators.min(0),
       Validators.max(MAX_MILEAGE),
       integerValidator,
@@ -94,8 +93,7 @@ export class VehicleFuelTab {
       notInteger: 'mileageInteger',
       max: 'mileageMax',
       server: 'serverRejected',
-      required: 'mileageRequired',
-      min: 'mileageRequired',
+      min: 'mileageNonNegative',
     },
     gasStation: { server: 'serverRejected', maxlength: 'gasStationMaxLength' },
     currency: { server: 'serverRejected', required: 'currencyRequired' },
@@ -307,7 +305,7 @@ export class VehicleFuelTab {
     const cost = parseNumericField(this.form.controls.cost.value);
     const mileage = parseIntegerField(this.form.controls.mileage.value);
 
-    if (amount.kind !== 'number' || cost.kind !== 'number' || mileage.kind !== 'number') {
+    if (amount.kind !== 'number' || cost.kind !== 'number' || mileage.kind === 'invalid') {
       return null;
     }
 
@@ -319,7 +317,7 @@ export class VehicleFuelTab {
       date,
       amount: amount.value,
       cost: cost.value,
-      mileage: mileage.value,
+      mileage: mileage.kind === 'number' ? mileage.value : null,
       gasStation: gasStation || null,
       currency,
     };

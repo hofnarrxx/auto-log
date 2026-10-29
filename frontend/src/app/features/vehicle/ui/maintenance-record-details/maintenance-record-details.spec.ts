@@ -47,6 +47,19 @@ describe('MaintenanceRecordDetails', () => {
     expect(text).toContain('invoice.pdf');
   });
 
+  it('shows the missing-mileage warning when the record has no mileage', () => {
+    fixture.componentInstance.record = { ...record, mileage: null };
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-warning-tip.warn')).toBeTruthy();
+  });
+
+  it('does not show the missing-mileage warning when mileage is present', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-warning-tip.warn')).toBeFalsy();
+  });
+
   it('hides the open-attachment action unless attachmentsOpenable is set', () => {
     fixture.detectChanges();
 

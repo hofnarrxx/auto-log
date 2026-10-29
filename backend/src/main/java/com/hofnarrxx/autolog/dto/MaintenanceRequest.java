@@ -15,7 +15,7 @@ public record MaintenanceRequest(
         LocalDate serviceDate,
         @NotBlank @Size(max = 50)
         String title,
-        @NotNull @PositiveOrZero @Max(10_000_000)
+        @PositiveOrZero @Max(10_000_000)
         Integer mileage,
         @NotBlank
         String category,

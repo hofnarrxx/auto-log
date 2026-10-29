@@ -61,7 +61,6 @@ export class VehicleMaintenanceTab {
     serviceDate: new FormControl('', [Validators.required, notInFutureValidator]),
     title: new FormControl('', [Validators.required, Validators.maxLength(50)]),
     mileage: new FormControl<number | null>(null, [
-      Validators.required,
       Validators.min(0),
       Validators.max(MAX_MILEAGE),
       integerValidator,
@@ -93,8 +92,7 @@ export class VehicleMaintenanceTab {
       notInteger: 'mileageInteger',
       max: 'mileageMax',
       server: 'serverRejected',
-      required: 'mileageRequired',
-      min: 'mileageRequired',
+      min: 'mileageNonNegative',
     },
     category: { server: 'serverRejected', required: 'categoryRequired' },
     description: { server: 'serverRejected', maxlength: 'descriptionMaxLength' },

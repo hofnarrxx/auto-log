@@ -101,7 +101,6 @@ public class VehicleService {
             requirePresent(request.make(), "make");
             requirePresent(request.model(), "model");
             requirePresent(request.fuelType(), "fuelType");
-            requirePresent(request.mileage(), "mileage");
             requirePresent(request.year(), "year");
         }
 

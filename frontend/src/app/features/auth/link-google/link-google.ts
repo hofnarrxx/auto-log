@@ -7,12 +7,13 @@ import { AuthApi } from '../../../core/auth/auth-api';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { PASSWORD_MIN_LENGTH } from '../../../shared/utils/password.validator';
+import { PasswordField } from '../../../shared/ui/password-field/password-field';
 
 type LinkState = 'checking' | 'ready';
 
 @Component({
   selector: 'app-link-google',
-  imports: [ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [ReactiveFormsModule, RouterLink, TranslateModule, PasswordField],
   templateUrl: './link-google.html',
   styleUrl: '../login/login.css',
 })

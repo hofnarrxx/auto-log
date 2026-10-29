@@ -28,11 +28,13 @@
       <div class="form-field">
         <label>{{ 'auth.register.passwordLabel' | translate }}</label>
 
-        <input
-          type="password"
-          [placeholder]="'auth.register.passwordPlaceholder' | translate"
-          formControlName="password"
-        />
+        <app-password-field>
+          <input
+            type="password"
+            [placeholder]="'auth.register.passwordPlaceholder' | translate"
+            formControlName="password"
+          />
+        </app-password-field>
 
         <div class="hint">
           {{ 'auth.register.passwordHint' | translate: { minLength: passwordMinLength } }}
@@ -67,11 +69,13 @@
       <div class="form-field">
         <label>{{ 'auth.register.confirmPasswordLabel' | translate }}</label>
 
-        <input
-          type="password"
-          [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate"
-          formControlName="confirmPassword"
-        />
+        <app-password-field>
+          <input
+            type="password"
+            [placeholder]="'auth.register.confirmPasswordPlaceholder' | translate"
+            formControlName="confirmPassword"
+          />
+        </app-password-field>
 
         @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
           <div class="error">

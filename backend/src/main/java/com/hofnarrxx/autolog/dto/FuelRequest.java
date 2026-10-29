@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Size;
 public record FuelRequest(
         @NotNull
         LocalDate date,
-        @NotNull @PositiveOrZero @Max(10_000_000)
+        @PositiveOrZero @Max(10_000_000)
         Integer mileage,
         @NotNull @PositiveOrZero @Digits(integer = 10, fraction = 2) 
         BigDecimal cost,

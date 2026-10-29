@@ -2,6 +2,7 @@ import { Component, Input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
+import { WarningTip } from '../../../../shared/ui/warning-tip/warning-tip';
 import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/fuel-record.utils';
 import type { FuelRecord } from '../../models';
 
@@ -11,7 +12,7 @@ import type { FuelRecord } from '../../models';
  */
 @Component({
   selector: 'app-fuel-record-details',
-  imports: [TranslateModule, DateFormatPipe, MoneyPipe],
+  imports: [TranslateModule, DateFormatPipe, MoneyPipe, WarningTip],
   templateUrl: './fuel-record-details.html',
   styleUrl: './fuel-record-details.css',
 })

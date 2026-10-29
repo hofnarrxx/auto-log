@@ -59,11 +59,10 @@
 
 @media (max-width: 600px) {
   .maintenance-list .timeline-item {
-    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-columns: 40px minmax(0, 1fr) auto auto;
     grid-template-areas:
-      'icon date date'
-      'icon content file'
-      'icon warn warn';
+      'icon date date date'
+      'icon content file warn';
   }
 
   .entry-attachment {

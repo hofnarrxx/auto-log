@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { Eye, EyeOff, LUCIDE_ICONS, LucideIconProvider } from 'lucide-angular';
 import { of, throwError } from 'rxjs';
 import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
@@ -51,6 +52,7 @@ describe('PasswordModal', () => {
     TestBed.configureTestingModule({
       imports: [PasswordModal, TranslateModule.forRoot()],
       providers: [
+        { provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider({ Eye, EyeOff }) },
         { provide: AuthStore, useValue: authStore },
         { provide: NotificationService, useValue: notifications },
       ],

@@ -9,10 +9,11 @@ import {
   PASSWORD_MIN_LENGTH,
   passwordStrengthValidator,
 } from '../../../shared/utils/password.validator';
+import { PasswordField } from '../../../shared/ui/password-field/password-field';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [ReactiveFormsModule, RouterLink, TranslateModule, PasswordField],
   templateUrl: './register.html',
   styleUrl: '../login/login.css',
 })

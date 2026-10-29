@@ -83,13 +83,16 @@
           </div>
 
           @if (hasMileageWarning(entry)) {
-            <span
+            <app-warning-tip
               class="entry-warning-side"
-              [attr.title]="'common.mileageWarning' | translate"
-              [attr.aria-label]="'common.mileageAnomaly' | translate"
-            >
-              ▲ {{ 'common.checkMileage' | translate }}
-            </span>
+              [text]="'common.mileageWarning' | translate"
+            ></app-warning-tip>
+          } @else if (hasMissingMileage(entry)) {
+            <app-warning-tip
+              class="entry-warning-side"
+              variant="warn"
+              [text]="'common.mileageMissingWarning' | translate"
+            ></app-warning-tip>
           }
         </button>
       }

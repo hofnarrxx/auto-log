@@ -119,6 +119,14 @@ describe('FuelList', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.entry-warning-side')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-warning-tip.warn')).toBeFalsy();
+  });
+
+  it('marks records without a mileage with the missing-mileage warning', () => {
+    fixture.componentInstance.records = [{ ...RECORD, mileage: null }];
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-warning-tip.warn')).toBeTruthy();
   });
 
   it('emits recordSelected and addRequested', () => {

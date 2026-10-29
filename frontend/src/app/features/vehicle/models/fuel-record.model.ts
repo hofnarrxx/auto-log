@@ -15,7 +15,7 @@ export interface FuelRecordPayload {
   date: string;
   amount: number;
   cost: number;
-  mileage: number;
+  mileage: number | null;
   gasStation: string | null;
   currency: string;
 }

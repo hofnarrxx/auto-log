@@ -17,6 +17,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
 import { CurrencyService } from '../../../../shared/services/currency.service';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { WarningTip } from '../../../../shared/ui/warning-tip/warning-tip';
 import { formatFuelAmount, getFuelPricePerUnit } from '../../../../shared/utils/fuel-record.utils';
 import { scrollToStartOf } from '../../../../shared/utils/scroll.utils';
 import type { FuelListRecord, FuelSortOption } from '../../../../shared/utils/fuel-list.utils';
@@ -40,6 +41,7 @@ export interface FuelQueryChange {
     DateFormatPipe,
     MoneyPipe,
     Pagination,
+    WarningTip,
   ],
   templateUrl: './fuel-list.html',
   styleUrl: './fuel-list.css',
@@ -179,6 +181,10 @@ export class FuelList<T extends FuelListRecord> {
 
   protected hasMileageWarning(record: T): boolean {
     return this.mileageWarningRecordIdsValue().has(record.id);
+  }
+
+  protected hasMissingMileage(record: T): boolean {
+    return record.mileage === null || record.mileage === undefined;
   }
 
   protected onGasStationSearchChange(event: Event) {

@@ -18,7 +18,7 @@ export interface CreateVehicleCommand {
   make: string;
   model: string;
   year: number;
-  mileage: number;
+  mileage: number | null;
   fuelType: string;
   licensePlate: string | null;
   imageKey: string | null;

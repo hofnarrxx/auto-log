@@ -38,12 +38,25 @@ describe('FuelRecordDetails', () => {
     fixture.componentInstance.hasMileageWarning = true;
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.detail-warning')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-warning-tip')).toBeTruthy();
   });
 
   it('hides the mileage warning by default', () => {
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.detail-warning')).toBeFalsy();
+    expect(fixture.nativeElement.querySelector('app-warning-tip')).toBeFalsy();
+  });
+
+  it('shows the missing-mileage warning when the record has no mileage', () => {
+    fixture.componentInstance.record = { ...record, mileage: null };
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-warning-tip.warn')).toBeTruthy();
+  });
+
+  it('does not show the missing-mileage warning when mileage is present', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-warning-tip.warn')).toBeFalsy();
   });
 });

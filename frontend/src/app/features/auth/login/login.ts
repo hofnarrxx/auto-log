@@ -7,10 +7,11 @@ import { AuthStore } from '../../../core/auth/auth-store';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { API_BASE_URL } from '../../../core/config/api-base-url.token';
 import { PASSWORD_MIN_LENGTH } from '../../../shared/utils/password.validator';
+import { PasswordField } from '../../../shared/ui/password-field/password-field';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [ReactiveFormsModule, RouterLink, TranslateModule, PasswordField],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

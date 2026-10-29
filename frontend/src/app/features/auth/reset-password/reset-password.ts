@@ -9,12 +9,13 @@ import {
   passwordStrengthValidator,
   passwordsMatchValidator,
 } from '../../../shared/utils/password.validator';
+import { PasswordField } from '../../../shared/ui/password-field/password-field';
 
 type TokenState = 'checking' | 'valid' | 'invalid';
 
 @Component({
   selector: 'app-reset-password',
-  imports: [ReactiveFormsModule, RouterLink, TranslateModule],
+  imports: [ReactiveFormsModule, RouterLink, TranslateModule, PasswordField],
   templateUrl: './reset-password.html',
   styleUrl: '../login/login.css',
 })

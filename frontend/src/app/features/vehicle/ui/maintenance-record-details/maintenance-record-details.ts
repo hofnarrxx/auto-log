@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { CategoryLabelPipe, DateFormatPipe, MoneyPipe } from '../../../../shared/pipes';
+import { WarningTip } from '../../../../shared/ui/warning-tip/warning-tip';
 import type { MaintenanceAttachment, MaintenanceRecord } from '../../models';
 
 /**
@@ -11,7 +12,7 @@ import type { MaintenanceAttachment, MaintenanceRecord } from '../../models';
  */
 @Component({
   selector: 'app-maintenance-record-details',
-  imports: [TranslateModule, CategoryLabelPipe, DateFormatPipe, MoneyPipe],
+  imports: [TranslateModule, CategoryLabelPipe, DateFormatPipe, MoneyPipe, WarningTip],
   templateUrl: './maintenance-record-details.html',
   styleUrl: './maintenance-record-details.css',
 })

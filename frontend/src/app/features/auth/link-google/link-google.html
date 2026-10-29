@@ -12,11 +12,13 @@
       <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
         <div class="form-field">
           <label>{{ 'auth.linkGoogle.passwordLabel' | translate }}</label>
-          <input
-            type="password"
-            [placeholder]="'auth.linkGoogle.passwordPlaceholder' | translate"
-            formControlName="password"
-          />
+          <app-password-field>
+            <input
+              type="password"
+              [placeholder]="'auth.linkGoogle.passwordPlaceholder' | translate"
+              formControlName="password"
+            />
+          </app-password-field>
 
           @if (form.controls.password.touched && form.controls.password.invalid) {
             <div class="error">

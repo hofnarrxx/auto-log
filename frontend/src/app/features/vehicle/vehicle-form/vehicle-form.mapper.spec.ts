@@ -36,9 +36,15 @@ describe('vehicle form mapping', () => {
 
     it('refuses to build a payload while a required field is empty', () => {
       expect(toCreateVehicleCommand({ ...completeValue, year: null }, null)).toBeNull();
-      expect(toCreateVehicleCommand({ ...completeValue, mileage: null }, null)).toBeNull();
       expect(toCreateVehicleCommand({ ...completeValue, fuelType: null }, null)).toBeNull();
       expect(toCreateVehicleCommand({ ...completeValue, fuelType: '' }, null)).toBeNull();
+    });
+
+    it('builds a payload without mileage when it is left blank', () => {
+      const command = toCreateVehicleCommand({ ...completeValue, mileage: null }, null);
+
+      expect(command).not.toBeNull();
+      expect(command?.mileage).toBeNull();
     });
 
     it('accepts zero mileage', () => {

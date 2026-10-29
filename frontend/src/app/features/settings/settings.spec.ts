@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { Eye, EyeOff, LUCIDE_ICONS, LucideIconProvider } from 'lucide-angular';
 import { AuthStore } from '../../core/auth/auth-store';
 import { LanguageService } from '../../core/i18n/language.service';
 import { CurrencyService } from '../../shared/services/currency.service';
@@ -34,6 +35,7 @@ describe('Settings password entry point', () => {
     TestBed.configureTestingModule({
       imports: [Settings, TranslateModule.forRoot()],
       providers: [
+        { provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider({ Eye, EyeOff }) },
         {
           provide: AuthStore,
           useValue: {

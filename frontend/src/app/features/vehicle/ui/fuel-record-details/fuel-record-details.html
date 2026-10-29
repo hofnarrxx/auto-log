@@ -18,9 +18,17 @@
   <div class="detail-row">
     <span class="label">{{ 'common.mileage' | translate }}</span>
     <span>
-      {{ record.mileage ?? '-' }} km
-      @if (hasMileageWarning) {
-        <span class="detail-warning" [attr.title]="'common.mileageWarning' | translate">▲</span>
+      @if (record.mileage === null || record.mileage === undefined) {
+        -
+        <app-warning-tip
+          variant="warn"
+          [text]="'common.mileageMissingWarning' | translate"
+        ></app-warning-tip>
+      } @else {
+        {{ record.mileage }} km
+        @if (hasMileageWarning) {
+          <app-warning-tip [text]="'common.mileageWarning' | translate"></app-warning-tip>
+        }
       }
     </span>
   </div>
