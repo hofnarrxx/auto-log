@@ -1,7 +1,7 @@
 import { Component, HostBinding, HostListener, Input } from '@angular/core';
 
-/** The tip that is currently open, so opening another one closes it. */
-let openTip: WarningTip | null = null;
+/** Closes the tip that is currently open, so opening another one closes it. */
+let closeOpenTip: (() => void) | null = null;
 
 /**
  * A small warning triangle that reveals an explanatory message: on hover for pointer devices and
@@ -27,6 +27,8 @@ export class WarningTip {
 
   @HostBinding('class.open') protected open = false;
 
+  private readonly closeSelf = () => this.close();
+
   @HostListener('click', ['$event'])
   protected onClick(event: Event) {
     event.stopPropagation();
@@ -36,17 +38,17 @@ export class WarningTip {
       return;
     }
 
-    openTip?.close();
+    closeOpenTip?.();
     this.open = true;
-    openTip = this;
+    closeOpenTip = this.closeSelf;
   }
 
   @HostListener('document:click')
   @HostListener('document:keydown.escape')
   protected close() {
     this.open = false;
-    if (openTip === this) {
-      openTip = null;
+    if (closeOpenTip === this.closeSelf) {
+      closeOpenTip = null;
     }
   }
 }

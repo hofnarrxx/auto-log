@@ -30,20 +30,27 @@ describe('maxDecimalsValidator', () => {
   });
 });
 
+/** `YYYY-MM-DD` in the *local* timezone, which is what the validator compares against. */
+function toLocalIsoDate(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 describe('notInFutureValidator', () => {
   it('accepts blank, past and today values', () => {
     expect(notInFutureValidator(new FormControl(''))).toBeNull();
     expect(notInFutureValidator(new FormControl(null))).toBeNull();
     expect(notInFutureValidator(new FormControl('2000-01-01'))).toBeNull();
 
-    const today = new Date().toISOString().slice(0, 10);
+    const today = toLocalIsoDate(new Date());
     expect(notInFutureValidator(new FormControl(today))).toBeNull();
   });
 
   it('rejects future dates', () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const value = tomorrow.toISOString().slice(0, 10);
+    const value = toLocalIsoDate(tomorrow);
 
     expect(notInFutureValidator(new FormControl(value))).toEqual({ futureDate: true });
   });
