@@ -1,5 +1,8 @@
 # Run from the deploy/ directory:  docker compose up -d --build
 # Compose reads deploy/.env automatically (copy .env.example to .env and fill it in).
+#
+# This stack has no web server of its own: HTTPS, the static frontend and routing to the API
+# are handled by a separate edge proxy project (Caddy) that owns ports 80/443 on the server.
 
 services:
   db:
@@ -32,29 +35,21 @@ services:
       DB_PASS: ${POSTGRES_PASSWORD}
       # Drives CORS, OAuth redirects and links in emails.
       FRONTEND_URL: https://${DOMAIN}
-    # "expose" is container-to-container only; Caddy is the single public entry point.
+    # "expose" is container-to-container only; the shared edge proxy (~/edge) is the single
+    # public entry point and reaches this service as autolog-backend:8080 over edge_autolog.
     expose:
       - "8080"
-
-  caddy:
-    image: caddy:2
-    restart: unless-stopped
-    depends_on:
-      - backend
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    environment:
-      DOMAIN: ${DOMAIN}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      # Output of `ng build` (built on your machine or in CI, then copied to the server).
-      - ../frontend/dist/frontend/browser:/srv:ro
-      - caddy_data:/data      # certificates: keep this volume, or you'll hit Let's Encrypt limits
-      - caddy_config:/config
+    networks:
+      default:
+      edge_autolog:
+        aliases:
+          - autolog-backend
 
 volumes:
   pgdata:
-  caddy_data:
-  caddy_config:
+
+networks:
+  # Created once on the host:  docker network create edge_autolog
+  # Only the edge proxy and this backend are attached to it; the database is not.
+  edge_autolog:
+    external: true

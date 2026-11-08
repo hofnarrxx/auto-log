@@ -39,7 +39,7 @@ Track fill-ups, service history, costs and receipts for all your vehicles, and s
 | File storage   | Cloudflare R2 (S3-compatible) via pre-signed upload/download URLs                   |
 | Email          | SMTP (verification and password-reset emails)                                       |
 | Rate limiting  | Bucket4j + Caffeine                                                                 |
-| Infrastructure | Docker Compose, Caddy (automatic HTTPS)                                             |
+| Infrastructure | Docker Compose, shared Caddy edge proxy (automatic HTTPS)                           |
 | CI             | GitHub Actions (format, lint, type-check, i18n check, unit tests, production build) |
 
 ## Repository layout
@@ -48,7 +48,7 @@ Track fill-ups, service history, costs and receipts for all your vehicles, and s
 auto-log/
 ├── backend/    Spring Boot REST API (controllers, services, repositories, Flyway migrations)
 ├── frontend/   Angular single-page app (see frontend/README.md for architecture notes)
-├── deploy/     Docker Compose stack, Caddyfile and .env.example for production
+├── deploy/     Docker Compose stack (db + backend) and .env.example for production
 └── .github/    CI workflows
 ```
 
@@ -140,6 +140,24 @@ cd backend
 ```
 
 Frontend architecture, dependency rules and conventions are documented in `[frontend/README.md](frontend/README.md)`.
+
+## Deployment
+
+`deploy/docker-compose.yml` runs only PostgreSQL and the backend. HTTPS, the static frontend and routing to the API are handled by a separate Caddy "edge proxy" project that owns ports 80/443 on the server, so other apps can share the same machine.
+
+The edge proxy expects:
+
+- an external Docker network named `edge_autolog` (`docker network create edge_autolog`), which the backend joins;
+- the API to be reachable at `autolog-backend:8080` on that network (the alias is set in `deploy/docker-compose.yml`);
+- the built frontend (`frontend/dist/frontend/browser`) to be copied into the directory it serves.
+
+Typical update on the server:
+
+```bash
+cd ~/auto-log/frontend && npm ci && npm run build:prod
+rsync -a --delete dist/frontend/browser/ ~/edge/sites/autolog/
+cd ~/auto-log/deploy && docker compose up -d --build
+```
 
 ## Security notes
 
